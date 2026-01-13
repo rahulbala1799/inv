@@ -141,9 +141,12 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                         {searchResults.map((customer) => (
                           <CommandItem
                             key={customer.id}
-                            value={customer.id}
+                            value={`${customer.id}-${customer.name}`}
+                            keywords={[customer.name, customer.email || '']}
                             onSelect={(value) => {
-                              handleSelect(value);
+                              // Extract customer ID from value (format: "id-name")
+                              const customerId = value.split('-')[0];
+                              handleSelect(customerId);
                             }}
                             className="cursor-pointer"
                           >
