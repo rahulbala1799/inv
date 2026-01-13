@@ -26,6 +26,7 @@ export async function PUT(
   const { error: invoiceError } = await supabase
     .from('invoices')
     .update({
+      invoice_number: invoice.invoice_number,
       customer_id: invoice.customer_id,
       issue_date: invoice.issue_date,
       due_date: invoice.due_date,

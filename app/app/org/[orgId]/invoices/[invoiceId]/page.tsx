@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
-import InvoiceEditor from './InvoiceEditor'
+import WYSIWYGInvoiceEditor from '@/components/invoices/WYSIWYGInvoiceEditor'
 
 export default async function InvoiceDetailPage({
   params,
@@ -44,26 +44,27 @@ export default async function InvoiceDetailPage({
     .eq('org_id', orgId)
     .order('sort_order')
 
-  // Get customers and templates for dropdowns
+  // Get customers for dropdown
   const { data: customers } = await supabase
     .from('customers')
-    .select('id, name')
+    .select('*')
     .eq('org_id', orgId)
     .order('name')
 
-  const { data: templates } = await supabase
-    .from('invoice_templates')
-    .select('id, name, is_default')
-    .or(`org_id.is.null,org_id.eq.${orgId}`)
-    .order('is_default', { ascending: false })
+  // Get org branding
+  const { data: branding } = await supabase
+    .from('org_branding')
+    .select('*')
+    .eq('org_id', orgId)
+    .single()
 
   return (
-    <InvoiceEditor
+    <WYSIWYGInvoiceEditor
       invoice={invoice}
       items={items || []}
       customers={customers || []}
-      templates={templates || []}
       orgId={orgId}
+      branding={branding}
     />
   )
 }
