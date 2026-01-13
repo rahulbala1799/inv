@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 
-export async function createOrg(prevState: any, formData: FormData) {
+export async function createOrg(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -14,7 +14,7 @@ export async function createOrg(prevState: any, formData: FormData) {
   const name = formData.get('name') as string
 
   if (!name || name.trim().length === 0) {
-    return { error: 'Organization name is required' }
+    redirect('/app?error=' + encodeURIComponent('Organization name is required'))
   }
 
   const { data: org, error } = await supabase
@@ -24,7 +24,7 @@ export async function createOrg(prevState: any, formData: FormData) {
     .single()
 
   if (error) {
-    return { error: error.message }
+    redirect('/app?error=' + encodeURIComponent(error.message))
   }
 
   // Trigger will create org_members entry automatically
