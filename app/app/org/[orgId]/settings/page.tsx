@@ -71,11 +71,10 @@ export default async function SettingsPage({
             <LogoUpload
               orgId={orgId}
               currentLogoUrl={logoUrl}
+              logoPathInputId="logo_storage_path"
               onUploadComplete={(logoPath) => {
-                const input = document.getElementById('logo_storage_path') as HTMLInputElement
-                if (input) {
-                  input.value = logoPath
-                }
+                // This callback is handled internally by LogoUpload component
+                // It updates the hidden input field automatically
               }}
             />
 

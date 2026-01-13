@@ -8,9 +8,10 @@ interface LogoUploadProps {
   orgId: string
   currentLogoUrl?: string | null
   onUploadComplete: (logoPath: string) => void
+  logoPathInputId?: string
 }
 
-export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete }: LogoUploadProps) {
+export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete, logoPathInputId = 'logo_storage_path' }: LogoUploadProps) {
   const [uploading, setUploading] = useState(false)
   const [preview, setPreview] = useState<string | null>(null)
   const [logoUrl, setLogoUrlState] = useState<string | null>(currentLogoUrl || null)
@@ -80,6 +81,12 @@ export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete }: 
       // Callback with storage path (not public URL)
       onUploadComplete(filePath)
       
+      // Update hidden input field
+      const hiddenInput = document.getElementById(logoPathInputId) as HTMLInputElement
+      if (hiddenInput) {
+        hiddenInput.value = filePath
+      }
+      
       // Update logo URL for display
       const { data: { publicUrl } } = supabase.storage
         .from('logos')
@@ -111,6 +118,12 @@ export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete }: 
       setPreview(null)
       setLogoUrlState(null)
       onUploadComplete('')
+      
+      // Update hidden input field
+      const hiddenInput = document.getElementById(logoPathInputId) as HTMLInputElement
+      if (hiddenInput) {
+        hiddenInput.value = ''
+      }
     } catch (error) {
       console.error('Error removing logo:', error)
       alert('Failed to remove logo. Please try again.')
@@ -132,6 +145,10 @@ export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete }: 
               fill
               className="object-contain"
               sizes="128px"
+              unoptimized={preview?.startsWith('data:')}
+              onError={(e) => {
+                console.error('Failed to load logo image:', e)
+              }}
             />
           </div>
         )}

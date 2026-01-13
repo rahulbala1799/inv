@@ -505,6 +505,9 @@ export default function WYSIWYGInvoiceEditor({
                     fill
                     className="object-contain"
                     sizes="128px"
+                    onError={(e) => {
+                      console.error('Failed to load logo image:', e)
+                    }}
                   />
                 </div>
               )}
