@@ -38,13 +38,13 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
     const isEmpty = !displayValue || displayValue.trim() === "";
 
     useEffect(() => {
-      // Only update editValue if we're not waiting for a pending update
-      if (pendingValue === null) {
-        setEditValue(value);
-      }
-      // Clear pending value once parent value matches
+      // If value prop changes and matches our pending value, clear pending
       if (pendingValue !== null && value === pendingValue) {
         setPendingValue(null);
+        setEditValue(value);
+      } else if (pendingValue === null) {
+        // Only update editValue if we're not waiting for a pending update
+        setEditValue(value);
       }
     }, [value, pendingValue]);
 
