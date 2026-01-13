@@ -524,7 +524,7 @@ export default function WYSIWYGInvoiceEditor({
             </div>
 
             {/* Invoice Details */}
-            <div className="text-right space-y-2">
+            <div className="text-right space-y-3">
               <div className="text-4xl font-bold text-gray-900 mb-4">INVOICE</div>
               <div className="flex items-center justify-end gap-2 text-sm">
                 <span className="text-gray-600">Invoice #:</span>
@@ -537,19 +537,25 @@ export default function WYSIWYGInvoiceEditor({
                   required
                 />
               </div>
-              <div className="flex items-center justify-end gap-2 text-sm">
-                <span className="text-gray-600">Issue Date:</span>
-                <InlineEditableDate
-                  value={invoice.issue_date}
-                  onChange={(value) => updateInvoice({ issue_date: value.toISOString().split('T')[0] })}
-                />
+              <div className="flex items-center justify-end gap-3">
+                <span className="text-base font-semibold text-gray-700">Issue Date:</span>
+                <div className="px-4 py-2.5 bg-amber-50 border-2 border-amber-300 rounded-lg shadow-sm">
+                  <InlineEditableDate
+                    value={invoice.issue_date}
+                    onChange={(value) => updateInvoice({ issue_date: value.toISOString().split('T')[0] })}
+                    className="text-base font-medium text-gray-900"
+                  />
+                </div>
               </div>
-              <div className="flex items-center justify-end gap-2 text-sm">
-                <span className="text-gray-600">Due Date:</span>
-                <InlineEditableDate
-                  value={invoice.due_date || new Date()}
-                  onChange={(value) => updateInvoice({ due_date: value.toISOString().split('T')[0] })}
-                />
+              <div className="flex items-center justify-end gap-3">
+                <span className="text-base font-semibold text-gray-700">Due Date:</span>
+                <div className="px-4 py-2.5 bg-amber-50 border-2 border-amber-300 rounded-lg shadow-sm">
+                  <InlineEditableDate
+                    value={invoice.due_date || new Date()}
+                    onChange={(value) => updateInvoice({ due_date: value.toISOString().split('T')[0] })}
+                    className="text-base font-medium text-gray-900"
+                  />
+                </div>
               </div>
             </div>
           </div>
