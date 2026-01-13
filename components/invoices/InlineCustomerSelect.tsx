@@ -118,7 +118,7 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-[400px] p-0" align="start">
+          <PopoverContent className="w-[400px] p-0" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
             <Command shouldFilter={false}>
               <CommandInput
                 placeholder="Search or type to create new customer..."
@@ -135,16 +135,8 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                     ) : (
                       <CommandGroup>
                         {searchResults.map((customer) => (
-                          <CommandItem
+                          <div
                             key={customer.id}
-                            value={customer.name}
-                            keywords={[customer.name, customer.email || '', customer.id]}
-                            onSelect={() => {
-                              // Directly use the customer object
-                              onSelect(customer);
-                              setIsOpen(false);
-                              setSearchQuery("");
-                            }}
                             onClick={(e) => {
                               e.preventDefault();
                               e.stopPropagation();
@@ -152,7 +144,14 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                               setIsOpen(false);
                               setSearchQuery("");
                             }}
-                            className="cursor-pointer"
+                            onMouseDown={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onSelect(customer);
+                              setIsOpen(false);
+                              setSearchQuery("");
+                            }}
+                            className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-gray-100 hover:text-gray-900"
                           >
                             <Check
                               className={cn(
@@ -166,7 +165,7 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                                 <div className="text-xs text-gray-500">{customer.email}</div>
                               )}
                             </div>
-                          </CommandItem>
+                          </div>
                         ))}
                       </CommandGroup>
                     )}
