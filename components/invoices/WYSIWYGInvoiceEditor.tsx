@@ -556,131 +556,42 @@ export default function WYSIWYGInvoiceEditor({
 
           {/* Bill To Section */}
           <div className="mb-12">
-            <div className="text-sm font-semibold text-gray-600 mb-4">Bill To:</div>
-            <div className="space-y-4">
+            <div className="text-sm font-semibold text-gray-600 mb-2">Bill To:</div>
+            <div className="space-y-1">
               {/* Customer Selection - Input Box Style */}
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Customer <span className="text-red-500">*</span>
-                </label>
+              <div className="mb-2">
                 <InlineCustomerSelect
                   ref={customerRef}
                   customers={customersList}
                   selectedCustomer={selectedCustomer}
                   onSelect={handleCustomerSelect}
-                  className=""
+                  className="font-semibold"
                   required
                   orgId={orgId}
                 />
               </div>
 
-              {/* Customer Details - Only show when customer is selected */}
+              {/* Customer Details - Display as text lines when customer is selected */}
               {selectedCustomer && (
-                <div className="space-y-4 border-t pt-4">
-                  {/* Address Line 1 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Address Line 1
-                    </label>
-                    <input
-                      type="text"
-                      value={customerAddress || ""}
-                      onChange={(e) => updateCustomerField('address_line1', e.target.value)}
-                      onBlur={() => triggerAutoSave()}
-                      placeholder="Street address"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-
-                  {/* Address Line 2 */}
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Address Line 2
-                    </label>
-                    <input
-                      type="text"
-                      value={customerAddress2 || ""}
-                      onChange={(e) => updateCustomerField('address_line2', e.target.value)}
-                      onBlur={() => triggerAutoSave()}
-                      placeholder="Suite, unit, etc. (optional)"
-                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-
-                  {/* City, Postcode, Country - Grid Layout */}
-                  <div className="grid grid-cols-3 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        City
-                      </label>
-                      <input
-                        type="text"
-                        value={customerCity || ""}
-                        onChange={(e) => updateCustomerField('city', e.target.value)}
-                        onBlur={() => triggerAutoSave()}
-                        placeholder="City"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                      />
+                <>
+                  {customerAddress && (
+                    <div className="text-sm text-gray-600">{customerAddress}</div>
+                  )}
+                  {customerAddress2 && (
+                    <div className="text-sm text-gray-600">{customerAddress2}</div>
+                  )}
+                  {(customerCity || customerPostcode || customerCountry) && (
+                    <div className="text-sm text-gray-600">
+                      {[customerCity, customerPostcode, customerCountry].filter(Boolean).join(', ')}
                     </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Postcode
-                      </label>
-                      <input
-                        type="text"
-                        value={customerPostcode || ""}
-                        onChange={(e) => updateCustomerField('postcode', e.target.value)}
-                        onBlur={() => triggerAutoSave()}
-                        placeholder="Postcode"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Country
-                      </label>
-                      <input
-                        type="text"
-                        value={customerCountry || ""}
-                        onChange={(e) => updateCustomerField('country', e.target.value)}
-                        onBlur={() => triggerAutoSave()}
-                        placeholder="Country"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                  </div>
-
-                  {/* Email and VAT - Grid Layout */}
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        ref={billToEmailRef}
-                        value={customerEmail || ""}
-                        onChange={(e) => updateCustomerField('email', e.target.value)}
-                        onBlur={() => triggerAutoSave()}
-                        placeholder="customer@example.com"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        VAT Number
-                      </label>
-                      <input
-                        type="text"
-                        value={customerVat || ""}
-                        onChange={(e) => updateCustomerField('vat_number', e.target.value)}
-                        onBlur={() => triggerAutoSave()}
-                        placeholder="VAT/Tax ID (optional)"
-                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
-                      />
-                    </div>
-                  </div>
-                </div>
+                  )}
+                  {customerEmail && (
+                    <div className="text-sm text-gray-600">{customerEmail}</div>
+                  )}
+                  {customerVat && (
+                    <div className="text-sm text-gray-600">VAT: {customerVat}</div>
+                  )}
+                </>
               )}
             </div>
           </div>
