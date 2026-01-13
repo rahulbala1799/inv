@@ -75,21 +75,17 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
     }, [searchQuery, isOpen, orgId, customers]);
 
     const handleSelect = (value: string) => {
-      console.log('handleSelect called with value:', value);
       // Check if it's the create new option - if value matches searchQuery, it's the create option
       if (value === searchQuery && searchQuery.trim().length > 0) {
         setIsCreating(true);
         return;
       }
 
-      const customer = searchResults.find((c) => c.id === value);
-      console.log('Found customer:', customer);
+      const customer = searchResults.find((c) => c.id === value || c.name === value);
       if (customer) {
         onSelect(customer);
         setIsOpen(false);
         setSearchQuery("");
-      } else {
-        console.log('Customer not found. searchResults:', searchResults);
       }
     };
 
@@ -141,12 +137,20 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                         {searchResults.map((customer) => (
                           <CommandItem
                             key={customer.id}
-                            value={`${customer.id}-${customer.name}`}
-                            keywords={[customer.name, customer.email || '']}
-                            onSelect={(value) => {
-                              // Extract customer ID from value (format: "id-name")
-                              const customerId = value.split('-')[0];
-                              handleSelect(customerId);
+                            value={customer.name}
+                            keywords={[customer.name, customer.email || '', customer.id]}
+                            onSelect={() => {
+                              // Directly use the customer object
+                              onSelect(customer);
+                              setIsOpen(false);
+                              setSearchQuery("");
+                            }}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              e.stopPropagation();
+                              onSelect(customer);
+                              setIsOpen(false);
+                              setSearchQuery("");
                             }}
                             className="cursor-pointer"
                           >
