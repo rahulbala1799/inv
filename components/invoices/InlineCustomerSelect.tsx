@@ -75,6 +75,7 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
     }, [searchQuery, isOpen, orgId, customers]);
 
     const handleSelect = (value: string) => {
+      console.log('handleSelect called with value:', value);
       // Check if it's the create new option - if value matches searchQuery, it's the create option
       if (value === searchQuery && searchQuery.trim().length > 0) {
         setIsCreating(true);
@@ -82,10 +83,13 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
       }
 
       const customer = searchResults.find((c) => c.id === value);
+      console.log('Found customer:', customer);
       if (customer) {
         onSelect(customer);
         setIsOpen(false);
         setSearchQuery("");
+      } else {
+        console.log('Customer not found. searchResults:', searchResults);
       }
     };
 
@@ -138,7 +142,10 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                           <CommandItem
                             key={customer.id}
                             value={customer.id}
-                            onSelect={handleSelect}
+                            onSelect={(value) => {
+                              handleSelect(value);
+                            }}
+                            className="cursor-pointer"
                           >
                             <Check
                               className={cn(
