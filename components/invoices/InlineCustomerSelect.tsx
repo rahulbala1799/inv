@@ -171,23 +171,25 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                     )}
                     {showCreateOption && (
                       <CommandGroup>
-                        <CommandItem
-                          value={searchQuery}
-                          keywords={[searchQuery, "create", "new", "customer"]}
-                          onSelect={handleSelect}
-                          className="text-indigo-600 cursor-pointer hover:bg-indigo-50"
-                          onMouseDown={(e) => {
-                            // Prevent the command from closing
+                        <div
+                          onClick={(e) => {
                             e.preventDefault();
+                            e.stopPropagation();
+                            setIsCreating(true);
+                            setIsOpen(false);
                           }}
-                          onClick={handleCreateClick}
+                          onMouseDown={(e) => {
+                            e.preventDefault();
+                            e.stopPropagation();
+                          }}
+                          className="relative flex cursor-pointer select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none hover:bg-indigo-50 text-indigo-600"
                         >
                           <Plus className="mr-2 h-4 w-4" />
                           <div>
                             <div className="font-medium">Create &quot;{searchQuery}&quot;</div>
                             <div className="text-xs text-gray-500">Add as new customer</div>
                           </div>
-                        </CommandItem>
+                        </div>
                       </CommandGroup>
                     )}
                   </>
