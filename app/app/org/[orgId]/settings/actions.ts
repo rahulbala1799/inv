@@ -32,8 +32,10 @@ export async function updateBranding(formData: FormData) {
     address_line1: formData.get('address_line1') as string || null,
     address_line2: formData.get('address_line2') as string || null,
     city: formData.get('city') as string || null,
+    county: formData.get('county') as string || null,
     postcode: formData.get('postcode') as string || null,
     country: formData.get('country') as string || null,
+    logo_storage_path: formData.get('logo_storage_path') as string || null,
     default_currency: formData.get('default_currency') as string || 'EUR',
   }
 

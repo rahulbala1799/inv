@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
 import { updateBranding } from './actions'
+import LogoUpload from '@/components/settings/LogoUpload'
 
 export default async function SettingsPage({
   params,
@@ -28,6 +29,19 @@ export default async function SettingsPage({
     .eq('org_id', orgId)
     .single()
 
+  // Get logo URL if exists
+  let logoUrl: string | null = null
+  if (branding?.logo_storage_path) {
+    try {
+      const { data: { publicUrl } } = supabase.storage
+        .from('logos')
+        .getPublicUrl(branding.logo_storage_path)
+      logoUrl = publicUrl
+    } catch (error) {
+      console.error('Error getting logo URL:', error)
+    }
+  }
+
   // Get templates
   const { data: templates } = await supabase
     .from('invoice_templates')
@@ -39,106 +53,142 @@ export default async function SettingsPage({
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
-        <p className="text-gray-600">Manage your organization branding and templates</p>
+        <p className="text-gray-600">Manage your organization settings and preferences</p>
       </div>
 
       <div className="space-y-6">
-        {/* Branding Section */}
+        {/* Organization Settings Section */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Organization Branding</h2>
-          <form action={updateBranding} className="space-y-4">
+          <h2 className="text-xl font-bold text-gray-900 mb-4">Organization Settings</h2>
+          <p className="text-sm text-gray-600 mb-6">
+            Configure your company information that will appear on invoices
+          </p>
+          <form action={updateBranding} className="space-y-6">
             <input type="hidden" name="orgId" value={orgId} />
+            <input type="hidden" name="logo_storage_path" id="logo_storage_path" value={branding?.logo_storage_path || ''} />
+
+            {/* Logo Upload */}
+            <LogoUpload
+              orgId={orgId}
+              currentLogoUrl={logoUrl}
+              onUploadComplete={(logoPath) => {
+                const input = document.getElementById('logo_storage_path') as HTMLInputElement
+                if (input) {
+                  input.value = logoPath
+                }
+              }}
+            />
 
             <div>
               <label htmlFor="business_name" className="block text-sm font-medium text-gray-700 mb-2">
-                Business Name
+                Company Name <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
                 id="business_name"
                 name="business_name"
                 defaultValue={branding?.business_name || ''}
+                placeholder="Click to add company name"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
 
             <div>
-              <label htmlFor="vat_number" className="block text-sm font-medium text-gray-700 mb-2">
-                VAT Number
+              <label htmlFor="address_line1" className="block text-sm font-medium text-gray-700 mb-2">
+                Street Address <span className="text-red-500">*</span>
               </label>
               <input
                 type="text"
-                id="vat_number"
-                name="vat_number"
-                defaultValue={branding?.vat_number || ''}
+                id="address_line1"
+                name="address_line1"
+                defaultValue={branding?.address_line1 || ''}
+                placeholder="Click to add street address"
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               />
             </div>
 
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label htmlFor="address_line1" className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Line 1
-                </label>
-                <input
-                  type="text"
-                  id="address_line1"
-                  name="address_line1"
-                  defaultValue={branding?.address_line1 || ''}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
-              <div>
-                <label htmlFor="address_line2" className="block text-sm font-medium text-gray-700 mb-2">
-                  Address Line 2
-                </label>
-                <input
-                  type="text"
-                  id="address_line2"
-                  name="address_line2"
-                  defaultValue={branding?.address_line2 || ''}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+            <div>
+              <label htmlFor="address_line2" className="block text-sm font-medium text-gray-700 mb-2">
+                Address Line 2 <span className="text-gray-400 text-xs">(Optional)</span>
+              </label>
+              <input
+                type="text"
+                id="address_line2"
+                name="address_line2"
+                defaultValue={branding?.address_line2 || ''}
+                placeholder="Suite, unit, etc."
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
             </div>
 
             <div className="grid md:grid-cols-3 gap-4">
               <div>
                 <label htmlFor="city" className="block text-sm font-medium text-gray-700 mb-2">
-                  City
+                  City <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   id="city"
                   name="city"
                   defaultValue={branding?.city || ''}
+                  placeholder="City"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label htmlFor="county" className="block text-sm font-medium text-gray-700 mb-2">
+                  State/Province
+                </label>
+                <input
+                  type="text"
+                  id="county"
+                  name="county"
+                  defaultValue={branding?.county || ''}
+                  placeholder="State"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
               <div>
                 <label htmlFor="postcode" className="block text-sm font-medium text-gray-700 mb-2">
-                  Postcode
+                  Postal Code <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="text"
                   id="postcode"
                   name="postcode"
                   defaultValue={branding?.postcode || ''}
+                  placeholder="Postal code"
                   className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                 />
               </div>
-              <div>
-                <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
-                  Country
-                </label>
-                <input
-                  type="text"
-                  id="country"
-                  name="country"
-                  defaultValue={branding?.country || ''}
-                  className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                />
-              </div>
+            </div>
+
+            <div>
+              <label htmlFor="country" className="block text-sm font-medium text-gray-700 mb-2">
+                Country
+              </label>
+              <input
+                type="text"
+                id="country"
+                name="country"
+                defaultValue={branding?.country || ''}
+                placeholder="Country"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="vat_number" className="block text-sm font-medium text-gray-700 mb-2">
+                VAT/Tax ID <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="text"
+                id="vat_number"
+                name="vat_number"
+                defaultValue={branding?.vat_number || ''}
+                placeholder="Click to add VAT/Tax ID"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
             </div>
 
             <div>
@@ -157,12 +207,14 @@ export default async function SettingsPage({
               </select>
             </div>
 
-            <button
-              type="submit"
-              className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-            >
-              Save Branding
-            </button>
+            <div className="pt-4 border-t border-gray-200">
+              <button
+                type="submit"
+                className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+              >
+                Save Organization Settings
+              </button>
+            </div>
           </form>
         </div>
 

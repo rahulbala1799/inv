@@ -3,6 +3,8 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
+import { createClient } from "@/lib/supabase/client";
 import { InlineEditableText } from "@/components/invoices/InlineEditableText";
 import { InlineEditableNumber } from "@/components/invoices/InlineEditableNumber";
 import { InlineEditableMoney } from "@/components/invoices/InlineEditableMoney";
@@ -67,8 +69,10 @@ interface OrgBranding {
   address_line1?: string | null;
   address_line2?: string | null;
   city?: string | null;
+  county?: string | null;
   postcode?: string | null;
   country?: string | null;
+  logo_storage_path?: string | null;
   default_currency?: string | null;
 }
 
@@ -131,9 +135,25 @@ export default function WYSIWYGInvoiceEditor({
   const companyAddress = branding?.address_line1 || "";
   const companyAddress2 = branding?.address_line2 || "";
   const companyCity = branding?.city || "";
+  const companyState = branding?.county || "";
   const companyPostcode = branding?.postcode || "";
   const companyCountry = branding?.country || "";
   const companyVat = branding?.vat_number || "";
+  
+  // Get logo URL if exists
+  const [logoUrl, setLogoUrl] = useState<string | null>(null);
+  
+  useEffect(() => {
+    if (branding?.logo_storage_path) {
+      const supabase = createClient();
+      const { data: { publicUrl } } = supabase.storage
+        .from('logos')
+        .getPublicUrl(branding.logo_storage_path);
+      setLogoUrl(publicUrl);
+    } else {
+      setLogoUrl(null);
+    }
+  }, [branding?.logo_storage_path]);
 
   // Customer info - use selectedCustomerData if available, otherwise fall back to invoice.customers or selectedCustomer
   const customerName = selectedCustomerData?.name || invoice.customers?.name || "";
@@ -476,51 +496,69 @@ export default function WYSIWYGInvoiceEditor({
           {/* Header Section */}
           <div className="flex justify-between mb-12">
             {/* Company Info */}
-            <div className="space-y-1">
-              <InlineEditableText
-                ref={companyNameRef}
-                value={companyName}
-                onChange={(value) => {
-                  // Note: Company info should be updated in org_branding, not here
-                  // For now, we'll just show it as read-only or handle separately
-                }}
-                placeholder="Click to add company name"
-                className="text-xl font-semibold"
-                bold
-                required
-              />
-              <InlineEditableText
-                ref={companyAddressRef}
-                value={companyAddress}
-                onChange={() => {}}
-                placeholder="Click to add street address"
-                className="text-sm text-gray-600"
-                required
-              />
-              {companyAddress2 && (
-                <InlineEditableText
-                  value={companyAddress2}
-                  onChange={() => {}}
-                  placeholder="Suite, unit, etc. (optional)"
-                  className="text-sm text-gray-600"
-                />
+            <div className="flex gap-6">
+              {logoUrl && (
+                <div className="relative w-32 h-32 flex-shrink-0">
+                  <Image
+                    src={logoUrl}
+                    alt="Company logo"
+                    fill
+                    className="object-contain"
+                    sizes="128px"
+                  />
+                </div>
               )}
-              <InlineEditableText
-                ref={companyCityRef}
-                value={`${companyCity}${companyPostcode ? `, ${companyPostcode}` : ""}${companyCountry ? `, ${companyCountry}` : ""}`}
-                onChange={() => {}}
-                placeholder="Click to add city, state, postal code"
-                className="text-sm text-gray-600"
-                required
-              />
-              <InlineEditableText
-                ref={companyVatRef}
-                value={companyVat}
-                onChange={() => {}}
-                placeholder="Click to add VAT/Tax ID"
-                className="text-sm text-gray-600"
-                required
-              />
+              <div className="space-y-1 flex-1">
+                <InlineEditableText
+                  ref={companyNameRef}
+                  value={companyName}
+                  onChange={(value) => {
+                    // Note: Company info should be updated in org_branding, not here
+                    // For now, we'll just show it as read-only or handle separately
+                  }}
+                  placeholder="Click to add company name"
+                  className="text-xl font-semibold"
+                  bold
+                  required
+                />
+                <InlineEditableText
+                  ref={companyAddressRef}
+                  value={companyAddress}
+                  onChange={() => {}}
+                  placeholder="Click to add street address"
+                  className="text-sm text-gray-600"
+                  required
+                />
+                {companyAddress2 && (
+                  <InlineEditableText
+                    value={companyAddress2}
+                    onChange={() => {}}
+                    placeholder="Suite, unit, etc. (optional)"
+                    className="text-sm text-gray-600"
+                  />
+                )}
+                <InlineEditableText
+                  ref={companyCityRef}
+                  value={[
+                    companyCity,
+                    companyState,
+                    companyPostcode,
+                    companyCountry
+                  ].filter(Boolean).join(", ")}
+                  onChange={() => {}}
+                  placeholder="Click to add city, state, postal code"
+                  className="text-sm text-gray-600"
+                  required
+                />
+                <InlineEditableText
+                  ref={companyVatRef}
+                  value={companyVat}
+                  onChange={() => {}}
+                  placeholder="Click to add VAT/Tax ID"
+                  className="text-sm text-gray-600"
+                  required
+                />
+              </div>
             </div>
 
             {/* Invoice Details */}
