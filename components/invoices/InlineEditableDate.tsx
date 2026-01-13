@@ -34,7 +34,7 @@ export function InlineEditableDate({
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           className={`cursor-pointer transition-colors inline-flex items-center gap-1 ${className} ${
-            isHovered ? "bg-indigo-50/50" : ""
+            isHovered ? "bg-gray-50/50" : ""
           }`}
           role="button"
           tabIndex={0}

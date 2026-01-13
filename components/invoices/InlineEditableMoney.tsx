@@ -79,13 +79,7 @@ export const InlineEditableMoney = forwardRef<HTMLDivElement, InlineEditableMone
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={`cursor-pointer transition-colors text-right font-mono ${className} ${
-          showRequired
-            ? isHovered
-              ? "bg-amber-100/60"
-              : "bg-amber-50/40"
-            : isHovered
-            ? "bg-indigo-50/50"
-            : ""
+          isHovered ? "bg-gray-50/50" : ""
         }`}
         role="button"
         tabIndex={0}
@@ -95,13 +89,8 @@ export const InlineEditableMoney = forwardRef<HTMLDivElement, InlineEditableMone
           }
         }}
       >
-        <span className="inline-flex items-center gap-2 justify-end">
-          {formatCurrency(value, currency)}
-          {showRequired && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-              Required
-            </span>
-          )}
+        <span className={`inline-flex items-center gap-2 justify-end ${isEmpty ? "text-amber-500" : ""}`}>
+          {isEmpty ? "0.00" : formatCurrency(value, currency)}
         </span>
       </div>
     );

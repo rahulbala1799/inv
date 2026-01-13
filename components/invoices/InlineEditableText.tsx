@@ -69,7 +69,7 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
     if (isEditing) {
       const baseInputClass = `border-none outline-none bg-transparent w-full ${inputClassName} ${
         bold ? "font-semibold" : ""
-      } ${showRequired ? "bg-amber-50" : ""}`;
+      }`;
 
       if (multiline) {
         return (
@@ -105,14 +105,8 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
         className={`cursor-pointer transition-colors relative ${className} ${
-          showRequired
-            ? isHovered
-              ? "bg-amber-100/60"
-              : "bg-amber-50/40"
-            : isHovered
-            ? "bg-indigo-50/50"
-            : ""
-        } ${isEmpty ? "text-gray-400 italic" : ""} ${bold ? "font-semibold" : ""}`}
+          isHovered ? "bg-gray-50/50" : ""
+        } ${bold ? "font-semibold" : ""}`}
         role="button"
         tabIndex={0}
         onKeyDown={(e) => {
@@ -121,13 +115,8 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
           }
         }}
       >
-        <span className="inline-flex items-center gap-2">
+        <span className={`inline-flex items-center gap-2 ${isEmpty ? "text-amber-500 italic" : ""}`}>
           {displayValue}
-          {showRequired && (
-            <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-              Required
-            </span>
-          )}
         </span>
       </div>
     );

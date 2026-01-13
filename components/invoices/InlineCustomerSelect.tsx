@@ -54,14 +54,8 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             className={`cursor-pointer transition-colors ${className} ${
-              showRequired
-                ? isHovered
-                  ? "bg-amber-100/60"
-                  : "bg-amber-50/40"
-                : isHovered
-                ? "bg-indigo-50/50"
-                : ""
-            } ${!selectedCustomer ? "text-gray-400 italic" : ""}`}
+              isHovered ? "bg-gray-50/50" : ""
+            }`}
             role="button"
             tabIndex={0}
             onKeyDown={(e) => {
@@ -71,13 +65,8 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
             }}
           >
             <div className="flex items-center justify-between">
-              <span className="inline-flex items-center gap-2">
+              <span className={`inline-flex items-center gap-2 ${!selectedCustomer ? "text-amber-500 italic" : ""}`}>
                 {selectedCustomer?.name || "Select customer..."}
-                {showRequired && (
-                  <span className="inline-flex items-center gap-1 text-[10px] font-medium text-amber-700 bg-amber-100 px-1.5 py-0.5 rounded">
-                    Required
-                  </span>
-                )}
               </span>
               {isHovered && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
             </div>

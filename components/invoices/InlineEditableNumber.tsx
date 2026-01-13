@@ -77,13 +77,15 @@ export function InlineEditableNumber({
     );
   }
 
+  const isEmpty = value === 0 || value === null || value === undefined;
+
   return (
     <div
       onClick={handleClick}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       className={`cursor-pointer transition-colors text-right ${className} ${
-        isHovered ? "bg-indigo-50/50" : ""
+        isHovered ? "bg-gray-50/50" : ""
       }`}
       role="button"
       tabIndex={0}
@@ -93,7 +95,9 @@ export function InlineEditableNumber({
         }
       }}
     >
-      {value || placeholder}
+      <span className={isEmpty ? "text-amber-500" : ""}>
+        {value || placeholder}
+      </span>
     </div>
   );
 }
