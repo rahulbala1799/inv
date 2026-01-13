@@ -568,55 +568,72 @@ export default function WYSIWYGInvoiceEditor({
                 orgId={orgId}
               />
               {selectedCustomer && (
-                <>
-                  <InlineEditableText
-                    value={customerAddress}
-                    onChange={(value) => updateCustomerField('address_line1', value)}
-                    placeholder="Click to add street address"
-                    className="text-sm text-gray-600"
-                  />
-                  <InlineEditableText
-                    value={customerAddress2}
-                    onChange={(value) => updateCustomerField('address_line2', value)}
-                    placeholder="Click to add address line 2 (optional)"
-                    className="text-sm text-gray-600"
-                  />
+                <div className="mt-2 space-y-1">
+                  {/* Address Line 1 */}
+                  <div>
+                    <InlineEditableText
+                      value={customerAddress || ""}
+                      onChange={(value) => updateCustomerField('address_line1', value)}
+                      placeholder="Click to add street address"
+                      className="text-sm text-gray-600"
+                    />
+                  </div>
+                  
+                  {/* Address Line 2 */}
+                  <div>
+                    <InlineEditableText
+                      value={customerAddress2 || ""}
+                      onChange={(value) => updateCustomerField('address_line2', value)}
+                      placeholder="Click to add address line 2 (optional)"
+                      className="text-sm text-gray-600"
+                    />
+                  </div>
+                  
+                  {/* City, Postcode, Country */}
                   <div className="flex items-center gap-1 flex-wrap">
                     <InlineEditableText
-                      value={customerCity}
+                      value={customerCity || ""}
                       onChange={(value) => updateCustomerField('city', value)}
                       placeholder="City"
                       className="text-sm text-gray-600"
                     />
-                    {customerPostcode && <span className="text-sm text-gray-600">,</span>}
+                    {(customerPostcode || customerCity) && <span className="text-sm text-gray-600">,</span>}
                     <InlineEditableText
-                      value={customerPostcode}
+                      value={customerPostcode || ""}
                       onChange={(value) => updateCustomerField('postcode', value)}
                       placeholder="Postcode"
                       className="text-sm text-gray-600"
                     />
-                    {customerCountry && <span className="text-sm text-gray-600">,</span>}
+                    {(customerCountry || customerPostcode) && <span className="text-sm text-gray-600">,</span>}
                     <InlineEditableText
-                      value={customerCountry}
+                      value={customerCountry || ""}
                       onChange={(value) => updateCustomerField('country', value)}
                       placeholder="Country"
                       className="text-sm text-gray-600"
                     />
                   </div>
-                  <InlineEditableText
-                    ref={billToEmailRef}
-                    value={customerEmail}
-                    onChange={(value) => updateCustomerField('email', value)}
-                    placeholder="Click to add customer email"
-                    className="text-sm text-gray-600"
-                  />
-                  <InlineEditableText
-                    value={customerVat}
-                    onChange={(value) => updateCustomerField('vat_number', value)}
-                    placeholder="Click to add VAT number (optional)"
-                    className="text-sm text-gray-600"
-                  />
-                </>
+                  
+                  {/* Email */}
+                  <div>
+                    <InlineEditableText
+                      ref={billToEmailRef}
+                      value={customerEmail || ""}
+                      onChange={(value) => updateCustomerField('email', value)}
+                      placeholder="Click to add customer email"
+                      className="text-sm text-gray-600"
+                    />
+                  </div>
+                  
+                  {/* VAT Number */}
+                  <div>
+                    <InlineEditableText
+                      value={customerVat || ""}
+                      onChange={(value) => updateCustomerField('vat_number', value)}
+                      placeholder="Click to add VAT number (optional)"
+                      className="text-sm text-gray-600"
+                    />
+                  </div>
+                </div>
               )}
             </div>
           </div>
