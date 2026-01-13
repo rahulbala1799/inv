@@ -31,12 +31,12 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
 
   if (numError) {
     console.error('Error allocating invoice number:', numError)
-    throw new Error(`Failed to allocate invoice number: ${numError.message}`)
+    return null
   }
 
   if (!invoiceNumber) {
     console.error('No invoice number returned from RPC')
-    throw new Error('Failed to allocate invoice number: No number returned')
+    return null
   }
 
   // Create draft invoice
@@ -61,12 +61,12 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
 
   if (error) {
     console.error('Error creating draft invoice:', error)
-    throw new Error(`Failed to create invoice: ${error.message}`)
+    return null
   }
 
   if (!invoice) {
     console.error('No invoice returned from insert')
-    throw new Error('Failed to create invoice: No invoice returned')
+    return null
   }
 
   return invoice.id
