@@ -57,6 +57,7 @@ interface Customer {
   city?: string | null;
   postcode?: string | null;
   country?: string | null;
+  vat_number?: string | null;
 }
 
 interface OrgBranding {
@@ -141,6 +142,7 @@ export default function WYSIWYGInvoiceEditor({
   const customerCity = selectedCustomerData?.city || invoice.customers?.city || "";
   const customerPostcode = selectedCustomerData?.postcode || invoice.customers?.postcode || "";
   const customerCountry = selectedCustomerData?.country || invoice.customers?.country || "";
+  const customerVat = selectedCustomerData?.vat_number || invoice.customers?.vat_number || "";
 
   // Auto-save function
   const triggerAutoSave = useCallback(() => {
@@ -226,6 +228,7 @@ export default function WYSIWYGInvoiceEditor({
           city: updatedCustomer.city || null,
           postcode: updatedCustomer.postcode || null,
           country: updatedCustomer.country || null,
+          vat_number: updatedCustomer.vat_number || null,
         }),
       });
 
@@ -604,6 +607,12 @@ export default function WYSIWYGInvoiceEditor({
                     value={customerEmail}
                     onChange={(value) => updateCustomerField('email', value)}
                     placeholder="Click to add customer email"
+                    className="text-sm text-gray-600"
+                  />
+                  <InlineEditableText
+                    value={customerVat}
+                    onChange={(value) => updateCustomerField('vat_number', value)}
+                    placeholder="Click to add VAT number (optional)"
                     className="text-sm text-gray-600"
                   />
                 </>

@@ -128,6 +128,9 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
                   {invoice.customers.city} {invoice.customers.postcode}
                 </Text>
               )}
+              {invoice.customers.vat_number && (
+                <Text style={{ marginTop: 5 }}>VAT: {invoice.customers.vat_number}</Text>
+              )}
             </View>
           )}
         </View>

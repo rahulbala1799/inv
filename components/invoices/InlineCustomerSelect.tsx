@@ -21,6 +21,7 @@ interface Customer {
   city?: string | null;
   postcode?: string | null;
   country?: string | null;
+  vat_number?: string | null;
 }
 
 interface InlineCustomerSelectProps {
@@ -104,18 +105,18 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
       <>
         <Popover open={isOpen} onOpenChange={setIsOpen}>
           <PopoverTrigger asChild>
-            <div
+            <button
+              type="button"
               ref={ref}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className={`cursor-pointer transition-colors ${className} ${
+              className={`w-full text-left cursor-pointer transition-colors border-none bg-transparent p-0 ${className} ${
                 isHovered ? "bg-gray-50/50" : ""
               }`}
-              role="button"
-              tabIndex={0}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  setIsOpen(true);
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setIsOpen((prev) => !prev);
                 }
               }}
             >
@@ -125,7 +126,7 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
                 </span>
                 {isHovered && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
               </div>
-            </div>
+            </button>
           </PopoverTrigger>
           <PopoverContent className="w-[400px] p-0" align="start">
             <Command shouldFilter={false}>

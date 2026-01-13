@@ -36,6 +36,7 @@ export default function CreateCustomerModal({
   const [city, setCity] = useState('')
   const [postcode, setPostcode] = useState('')
   const [country, setCountry] = useState('')
+  const [vat_number, setVatNumber] = useState('')
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
 
@@ -57,6 +58,7 @@ export default function CreateCustomerModal({
       setCity('')
       setPostcode('')
       setCountry('')
+      setVatNumber('')
       setError(null)
     }
   }, [open])
@@ -84,6 +86,7 @@ export default function CreateCustomerModal({
             city: city.trim() || null,
             postcode: postcode.trim() || null,
             country: country.trim() || null,
+            vat_number: vat_number.trim() || null,
           }),
         })
 
@@ -105,6 +108,7 @@ export default function CreateCustomerModal({
         setCity('')
         setPostcode('')
         setCountry('')
+        setVatNumber('')
       } catch (err) {
         setError('Failed to create customer')
       }
@@ -243,6 +247,20 @@ export default function CreateCustomerModal({
                 placeholder="Country"
               />
             </div>
+          </div>
+
+          <div>
+            <label htmlFor="vat_number" className="block text-sm font-medium text-gray-700 mb-2">
+              VAT Number
+            </label>
+            <input
+              type="text"
+              id="vat_number"
+              value={vat_number}
+              onChange={(e) => setVatNumber(e.target.value)}
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              placeholder="VAT/Tax ID (optional)"
+            />
           </div>
 
           <DialogFooter>

@@ -21,7 +21,7 @@ export async function PUT(
   }
 
   const body = await request.json()
-  const { name, email, phone, address_line1, address_line2, city, postcode, country } = body
+  const { name, email, phone, address_line1, address_line2, city, postcode, country, vat_number } = body
 
   if (!name || name.trim() === '') {
     return NextResponse.json({ error: 'Customer name is required' }, { status: 400 })
@@ -38,6 +38,7 @@ export async function PUT(
       city: city?.trim() || null,
       postcode: postcode?.trim() || null,
       country: country?.trim() || null,
+      vat_number: vat_number?.trim() || null,
     })
     .eq('id', customerId)
     .eq('org_id', orgId)
