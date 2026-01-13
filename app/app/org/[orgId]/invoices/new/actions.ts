@@ -39,7 +39,7 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
     .insert({
       org_id: orgId,
       invoice_number: invoiceNumber.toString(),
-      customer_id: '', // Will be set in WYSIWYG editor
+      customer_id: null, // Will be set in WYSIWYG editor
       issue_date: new Date().toISOString().split('T')[0],
       due_date: null, // Will be set in WYSIWYG editor
       currency: currency,
@@ -53,7 +53,13 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
     .select()
     .single()
 
-  if (error || !invoice) {
+  if (error) {
+    console.error('Error creating draft invoice:', error)
+    return null
+  }
+
+  if (!invoice) {
+    console.error('No invoice returned from insert')
     return null
   }
 
