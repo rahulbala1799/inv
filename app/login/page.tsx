@@ -1,6 +1,20 @@
+'use client'
+
 import Link from "next/link";
+import { signIn } from "./actions";
+import { useState } from "react";
 
 export default function Login() {
+  const [error, setError] = useState<string | null>(null);
+
+  async function handleSubmit(formData: FormData) {
+    setError(null);
+    const result = await signIn(formData);
+    if (result?.error) {
+      setError(result.error);
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 flex items-center justify-center px-4">
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
@@ -9,7 +23,13 @@ export default function Login() {
           <p className="text-gray-600">Sign in to your account</p>
         </div>
         
-        <form className="space-y-6">
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 text-red-700 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
+
+        <form action={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
               Email
@@ -17,6 +37,8 @@ export default function Login() {
             <input
               type="email"
               id="email"
+              name="email"
+              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="you@example.com"
             />
@@ -29,6 +51,8 @@ export default function Login() {
             <input
               type="password"
               id="password"
+              name="password"
+              required
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
               placeholder="••••••••"
             />

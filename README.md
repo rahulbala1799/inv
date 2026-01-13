@@ -225,6 +225,7 @@ Supabase Storage bucket: `invoices`
 - **Server Actions/Route Handlers**: All mutations use server-side Supabase client with anon key and SSR session cookies so RLS is always enforced
 - **Defense in Depth**: All DB operations include `org_id` filters even though RLS exists
 - **Service Role Key Usage**: The service role key is only used for local/admin scripts (seed/migrations) and is never used for user-facing requests. This keeps the security story clean and ensures RLS is always enforced.
+- **No Service Role Key in API Routes**: All API routes and server actions use the anon key with SSR session cookies. The service role key is never used in request/response paths to ensure RLS is always enforced.
 - **Environment Variables**: All Supabase credentials stored in Vercel environment variables
 
 ## 🚀 Getting Started
