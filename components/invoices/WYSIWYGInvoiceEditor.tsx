@@ -117,7 +117,7 @@ export default function WYSIWYGInvoiceEditor({
   const companyCityRef = useRef<HTMLDivElement>(null);
   const companyVatRef = useRef<HTMLDivElement>(null);
   const invoiceNumberRef = useRef<HTMLDivElement>(null);
-  const customerRef = useRef<HTMLDivElement>(null);
+  const customerRef = useRef<HTMLButtonElement>(null);
   const billToEmailRef = useRef<HTMLDivElement>(null);
   const firstItemDescRef = useRef<HTMLDivElement>(null);
   const firstItemPriceRef = useRef<HTMLDivElement>(null);

@@ -33,7 +33,7 @@ interface InlineCustomerSelectProps {
   orgId: string;
 }
 
-export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSelectProps>(
+export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomerSelectProps>(
   ({ customers, selectedCustomer, onSelect, className = "", required = false, orgId }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
