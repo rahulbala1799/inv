@@ -29,8 +29,14 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
   const { data: invoiceNumber, error: numError } = await supabase
     .rpc('allocate_invoice_number', { p_org_id: orgId })
 
-  if (numError || !invoiceNumber) {
-    return null
+  if (numError) {
+    console.error('Error allocating invoice number:', numError)
+    throw new Error(`Failed to allocate invoice number: ${numError.message}`)
+  }
+
+  if (!invoiceNumber) {
+    console.error('No invoice number returned from RPC')
+    throw new Error('Failed to allocate invoice number: No number returned')
   }
 
   // Create draft invoice
@@ -55,12 +61,12 @@ export async function createDraftInvoice(orgId: string): Promise<string | null> 
 
   if (error) {
     console.error('Error creating draft invoice:', error)
-    return null
+    throw new Error(`Failed to create invoice: ${error.message}`)
   }
 
   if (!invoice) {
     console.error('No invoice returned from insert')
-    return null
+    throw new Error('Failed to create invoice: No invoice returned')
   }
 
   return invoice.id

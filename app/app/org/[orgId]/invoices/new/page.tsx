@@ -22,10 +22,11 @@ export default async function NewInvoicePage({
   }
 
   // Create a draft invoice immediately and redirect to edit page with WYSIWYG editor
-  const invoiceId = await createDraftInvoice(orgId)
-  if (invoiceId) {
+  try {
+    const invoiceId = await createDraftInvoice(orgId)
     redirect(`/app/org/${orgId}/invoices/${invoiceId}`)
-  } else {
-    redirect(`/app/org/${orgId}/invoices?error=${encodeURIComponent('Failed to create invoice. Please try again.')}`)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to create invoice. Please try again.'
+    redirect(`/app/org/${orgId}/invoices?error=${encodeURIComponent(errorMessage)}`)
   }
 }

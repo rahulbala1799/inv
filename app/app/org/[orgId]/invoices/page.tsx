@@ -9,10 +9,10 @@ export default async function InvoicesPage({
   searchParams,
 }: {
   params: Promise<{ orgId: string }>
-  searchParams: Promise<{ status?: string }>
+  searchParams: Promise<{ status?: string; error?: string }>
 }) {
   const { orgId } = await params
-  const { status } = await searchParams
+  const { status, error } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -38,6 +38,12 @@ export default async function InvoicesPage({
 
   return (
     <div>
+      {error && (
+        <div className="mb-4 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
+          <p className="font-semibold">Error:</p>
+          <p>{decodeURIComponent(error as string)}</p>
+        </div>
+      )}
       <div className="mb-8 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Invoices</h1>
