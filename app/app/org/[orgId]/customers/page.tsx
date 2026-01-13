@@ -2,7 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createCustomer, deleteCustomer } from './actions'
+import { createCustomer } from './actions'
+import DeleteButton from './DeleteButton'
 
 export default async function CustomersPage({
   params,
@@ -72,21 +73,7 @@ export default async function CustomersPage({
                     >
                       Edit
                     </Link>
-                    <form action={deleteCustomer} className="inline">
-                      <input type="hidden" name="customerId" value={customer.id} />
-                      <input type="hidden" name="orgId" value={orgId} />
-                      <button
-                        type="submit"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={(e) => {
-                          if (!confirm('Are you sure you want to delete this customer?')) {
-                            e.preventDefault()
-                          }
-                        }}
-                      >
-                        Delete
-                      </button>
-                    </form>
+                    <DeleteButton customerId={customer.id} orgId={orgId} />
                   </td>
                 </tr>
               ))
