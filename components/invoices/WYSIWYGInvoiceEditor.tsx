@@ -44,6 +44,7 @@ interface Invoice {
     city?: string | null;
     postcode?: string | null;
     country?: string | null;
+    vat_number?: string | null;
   };
 }
 
