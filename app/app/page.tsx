@@ -47,7 +47,7 @@ export default async function AppPage({
 
           {errorParam && (
             <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-lg">
-              {errorParam}
+              {decodeURIComponent(errorParam)}
             </div>
           )}
 
