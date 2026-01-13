@@ -179,6 +179,7 @@ export default function WYSIWYGInvoiceEditor({
     setInvoice((prev) => ({ ...prev, ...updates }));
     calculateTotals();
     triggerAutoSave();
+    // Force re-render to update missing fields
   };
 
   const handleCustomerSelect = (customer: Customer) => {
@@ -188,6 +189,7 @@ export default function WYSIWYGInvoiceEditor({
     }));
     calculateTotals();
     triggerAutoSave();
+    // Force re-render to update missing fields
   };
 
   const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
@@ -198,6 +200,7 @@ export default function WYSIWYGInvoiceEditor({
     });
     calculateTotals();
     triggerAutoSave();
+    // Force re-render to update missing fields
   };
 
   const addItem = () => {
@@ -353,7 +356,17 @@ export default function WYSIWYGInvoiceEditor({
     }
 
     return fields;
-  }, [invoice, companyName, companyAddress, companyCity, customerName, items]);
+  }, [
+    invoice.invoice_number,
+    invoice.customer_id,
+    companyName,
+    companyAddress,
+    companyCity,
+    customerName,
+    items.length,
+    items[0]?.description,
+    items[0]?.unit_price,
+  ]);
 
   const currency = invoice.currency || branding?.default_currency || "EUR";
 
