@@ -110,8 +110,8 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
               ref={ref}
               onMouseEnter={() => setIsHovered(true)}
               onMouseLeave={() => setIsHovered(false)}
-              className={`w-full text-left cursor-pointer transition-colors border-none bg-transparent p-0 ${className} ${
-                isHovered ? "bg-gray-50/50" : ""
+              className={`w-full text-left cursor-pointer transition-colors border border-gray-300 rounded-lg bg-white px-4 py-2.5 flex items-center justify-between hover:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent ${className} ${
+                !selectedCustomer ? "text-gray-400" : "text-gray-900"
               }`}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") {
@@ -120,12 +120,10 @@ export const InlineCustomerSelect = forwardRef<HTMLButtonElement, InlineCustomer
                 }
               }}
             >
-              <div className="flex items-center justify-between">
-                <span className={`inline-flex items-center gap-2 ${!selectedCustomer ? "text-amber-500 italic" : ""}`}>
-                  {selectedCustomer?.name || "Select customer..."}
-                </span>
-                {isHovered && <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />}
-              </div>
+              <span className="truncate">
+                {selectedCustomer?.name || "Select customer..."}
+              </span>
+              <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </button>
           </PopoverTrigger>
           <PopoverContent className="w-[400px] p-0" align="start">

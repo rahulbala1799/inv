@@ -119,7 +119,7 @@ export default function WYSIWYGInvoiceEditor({
   const companyVatRef = useRef<HTMLDivElement>(null);
   const invoiceNumberRef = useRef<HTMLDivElement>(null);
   const customerRef = useRef<HTMLButtonElement>(null);
-  const billToEmailRef = useRef<HTMLDivElement>(null);
+  const billToEmailRef = useRef<HTMLInputElement>(null);
   const firstItemDescRef = useRef<HTMLDivElement>(null);
   const firstItemPriceRef = useRef<HTMLDivElement>(null);
 
@@ -556,82 +556,129 @@ export default function WYSIWYGInvoiceEditor({
 
           {/* Bill To Section */}
           <div className="mb-12">
-            <div className="text-sm font-semibold text-gray-600 mb-2">Bill To:</div>
-            <div className="space-y-1">
-              <InlineCustomerSelect
-                ref={customerRef}
-                customers={customersList}
-                selectedCustomer={selectedCustomer}
-                onSelect={handleCustomerSelect}
-                className="font-semibold"
-                required
-                orgId={orgId}
-              />
+            <div className="text-sm font-semibold text-gray-600 mb-4">Bill To:</div>
+            <div className="space-y-4">
+              {/* Customer Selection - Input Box Style */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Customer <span className="text-red-500">*</span>
+                </label>
+                <InlineCustomerSelect
+                  ref={customerRef}
+                  customers={customersList}
+                  selectedCustomer={selectedCustomer}
+                  onSelect={handleCustomerSelect}
+                  className=""
+                  required
+                  orgId={orgId}
+                />
+              </div>
+
+              {/* Customer Details - Only show when customer is selected */}
               {selectedCustomer && (
-                <div className="mt-2 space-y-1">
+                <div className="space-y-4 border-t pt-4">
                   {/* Address Line 1 */}
                   <div>
-                    <InlineEditableText
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Address Line 1
+                    </label>
+                    <input
+                      type="text"
                       value={customerAddress || ""}
-                      onChange={(value) => updateCustomerField('address_line1', value)}
-                      placeholder="Click to add street address"
-                      className="text-sm text-gray-600"
+                      onChange={(e) => updateCustomerField('address_line1', e.target.value)}
+                      onBlur={() => triggerAutoSave()}
+                      placeholder="Street address"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                     />
                   </div>
-                  
+
                   {/* Address Line 2 */}
                   <div>
-                    <InlineEditableText
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Address Line 2
+                    </label>
+                    <input
+                      type="text"
                       value={customerAddress2 || ""}
-                      onChange={(value) => updateCustomerField('address_line2', value)}
-                      placeholder="Click to add address line 2 (optional)"
-                      className="text-sm text-gray-600"
+                      onChange={(e) => updateCustomerField('address_line2', e.target.value)}
+                      onBlur={() => triggerAutoSave()}
+                      placeholder="Suite, unit, etc. (optional)"
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
                     />
                   </div>
-                  
-                  {/* City, Postcode, Country */}
-                  <div className="flex items-center gap-1 flex-wrap">
-                    <InlineEditableText
-                      value={customerCity || ""}
-                      onChange={(value) => updateCustomerField('city', value)}
-                      placeholder="City"
-                      className="text-sm text-gray-600"
-                    />
-                    {(customerPostcode || customerCity) && <span className="text-sm text-gray-600">,</span>}
-                    <InlineEditableText
-                      value={customerPostcode || ""}
-                      onChange={(value) => updateCustomerField('postcode', value)}
-                      placeholder="Postcode"
-                      className="text-sm text-gray-600"
-                    />
-                    {(customerCountry || customerPostcode) && <span className="text-sm text-gray-600">,</span>}
-                    <InlineEditableText
-                      value={customerCountry || ""}
-                      onChange={(value) => updateCustomerField('country', value)}
-                      placeholder="Country"
-                      className="text-sm text-gray-600"
-                    />
+
+                  {/* City, Postcode, Country - Grid Layout */}
+                  <div className="grid grid-cols-3 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        City
+                      </label>
+                      <input
+                        type="text"
+                        value={customerCity || ""}
+                        onChange={(e) => updateCustomerField('city', e.target.value)}
+                        onBlur={() => triggerAutoSave()}
+                        placeholder="City"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Postcode
+                      </label>
+                      <input
+                        type="text"
+                        value={customerPostcode || ""}
+                        onChange={(e) => updateCustomerField('postcode', e.target.value)}
+                        onBlur={() => triggerAutoSave()}
+                        placeholder="Postcode"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Country
+                      </label>
+                      <input
+                        type="text"
+                        value={customerCountry || ""}
+                        onChange={(e) => updateCustomerField('country', e.target.value)}
+                        onBlur={() => triggerAutoSave()}
+                        placeholder="Country"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      />
+                    </div>
                   </div>
-                  
-                  {/* Email */}
-                  <div>
-                    <InlineEditableText
-                      ref={billToEmailRef}
-                      value={customerEmail || ""}
-                      onChange={(value) => updateCustomerField('email', value)}
-                      placeholder="Click to add customer email"
-                      className="text-sm text-gray-600"
-                    />
-                  </div>
-                  
-                  {/* VAT Number */}
-                  <div>
-                    <InlineEditableText
-                      value={customerVat || ""}
-                      onChange={(value) => updateCustomerField('vat_number', value)}
-                      placeholder="Click to add VAT number (optional)"
-                      className="text-sm text-gray-600"
-                    />
+
+                  {/* Email and VAT - Grid Layout */}
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Email
+                      </label>
+                      <input
+                        type="email"
+                        ref={billToEmailRef}
+                        value={customerEmail || ""}
+                        onChange={(e) => updateCustomerField('email', e.target.value)}
+                        onBlur={() => triggerAutoSave()}
+                        placeholder="customer@example.com"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        VAT Number
+                      </label>
+                      <input
+                        type="text"
+                        value={customerVat || ""}
+                        onChange={(e) => updateCustomerField('vat_number', e.target.value)}
+                        onBlur={() => triggerAutoSave()}
+                        placeholder="VAT/Tax ID (optional)"
+                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-sm"
+                      />
+                    </div>
                   </div>
                 </div>
               )}
