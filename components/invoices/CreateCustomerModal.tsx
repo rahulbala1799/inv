@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import * as React from 'react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -37,6 +38,28 @@ export default function CreateCustomerModal({
   const [country, setCountry] = useState('')
   const [isPending, startTransition] = useTransition()
   const [error, setError] = useState<string | null>(null)
+
+  // Update name when modal opens or initialName changes
+  React.useEffect(() => {
+    if (open && initialName) {
+      setName(initialName)
+    }
+  }, [open, initialName])
+
+  // Reset form when modal closes
+  React.useEffect(() => {
+    if (!open) {
+      setName('')
+      setEmail('')
+      setPhone('')
+      setAddressLine1('')
+      setAddressLine2('')
+      setCity('')
+      setPostcode('')
+      setCountry('')
+      setError(null)
+    }
+  }, [open])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

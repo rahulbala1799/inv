@@ -74,7 +74,8 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
     }, [searchQuery, isOpen, orgId, customers]);
 
     const handleSelect = (value: string) => {
-      if (value === "__create_new__") {
+      // Check if it's the create new option - if value matches searchQuery, it's the create option
+      if (value === searchQuery && searchQuery.trim().length > 0) {
         setIsCreating(true);
         return;
       }
@@ -85,6 +86,12 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
         setIsOpen(false);
         setSearchQuery("");
       }
+    };
+
+    const handleCreateClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsCreating(true);
     };
 
     const handleCustomerCreated = (newCustomer: Customer) => {
@@ -161,9 +168,15 @@ export const InlineCustomerSelect = forwardRef<HTMLDivElement, InlineCustomerSel
                     {showCreateOption && (
                       <CommandGroup>
                         <CommandItem
-                          value="__create_new__"
+                          value={searchQuery}
+                          keywords={[searchQuery, "create", "new", "customer"]}
                           onSelect={handleSelect}
-                          className="text-indigo-600"
+                          className="text-indigo-600 cursor-pointer hover:bg-indigo-50"
+                          onMouseDown={(e) => {
+                            // Prevent the command from closing
+                            e.preventDefault();
+                          }}
+                          onClick={handleCreateClick}
                         >
                           <Plus className="mr-2 h-4 w-4" />
                           <div>
