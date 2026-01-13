@@ -2,8 +2,8 @@ import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
 import Link from 'next/link'
-import { createCustomer } from './actions'
 import DeleteButton from './DeleteButton'
+import CreateCustomerButton from './CreateCustomerButton'
 
 export default async function CustomersPage({
   params,
@@ -36,7 +36,7 @@ export default async function CustomersPage({
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Customers</h1>
           <p className="text-gray-600">Manage your customer database</p>
         </div>
-        <CreateCustomerModal orgId={orgId} />
+        <CreateCustomerButton orgId={orgId} />
       </div>
 
       <div className="bg-white rounded-lg shadow overflow-hidden">
@@ -91,16 +91,3 @@ export default async function CustomersPage({
   )
 }
 
-function CreateCustomerModal({ orgId }: { orgId: string }) {
-  return (
-    <form action={createCustomer} className="inline-block">
-      <input type="hidden" name="orgId" value={orgId} />
-      <button
-        type="submit"
-        className="bg-indigo-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-      >
-        + New Customer
-      </button>
-    </form>
-  )
-}

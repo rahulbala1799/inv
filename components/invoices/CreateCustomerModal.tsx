@@ -117,7 +117,7 @@ export default function CreateCustomerModal({
         <DialogHeader>
           <DialogTitle>Create New Customer</DialogTitle>
           <DialogDescription>
-            Add a new customer to your database. All fields except name are optional.
+            Add a new customer with essential information needed for invoice creation. Name is required; other fields are optional but recommended.
           </DialogDescription>
         </DialogHeader>
 
