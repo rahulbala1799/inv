@@ -97,7 +97,7 @@ export default function Home() {
         {/* Features Section */}
         <div id="features" className="max-w-6xl mx-auto mt-24">
           <h2 className="text-3xl md:text-4xl font-bold text-center text-gray-900 mb-12">
-            Everything You Need, Nothing You Don't
+            Everything You Need, Nothing You Don&apos;t
           </h2>
           
           <div className="grid md:grid-cols-3 gap-8">
