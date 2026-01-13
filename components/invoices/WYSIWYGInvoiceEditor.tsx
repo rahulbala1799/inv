@@ -51,6 +51,7 @@ interface Customer {
   id: string;
   name: string;
   email?: string | null;
+  phone?: string | null;
   address_line1?: string | null;
   address_line2?: string | null;
   city?: string | null;
@@ -104,6 +105,10 @@ export default function WYSIWYGInvoiceEditor({
   );
   const [saveStatus, setSaveStatus] = useState<SaveStatus>("idle");
   const [saveTimeoutId, setSaveTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const [customersList, setCustomersList] = useState<Customer[]>(customers);
+  const [selectedCustomerData, setSelectedCustomerData] = useState<Customer | null>(
+    customers.find((c) => c.id === invoice.customer_id) || null
+  );
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -117,7 +122,7 @@ export default function WYSIWYGInvoiceEditor({
   const firstItemPriceRef = useRef<HTMLDivElement>(null);
 
   // Get selected customer
-  const selectedCustomer = customers.find((c) => c.id === invoice.customer_id) || null;
+  const selectedCustomer = selectedCustomerData || customersList.find((c) => c.id === invoice.customer_id) || null;
 
   // Company info from branding
   const companyName = branding?.business_name || "";
@@ -128,14 +133,14 @@ export default function WYSIWYGInvoiceEditor({
   const companyCountry = branding?.country || "";
   const companyVat = branding?.vat_number || "";
 
-  // Customer info
-  const customerName = invoice.customers?.name || selectedCustomer?.name || "";
-  const customerEmail = invoice.customers?.email || selectedCustomer?.email || "";
-  const customerAddress = invoice.customers?.address_line1 || selectedCustomer?.address_line1 || "";
-  const customerAddress2 = invoice.customers?.address_line2 || selectedCustomer?.address_line2 || "";
-  const customerCity = invoice.customers?.city || selectedCustomer?.city || "";
-  const customerPostcode = invoice.customers?.postcode || selectedCustomer?.postcode || "";
-  const customerCountry = invoice.customers?.country || selectedCustomer?.country || "";
+  // Customer info - use selectedCustomerData if available, otherwise fall back to invoice.customers or selectedCustomer
+  const customerName = selectedCustomerData?.name || invoice.customers?.name || "";
+  const customerEmail = selectedCustomerData?.email || invoice.customers?.email || "";
+  const customerAddress = selectedCustomerData?.address_line1 || invoice.customers?.address_line1 || "";
+  const customerAddress2 = selectedCustomerData?.address_line2 || invoice.customers?.address_line2 || "";
+  const customerCity = selectedCustomerData?.city || invoice.customers?.city || "";
+  const customerPostcode = selectedCustomerData?.postcode || invoice.customers?.postcode || "";
+  const customerCountry = selectedCustomerData?.country || invoice.customers?.country || "";
 
   // Auto-save function
   const triggerAutoSave = useCallback(() => {
@@ -183,13 +188,58 @@ export default function WYSIWYGInvoiceEditor({
   };
 
   const handleCustomerSelect = (customer: Customer) => {
+    setSelectedCustomerData(customer);
     setInvoice((prev) => ({
       ...prev,
       customer_id: customer.id,
     }));
     calculateTotals();
     triggerAutoSave();
-    // Force re-render to update missing fields
+  };
+
+  const handleCustomerCreated = async (newCustomer: Customer) => {
+    // Add new customer to the list
+    setCustomersList((prev) => [...prev, newCustomer]);
+    // Select the new customer
+    handleCustomerSelect(newCustomer);
+    // Refresh the page to get updated customer list
+    router.refresh();
+  };
+
+  const updateCustomerField = async (field: keyof Customer, value: string) => {
+    if (!selectedCustomerData) return;
+
+    const updatedCustomer = { ...selectedCustomerData, [field]: value };
+    setSelectedCustomerData(updatedCustomer);
+
+    // Update customer in database
+    try {
+      const response = await fetch(`/api/org/${orgId}/customers/${selectedCustomerData.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: updatedCustomer.name,
+          email: updatedCustomer.email || null,
+          phone: updatedCustomer.phone || null,
+          address_line1: updatedCustomer.address_line1 || null,
+          address_line2: updatedCustomer.address_line2 || null,
+          city: updatedCustomer.city || null,
+          postcode: updatedCustomer.postcode || null,
+          country: updatedCustomer.country || null,
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        // Update customers list with the returned customer data
+        setCustomersList((prev) =>
+          prev.map((c) => (c.id === selectedCustomerData.id ? data.customer : c))
+        );
+        setSelectedCustomerData(data.customer);
+      }
+    } catch (error) {
+      console.error('Error updating customer:', error);
+    }
   };
 
   const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
@@ -364,8 +414,10 @@ export default function WYSIWYGInvoiceEditor({
     companyCity,
     customerName,
     items.length,
-    items[0]?.description,
-    items[0]?.unit_price,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    items.length > 0 ? items[0]?.description : undefined,
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    items.length > 0 ? items[0]?.unit_price : undefined,
   ]);
 
   const currency = invoice.currency || branding?.default_currency || "EUR";
@@ -504,44 +556,56 @@ export default function WYSIWYGInvoiceEditor({
             <div className="space-y-1">
               <InlineCustomerSelect
                 ref={customerRef}
-                customers={customers}
+                customers={customersList}
                 selectedCustomer={selectedCustomer}
                 onSelect={handleCustomerSelect}
                 className="font-semibold"
                 required
+                orgId={orgId}
               />
-              {customerName && (
+              {selectedCustomer && (
                 <>
-                  {customerAddress && (
+                  <InlineEditableText
+                    value={customerAddress}
+                    onChange={(value) => updateCustomerField('address_line1', value)}
+                    placeholder="Click to add street address"
+                    className="text-sm text-gray-600"
+                  />
+                  <InlineEditableText
+                    value={customerAddress2}
+                    onChange={(value) => updateCustomerField('address_line2', value)}
+                    placeholder="Click to add address line 2 (optional)"
+                    className="text-sm text-gray-600"
+                  />
+                  <div className="flex items-center gap-1 flex-wrap">
                     <InlineEditableText
-                      value={customerAddress}
-                      onChange={() => {}}
+                      value={customerCity}
+                      onChange={(value) => updateCustomerField('city', value)}
+                      placeholder="City"
                       className="text-sm text-gray-600"
                     />
-                  )}
-                  {customerAddress2 && (
+                    {customerPostcode && <span className="text-sm text-gray-600">,</span>}
                     <InlineEditableText
-                      value={customerAddress2}
-                      onChange={() => {}}
+                      value={customerPostcode}
+                      onChange={(value) => updateCustomerField('postcode', value)}
+                      placeholder="Postcode"
                       className="text-sm text-gray-600"
                     />
-                  )}
-                  {(customerCity || customerPostcode) && (
+                    {customerCountry && <span className="text-sm text-gray-600">,</span>}
                     <InlineEditableText
-                      value={`${customerCity || ""}${customerPostcode ? `, ${customerPostcode}` : ""}${customerCountry ? `, ${customerCountry}` : ""}`}
-                      onChange={() => {}}
+                      value={customerCountry}
+                      onChange={(value) => updateCustomerField('country', value)}
+                      placeholder="Country"
                       className="text-sm text-gray-600"
                     />
-                  )}
-                  {customerEmail && (
-                    <InlineEditableText
-                      ref={billToEmailRef}
-                      value={customerEmail}
-                      onChange={() => {}}
-                      placeholder="Click to add customer email"
-                      className="text-sm text-gray-600"
-                    />
-                  )}
+                  </div>
+                  <InlineEditableText
+                    ref={billToEmailRef}
+                    value={customerEmail}
+                    onChange={(value) => updateCustomerField('email', value)}
+                    placeholder="Click to add customer email"
+                    className="text-sm text-gray-600"
+                  />
                 </>
               )}
             </div>

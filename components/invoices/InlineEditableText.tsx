@@ -30,14 +30,23 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
     const [isEditing, setIsEditing] = useState(false);
     const [editValue, setEditValue] = useState(value);
     const [isHovered, setIsHovered] = useState(false);
+    const [pendingValue, setPendingValue] = useState<string | null>(null);
     const inputRef = useRef<HTMLInputElement | HTMLTextAreaElement>(null);
 
-    const isEmpty = !value || value.trim() === "";
-    const showRequired = required && isEmpty;
+    // Use pendingValue if set, otherwise use value from props
+    const displayValue = pendingValue !== null ? pendingValue : (value || "");
+    const isEmpty = !displayValue || displayValue.trim() === "";
 
     useEffect(() => {
-      setEditValue(value);
-    }, [value]);
+      // Only update editValue if we're not waiting for a pending update
+      if (pendingValue === null) {
+        setEditValue(value);
+      }
+      // Clear pending value once parent value matches
+      if (pendingValue !== null && value === pendingValue) {
+        setPendingValue(null);
+      }
+    }, [value, pendingValue]);
 
     useEffect(() => {
       if (isEditing && inputRef.current) {
@@ -52,19 +61,22 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
 
     const handleBlur = () => {
       setIsEditing(false);
+      // Keep the value visible while parent updates
+      setPendingValue(editValue);
       onChange(editValue);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === "Escape") {
         setEditValue(value);
+        setPendingValue(null);
         setIsEditing(false);
       } else if (e.key === "Enter" && !multiline) {
         handleBlur();
       }
     };
 
-    const displayValue = value || placeholder;
+    const displayText = isEmpty ? placeholder : displayValue;
 
     if (isEditing) {
       const baseInputClass = `border-none outline-none bg-transparent w-full ${inputClassName} ${
@@ -116,7 +128,7 @@ export const InlineEditableText = forwardRef<HTMLDivElement, InlineEditableTextP
         }}
       >
         <span className={`inline-flex items-center gap-2 ${isEmpty ? "text-amber-500 italic" : ""}`}>
-          {displayValue}
+          {displayText}
         </span>
       </div>
     );
