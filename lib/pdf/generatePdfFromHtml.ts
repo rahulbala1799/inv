@@ -72,7 +72,14 @@ async function getChromeExecutablePath(): Promise<string | undefined> {
       )
     }
   }
-  // For local development, use system Chrome or let Puppeteer find it
+  
+  // For local development, check for explicit path or let Puppeteer find it
+  if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+    console.log('Using Chrome from PUPPETEER_EXECUTABLE_PATH:', process.env.PUPPETEER_EXECUTABLE_PATH)
+    return process.env.PUPPETEER_EXECUTABLE_PATH
+  }
+  
+  // Let Puppeteer find Chrome automatically (will use system Chrome or Puppeteer cache)
   return undefined
 }
 
@@ -113,20 +120,69 @@ async function getChromeArgs(): Promise<string[]> {
  * @returns PDF buffer
  */
 export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
-  // Launch Puppeteer with environment-appropriate settings
-  const launchOptions: any = {
-    args: await getChromeArgs(),
-    headless: true,
-  }
+  let browser
   
-  // Only set executablePath in serverless environments
-  if (isServerless()) {
-    const chromiumModule = await getChromium()
-    launchOptions.executablePath = await getChromeExecutablePath()
-    launchOptions.headless = chromiumModule?.headless ?? true
+  try {
+    // Launch Puppeteer with environment-appropriate settings
+    const launchOptions: any = {
+      args: await getChromeArgs(),
+      headless: true,
+    }
+    
+    // Only set executablePath in serverless environments
+    if (isServerless()) {
+      try {
+        const chromiumModule = await getChromium()
+        if (!chromiumModule) {
+          throw new Error('@sparticuz/chromium-min module not found. Please install: npm install @sparticuz/chromium-min')
+        }
+        launchOptions.executablePath = await getChromeExecutablePath()
+        launchOptions.headless = chromiumModule?.headless ?? true
+      } catch (error) {
+        console.error('Failed to setup Chromium for serverless:', error)
+        throw new Error(
+          `Chromium setup failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+          `For Vercel: Set CHROMIUM_REMOTE_EXEC_PATH environment variable. ` +
+          `For local dev: Install Chrome or run 'npx puppeteer browsers install chrome'`
+        )
+      }
+    } else {
+      // Local development - try to find Chrome automatically
+      // Check if explicit path is set, otherwise let Puppeteer find it
+      if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+        launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH
+        console.log('Local development: Using Chrome from PUPPETEER_EXECUTABLE_PATH')
+      } else {
+        console.log('Local development: Attempting to find Chrome/Chromium automatically...')
+        // Don't set executablePath, let Puppeteer find it from:
+        // 1. System PATH
+        // 2. Puppeteer cache (if installed via npx puppeteer browsers install chrome)
+      }
+    }
+    
+    browser = await puppeteer.launch(launchOptions)
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+    console.error('Puppeteer launch error:', errorMessage)
+    
+    // Provide helpful error messages based on environment
+    if (isServerless()) {
+      throw new Error(
+        `Failed to launch browser in serverless environment: ${errorMessage}. ` +
+        `SOLUTIONS: ` +
+        `1. Set CHROMIUM_REMOTE_EXEC_PATH=https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar ` +
+        `2. Ensure @sparticuz/chromium-min is installed: npm install @sparticuz/chromium-min`
+      )
+    } else {
+      throw new Error(
+        `Failed to launch browser in local development: ${errorMessage}. ` +
+        `SOLUTIONS: ` +
+        `1. Install Chrome/Chromium: npx puppeteer browsers install chrome ` +
+        `2. Or ensure Chrome is installed system-wide ` +
+        `3. Or set PUPPETEER_EXECUTABLE_PATH environment variable to your Chrome path`
+      )
+    }
   }
-  
-  const browser = await puppeteer.launch(launchOptions)
   
   try {
     const page = await browser.newPage()
@@ -242,19 +298,62 @@ let browserInstance: any = null
 export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buffer> {
   // Initialize browser if not already done
   if (!browserInstance) {
-    const launchOptions: any = {
-      args: await getChromeArgs(),
-      headless: true,
+    try {
+      const launchOptions: any = {
+        args: await getChromeArgs(),
+        headless: true,
+      }
+      
+      // Only set executablePath in serverless environments
+      if (isServerless()) {
+        try {
+          const chromiumModule = await getChromium()
+          if (!chromiumModule) {
+            throw new Error('@sparticuz/chromium-min module not found. Please install: npm install @sparticuz/chromium-min')
+          }
+          launchOptions.executablePath = await getChromeExecutablePath()
+          launchOptions.headless = chromiumModule?.headless ?? true
+        } catch (error) {
+          console.error('Failed to setup Chromium for serverless:', error)
+          throw new Error(
+            `Chromium setup failed: ${error instanceof Error ? error.message : 'Unknown error'}. ` +
+            `For Vercel: Set CHROMIUM_REMOTE_EXEC_PATH environment variable. ` +
+            `For local dev: Install Chrome or run 'npx puppeteer browsers install chrome'`
+          )
+        }
+      } else {
+        // Local development - try to find Chrome automatically
+        if (process.env.PUPPETEER_EXECUTABLE_PATH) {
+          launchOptions.executablePath = process.env.PUPPETEER_EXECUTABLE_PATH
+          console.log('Local development: Using Chrome from PUPPETEER_EXECUTABLE_PATH')
+        } else {
+          console.log('Local development: Attempting to find Chrome/Chromium automatically...')
+        }
+      }
+      
+      browserInstance = await puppeteer.launch(launchOptions)
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      console.error('Puppeteer launch error (cached):', errorMessage)
+      
+      // Provide helpful error messages based on environment
+      if (isServerless()) {
+        throw new Error(
+          `Failed to launch browser in serverless environment: ${errorMessage}. ` +
+          `SOLUTIONS: ` +
+          `1. Set CHROMIUM_REMOTE_EXEC_PATH=https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar ` +
+          `2. Ensure @sparticuz/chromium-min is installed: npm install @sparticuz/chromium-min`
+        )
+      } else {
+        throw new Error(
+          `Failed to launch browser in local development: ${errorMessage}. ` +
+          `SOLUTIONS: ` +
+          `1. Install Chrome/Chromium: npx puppeteer browsers install chrome ` +
+          `2. Or ensure Chrome is installed system-wide ` +
+          `3. Or set PUPPETEER_EXECUTABLE_PATH environment variable to your Chrome path`
+        )
+      }
     }
-    
-    // Only set executablePath in serverless environments
-    if (isServerless()) {
-      const chromiumModule = await getChromium()
-      launchOptions.executablePath = await getChromeExecutablePath()
-      launchOptions.headless = chromiumModule?.headless ?? true
-    }
-    
-    browserInstance = await puppeteer.launch(launchOptions)
   }
   
   try {
