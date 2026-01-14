@@ -1,13 +1,14 @@
 import puppeteer from 'puppeteer-core'
 
 // Dynamically import chromium to avoid build-time issues
-let chromium: any = null
+let chromiumModule: any = null
 async function getChromium() {
-  if (!chromium && isServerless()) {
-    chromium = await import('@sparticuz/chromium-min')
-    return chromium.default || chromium
+  if (!chromiumModule && isServerless()) {
+    const imported = await import('@sparticuz/chromium-min')
+    // The default export is the chromium object
+    chromiumModule = imported.default || imported
   }
-  return chromium
+  return chromiumModule
 }
 
 /**
@@ -28,26 +29,36 @@ function isServerless(): boolean {
 async function getChromeExecutablePath(): Promise<string | undefined> {
   if (isServerless()) {
     try {
-      const chromiumModule = await getChromium()
-      if (!chromiumModule) {
+      const chromium = await getChromium()
+      if (!chromium) {
         throw new Error('Could not load @sparticuz/chromium-min module')
+      }
+      
+      // Check if executablePath is a function
+      if (typeof chromium.executablePath !== 'function') {
+        console.error('chromium.executablePath is not a function. Module:', chromium)
+        throw new Error('Invalid chromium module: executablePath is not a function')
       }
       
       // Option 1: Use remote Chromium binary if configured (recommended for Vercel)
       if (process.env.CHROMIUM_REMOTE_EXEC_PATH) {
         console.log('Using remote Chromium binary from:', process.env.CHROMIUM_REMOTE_EXEC_PATH)
-        return await chromiumModule.executablePath(process.env.CHROMIUM_REMOTE_EXEC_PATH)
+        const execPath = await chromium.executablePath(process.env.CHROMIUM_REMOTE_EXEC_PATH)
+        console.log('Chromium executable path:', execPath)
+        return execPath
       }
       
-      // Option 2: Try to get executable path
+      // Option 2: Try to get executable path without remote URL
       // Note: This may fail in Vercel if Chromium can't be extracted
-      // For Vercel, it's recommended to use CHROMIUM_REMOTE_EXEC_PATH
-      const executablePath = await chromiumModule.executablePath()
+      // For Vercel, it's strongly recommended to use CHROMIUM_REMOTE_EXEC_PATH
+      console.log('No CHROMIUM_REMOTE_EXEC_PATH set, trying default extraction...')
+      const executablePath = await chromium.executablePath()
       
       if (!executablePath) {
         throw new Error('Chromium executable path is null or undefined')
       }
       
+      console.log('Chromium executable path (default):', executablePath)
       return executablePath
     } catch (error) {
       console.error('Failed to get Chromium executable path:', error)
@@ -56,8 +67,8 @@ async function getChromeExecutablePath(): Promise<string | undefined> {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error'
       throw new Error(
         `Could not locate Chromium executable in serverless environment: ${errorMessage}. ` +
-        `SOLUTION: Set CHROMIUM_REMOTE_EXEC_PATH environment variable in Vercel to a hosted Chromium binary URL. ` +
-        `See SERVERLESS_PUPPETEER_SETUP.md for instructions.`
+        `SOLUTION: Set CHROMIUM_REMOTE_EXEC_PATH environment variable in Vercel to: ` +
+        `https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar`
       )
     }
   }
