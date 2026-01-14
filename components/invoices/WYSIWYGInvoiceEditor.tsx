@@ -234,7 +234,12 @@ export default function WYSIWYGInvoiceEditor({
 
   // Update handlers
   const updateInvoice = (updates: Partial<Invoice>) => {
-    setInvoice((prev) => ({ ...prev, ...updates }));
+    setInvoice((prev) => ({ 
+      ...prev, 
+      ...updates,
+      // Ensure ID is never lost
+      id: prev?.id || initialInvoice.id 
+    }));
     calculateTotals();
     triggerAutoSave();
     // Force re-render to update missing fields
@@ -499,13 +504,21 @@ export default function WYSIWYGInvoiceEditor({
 
   // Handle template selection - save to invoice and show preview
   const handleTemplateSelected = async (templateId: string) => {
+    // Use initialInvoice.id as it's guaranteed to exist from server
+    const invoiceId = invoice?.id || initialInvoice.id;
+    
+    if (!invoiceId) {
+      console.error('No invoice ID available');
+      return;
+    }
+
     try {
       // Update invoice with template
-      const response = await fetch(`/api/org/${orgId}/invoices/${invoice?.id}`, {
+      const response = await fetch(`/api/org/${orgId}/invoices/${invoiceId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
-          invoice: { ...invoice, template_id: templateId },
+          invoice: { ...invoice, id: invoiceId, template_id: templateId },
           items 
         }),
       });
@@ -909,7 +922,7 @@ export default function WYSIWYGInvoiceEditor({
         onOpenChange={setPreviewModalOpen}
         templates={templates}
         selectedTemplateId={invoice?.template_id}
-        invoiceId={invoice?.id || ''}
+        invoiceId={invoice?.id || initialInvoice.id}
         orgId={orgId}
         onTemplateChange={handleTemplateSelected}
       />
