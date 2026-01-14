@@ -346,6 +346,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
   const config = template?.config_json || {}
   const layout = config.layout || 'classic'
   const logoPosition = config.logoPosition || 'top-left'
+  const textColor = config.textColor || '#000000'
 
   // Get logo URL from branding (set by API route)
   const logoUrl = branding?.logoUrl || null
@@ -573,7 +574,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
                         width: colWidths[idx] || '15%',
                         textAlign: idx === 0 ? 'left' : 'right',
                         fontWeight: 'bold',
-                        color: config.tableHeaderTextColor || textColor,
+                        color: config.tableHeaderTextColor || config.textColor || '#000000',
                       }}
                     >
                       {col.label}
