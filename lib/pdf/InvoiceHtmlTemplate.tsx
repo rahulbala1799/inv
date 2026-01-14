@@ -5,7 +5,9 @@ import { InvoiceTemplateProps } from './templates/types'
 /**
  * Main HTML template wrapper for PDF generation
  * This component wraps the selected template with HTML structure and Tailwind CSS
+ * Note: This file uses raw HTML/script tags for Puppeteer PDF generation (server-side only)
  */
+/* eslint-disable @next/next/no-head-element, @next/next/no-sync-scripts */
 export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
   const { template } = props
   const config = template?.config_json || {}
@@ -19,11 +21,15 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
       <head>
         <meta charSet="utf-8" />
         <title>Invoice #{props.invoice.invoice_number}</title>
-        {/* Include Tailwind CSS via CDN for Puppeteer */}
-        <link
-          href="https://cdn.jsdelivr.net/npm/tailwindcss@3.4.19/dist/tailwind.min.css"
-          rel="stylesheet"
-        />
+        {/* Include Tailwind CSS via CDN for Puppeteer - using Play CDN for better compatibility */}
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script dangerouslySetInnerHTML={{ __html: `
+          tailwind.config = {
+            theme: {
+              extend: {}
+            }
+          }
+        `}} />
         <style>{`
           @page {
             size: A4;

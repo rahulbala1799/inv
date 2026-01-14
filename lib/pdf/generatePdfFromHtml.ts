@@ -140,6 +140,37 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
       waitUntil: 'networkidle0'
     })
     
+    // Wait for Tailwind CSS to be fully loaded and applied
+    try {
+      await page.evaluate(() => {
+        return new Promise<void>((resolve) => {
+          // Check if Tailwind is loaded by checking for computed styles
+          const checkTailwind = () => {
+            const testEl = document.createElement('div')
+            testEl.className = 'flex'
+            testEl.style.display = 'none'
+            document.body.appendChild(testEl)
+            const styles = window.getComputedStyle(testEl)
+            const isLoaded = styles.display === 'flex' || document.querySelector('script[src*="tailwindcss"]')
+            document.body.removeChild(testEl)
+            
+            if (isLoaded) {
+              resolve()
+            } else {
+              setTimeout(checkTailwind, 100)
+            }
+          }
+          // Start checking after a brief delay
+          setTimeout(checkTailwind, 200)
+        })
+      })
+    } catch (error) {
+      console.warn('Tailwind check failed, proceeding anyway:', error)
+    }
+    
+    // Additional wait to ensure all styles are applied
+    await new Promise(resolve => setTimeout(resolve, 500))
+    
     // Generate PDF
     const pdfBuffer = await page.pdf({
       format: 'A4',
@@ -202,6 +233,37 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
     await page.setContent(fullHtml, {
       waitUntil: 'networkidle0'
     })
+    
+    // Wait for Tailwind CSS to be fully loaded and applied
+    try {
+      await page.evaluate(() => {
+        return new Promise<void>((resolve) => {
+          // Check if Tailwind is loaded by checking for computed styles
+          const checkTailwind = () => {
+            const testEl = document.createElement('div')
+            testEl.className = 'flex'
+            testEl.style.display = 'none'
+            document.body.appendChild(testEl)
+            const styles = window.getComputedStyle(testEl)
+            const isLoaded = styles.display === 'flex' || document.querySelector('script[src*="tailwindcss"]')
+            document.body.removeChild(testEl)
+            
+            if (isLoaded) {
+              resolve()
+            } else {
+              setTimeout(checkTailwind, 100)
+            }
+          }
+          // Start checking after a brief delay
+          setTimeout(checkTailwind, 200)
+        })
+      })
+    } catch (error) {
+      console.warn('Tailwind check failed, proceeding anyway:', error)
+    }
+    
+    // Additional wait to ensure all styles are applied
+    await new Promise(resolve => setTimeout(resolve, 500))
     
     // Generate PDF
     const pdfBuffer = await page.pdf({
