@@ -15,6 +15,18 @@ import { VibrantPurple } from './VibrantPurple'
 import { CleanGreen } from './CleanGreen'
 import { LuxuryGold } from './LuxuryGold'
 
+// Import new tech-themed templates
+import { TechMinimal } from './TechMinimal'
+import { TechDark } from './TechDark'
+import { TechPro } from './TechPro'
+import { TechGrid } from './TechGrid'
+import { TechModern } from './TechModern'
+import { TechNeon } from './TechNeon'
+import { TechFuturistic } from './TechFuturistic'
+import { TechCyber } from './TechCyber'
+import { TechMatrix } from './TechMatrix'
+import { TechDigital } from './TechDigital'
+
 /**
  * Template component type
  */
@@ -36,7 +48,19 @@ const templateMap: Record<string, TemplateComponent> = {
   'professional-gray': BaseTemplate, // TODO: Convert ProfessionalGray
   'vibrant-purple': BaseTemplate, // TODO: Convert VibrantPurple
   'clean-green': BaseTemplate, // TODO: Convert CleanGreen
-  'luxury-gold': BaseTemplate, // TODO: Convert LuxuryGold
+  'luxury-gold': BaseTemplate, // TODO: Convert LuxuryGold,
+  
+  // New tech-themed templates (all fully converted with dynamic data)
+  'tech-minimal': TechMinimal,
+  'tech-dark': TechDark,
+  'tech-pro': TechPro,
+  'tech-grid': TechGrid,
+  'tech-modern': TechModern,
+  'tech-neon': TechNeon,
+  'tech-futuristic': TechFuturistic,
+  'tech-cyber': TechCyber,
+  'tech-matrix': TechMatrix,
+  'tech-digital': TechDigital,
   
   // Legacy mappings (from old template system)
   'classic': ClassicBlue,
