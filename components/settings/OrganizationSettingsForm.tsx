@@ -2,10 +2,6 @@
 
 import { useState } from 'react'
 import LogoUpload from './LogoUpload'
-'use client'
-
-import { useState } from 'react'
-import LogoUpload from './LogoUpload'
 import { updateBranding } from '@/app/app/org/[orgId]/settings/actions'
 
 interface OrganizationSettingsFormProps {
