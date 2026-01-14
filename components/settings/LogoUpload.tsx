@@ -53,9 +53,9 @@ export default function LogoUpload({ orgId, currentLogoUrl, onUploadComplete, lo
       reader.readAsDataURL(file)
 
       // Upload to Supabase Storage
+      // Path format: {orgId}/logo.{ext} (bucket name 'logos' is not included in path)
       const fileExt = file.name.split('.').pop()
-      const fileName = `${orgId}/logo.${fileExt}`
-      const filePath = `logos/${fileName}`
+      const filePath = `${orgId}/logo.${fileExt}`
 
       // Delete old logo if exists (get path from storage)
       const { data: existingFiles } = await supabase.storage
