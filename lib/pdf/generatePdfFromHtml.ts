@@ -171,13 +171,24 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
     // Additional wait to ensure all styles are applied
     await new Promise(resolve => setTimeout(resolve, 500))
     
-    // Extract header/footer data from the page
+    // Extract header/footer data from the page using data attributes (NOT textContent to avoid duplicates)
     const headerFooterData = await page.evaluate(() => {
-      const invoiceNumber = document.querySelector('[data-invoice-number]')?.textContent || 
-                           document.querySelector('h2')?.textContent?.match(/#[\w-]+/)?.[0] || ''
-      const businessName = document.querySelector('[data-business-name]')?.textContent || 
-                          document.querySelector('h1')?.textContent || ''
-      return { invoiceNumber, businessName }
+      // Get invoice number from data attribute value, not textContent
+      const invoiceNumberEl = document.querySelector('[data-invoice-number]')
+      const invoiceNumber = invoiceNumberEl?.getAttribute('data-invoice-number') || 
+                           document.querySelector('h2')?.textContent?.match(/#[\w-]+/)?.[0] || 
+                           'Invoice'
+      
+      // Get business name from data attribute value, not textContent
+      const businessNameEl = document.querySelector('[data-business-name]')
+      const businessName = businessNameEl?.getAttribute('data-business-name') || 
+                          document.querySelector('h1')?.textContent?.substring(0, 40) || 
+                          ''
+      
+      return { 
+        invoiceNumber: invoiceNumber.substring(0, 30),
+        businessName: businessName.substring(0, 40)
+      }
     })
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
@@ -192,15 +203,15 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
       },
       displayHeaderFooter: true,
       headerTemplate: `
-        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-          <span style="color: #6b7280;">${headerFooterData.invoiceNumber || 'Invoice'}</span>
-          <span style="color: #6b7280;">${headerFooterData.businessName || ''}</span>
+        <div style="font-size: 10px; width: 100%; padding: 8px 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; background: white;">
+          <span style="color: #6b7280; font-weight: 500;">${(headerFooterData.invoiceNumber || 'Invoice').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+          <span style="color: #6b7280; font-weight: 500;">${(headerFooterData.businessName || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
         </div>
       `,
       footerTemplate: `
-        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280;">
-          <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-          <span>Thank you for your business</span>
+        <div style="font-size: 10px; width: 100%; padding: 8px 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280; background: white;">
+          <span style="font-weight: 500;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span style="font-weight: 500;">Thank you for your business</span>
         </div>
       `
     })
@@ -319,15 +330,15 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
       },
       displayHeaderFooter: true,
       headerTemplate: `
-        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
-          <span style="color: #6b7280;">${headerFooterData.invoiceNumber || 'Invoice'}</span>
-          <span style="color: #6b7280;">${headerFooterData.businessName || ''}</span>
+        <div style="font-size: 10px; width: 100%; padding: 8px 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb; background: white;">
+          <span style="color: #6b7280; font-weight: 500;">${(headerFooterData.invoiceNumber || 'Invoice').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
+          <span style="color: #6b7280; font-weight: 500;">${(headerFooterData.businessName || '').replace(/</g, '&lt;').replace(/>/g, '&gt;')}</span>
         </div>
       `,
       footerTemplate: `
-        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280;">
-          <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
-          <span>Thank you for your business</span>
+        <div style="font-size: 10px; width: 100%; padding: 8px 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280; background: white;">
+          <span style="font-weight: 500;">Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span style="font-weight: 500;">Thank you for your business</span>
         </div>
       `
     })

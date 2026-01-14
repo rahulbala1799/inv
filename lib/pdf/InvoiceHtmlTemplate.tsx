@@ -51,23 +51,10 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             print-color-adjust: exact;
           }
           
-          /* Remove max-width constraints and shadows for PDF */
-          body > div[data-invoice-number] {
+          /* Remove max-width constraints and shadows for PDF - target the actual template content */
+          body > div:first-of-type:not([data-invoice-number]) {
             max-width: none !important;
             width: 100% !important;
-            box-shadow: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            min-height: 100vh !important;
-            display: flex;
-            flex-direction: column;
-          }
-          
-          /* Ensure template content fills pages properly */
-          body > div[data-invoice-number] > div {
-            flex: 1;
-            width: 100% !important;
-            max-width: none !important;
             box-shadow: none !important;
             margin: 0 !important;
             padding: 20px 15mm !important;
@@ -78,14 +65,28 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
           }
           
           /* If content is short, expand footer to push to bottom */
-          body > div[data-invoice-number] > div > div:last-child {
+          body > div:first-of-type:not([data-invoice-number]) > div:last-child {
             margin-top: auto;
+          }
+          
+          /* Prevent word breaking in the middle */
+          * {
+            word-wrap: break-word;
+            word-break: break-word;
+            overflow-wrap: break-word;
+          }
+          
+          /* Prevent breaking words, but allow breaking long URLs/strings */
+          p, span, div, td, th {
+            word-break: break-word;
+            hyphens: auto;
           }
           
           /* Page break rules - ensure content uses full pages */
           table {
             page-break-inside: avoid;
             width: 100%;
+            border-collapse: collapse;
           }
           
           thead {
@@ -96,18 +97,38 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             display: table-footer-group;
           }
           
+          /* Prevent breaking table rows across pages */
           tr {
             page-break-inside: avoid;
+            page-break-after: auto;
           }
           
-          /* Ensure table rows don't break awkwardly - but allow breaking if needed for full pages */
-          tbody tr {
+          /* Prevent breaking cells across pages */
+          td, th {
             page-break-inside: avoid;
           }
           
-          /* If a row would cause a page break with little content, allow it to break */
-          tbody tr:last-child {
-            page-break-after: auto;
+          /* Allow table to break if it's too long, but keep rows together */
+          tbody {
+            page-break-inside: auto;
+          }
+          
+          /* Keep header row with first data row */
+          thead + tbody tr:first-child {
+            page-break-before: avoid;
+          }
+          
+          /* Prevent breaking sections awkwardly */
+          div {
+            orphans: 3;
+            widows: 3;
+          }
+          
+          /* Prevent breaking paragraphs in the middle */
+          p {
+            page-break-inside: avoid;
+            orphans: 2;
+            widows: 2;
           }
           
           /* Force page breaks for major sections if needed */
@@ -155,9 +176,11 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
         `}</style>
       </head>
       <body>
-        <div data-invoice-number={`#${props.invoice.invoice_number}`} data-business-name={props.branding?.business_name || ''}>
-          {templateComponent}
+        {/* Hidden data attributes for header/footer extraction - not visible in PDF */}
+        <div data-invoice-number={`#${props.invoice.invoice_number}`} data-business-name={props.branding?.business_name || ''} style={{ display: 'none', visibility: 'hidden', height: 0, width: 0, overflow: 'hidden', position: 'absolute' }}>
         </div>
+        {/* Actual invoice content */}
+        {templateComponent}
       </body>
     </html>
   )
