@@ -922,6 +922,8 @@ export default function WYSIWYGInvoiceEditor({
         onOpenChange={setTemplateModalOpen}
         templates={templates}
         selectedTemplateId={invoice?.template_id}
+        invoiceId={invoice?.id || initialInvoice.id}
+        orgId={orgId}
         onSelectTemplate={handleSelectTemplate}
         onGeneratePDF={handleGeneratePDF}
       />

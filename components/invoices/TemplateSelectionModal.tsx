@@ -17,6 +17,8 @@ interface TemplateSelectionModalProps {
   onOpenChange: (open: boolean) => void
   templates: Template[]
   selectedTemplateId: string | null
+  invoiceId: string
+  orgId: string
   onSelectTemplate: (templateId: string) => void
   onGeneratePDF: (templateId: string) => void
 }
@@ -26,10 +28,13 @@ export default function TemplateSelectionModal({
   onOpenChange,
   templates,
   selectedTemplateId,
+  invoiceId,
+  orgId,
   onSelectTemplate,
   onGeneratePDF,
 }: TemplateSelectionModalProps) {
   const [localSelectedId, setLocalSelectedId] = useState<string | null>(selectedTemplateId)
+  const [hoveredTemplateId, setHoveredTemplateId] = useState<string | null>(null)
 
   const handleSelect = (templateId: string) => {
     setLocalSelectedId(templateId)
@@ -97,29 +102,109 @@ export default function TemplateSelectionModal({
                   </div>
                 )}
 
-                {/* Template Preview */}
-                <div className="mb-3">
+                {/* Template Preview - Visual Thumbnail */}
+                <div 
+                  className="mb-3 relative group"
+                  onMouseEnter={() => setHoveredTemplateId(template.id)}
+                  onMouseLeave={() => setHoveredTemplateId(null)}
+                >
                   <div
-                    className="w-full h-32 rounded border-2 border-gray-200 flex items-center justify-center"
+                    className="w-full h-40 rounded border-2 border-gray-200 overflow-hidden bg-white relative cursor-pointer"
                     style={{
-                      backgroundColor: template.config_json?.backgroundColor || '#FFFFFF',
                       borderColor: isSelected ? previewColor : '#E5E7EB',
+                      backgroundColor: template.config_json?.backgroundColor || '#FFFFFF',
                     }}
                   >
-                    <div className="text-center">
-                      <div
-                        className="w-16 h-16 mx-auto mb-2 rounded-full flex items-center justify-center text-white font-bold text-xl"
-                        style={{ backgroundColor: previewColor }}
+                    {/* Template Structure Preview */}
+                    <div className="p-2 h-full flex flex-col">
+                      {/* Header Bar */}
+                      <div 
+                        className="h-6 mb-1 rounded"
+                        style={{ 
+                          backgroundColor: template.config_json?.headerBackground || template.config_json?.primaryColor || '#F3F4F6',
+                        }}
                       >
-                        {template.name.charAt(0)}
+                        <div className="flex items-center justify-between px-2 h-full">
+                          <div className="flex items-center gap-1">
+                            {template.config_json?.logoPosition === 'top-left' && (
+                              <div 
+                                className="w-3 h-3 rounded"
+                                style={{ backgroundColor: previewColor }}
+                              />
+                            )}
+                            <div 
+                              className="text-[6px] font-bold"
+                              style={{ 
+                                color: template.config_json?.headerBackground === '#000000' || template.config_json?.tableHeaderBackground === '#000000' 
+                                  ? '#FFFFFF' 
+                                  : (template.config_json?.primaryColor || '#000000')
+                              }}
+                            >
+                              INVOICE
+                            </div>
+                          </div>
+                          {template.config_json?.logoPosition === 'top-right' && (
+                            <div 
+                              className="w-3 h-3 rounded"
+                              style={{ backgroundColor: previewColor }}
+                            />
+                          )}
+                        </div>
                       </div>
-                      <div
-                        className="text-xs font-semibold"
-                        style={{ color: template.config_json?.textColor || '#000000' }}
+                      
+                      {/* Table Header */}
+                      <div 
+                        className="h-4 mb-1 rounded"
+                        style={{ 
+                          backgroundColor: template.config_json?.tableHeaderBackground || '#F3F4F6',
+                        }}
                       >
-                        {template.name}
+                        <div className="flex gap-1 px-1 h-full items-center">
+                          <div 
+                            className="flex-1 h-2 rounded"
+                            style={{ backgroundColor: template.config_json?.tableHeaderTextColor || template.config_json?.textColor || '#000000', opacity: 0.3 }}
+                          />
+                          <div 
+                            className="w-8 h-2 rounded"
+                            style={{ backgroundColor: template.config_json?.tableHeaderTextColor || template.config_json?.textColor || '#000000', opacity: 0.3 }}
+                          />
+                          <div 
+                            className="w-8 h-2 rounded"
+                            style={{ backgroundColor: template.config_json?.tableHeaderTextColor || template.config_json?.textColor || '#000000', opacity: 0.3 }}
+                          />
+                        </div>
+                      </div>
+                      
+                      {/* Table Rows */}
+                      {[1, 2].map((i) => (
+                        <div key={i} className="h-3 mb-0.5 flex gap-1 px-1">
+                          <div className="flex-1 h-full bg-gray-100 rounded" />
+                          <div className="w-8 h-full bg-gray-100 rounded" />
+                          <div className="w-8 h-full bg-gray-100 rounded" />
+                        </div>
+                      ))}
+                      
+                      {/* Totals Section */}
+                      <div className="mt-auto flex justify-end gap-2">
+                        <div 
+                          className="h-3 w-12 rounded"
+                          style={{ backgroundColor: previewColor, opacity: 0.2 }}
+                        />
+                        <div 
+                          className="h-3 w-16 rounded"
+                          style={{ backgroundColor: previewColor }}
+                        />
                       </div>
                     </div>
+                    
+                    {/* Hover overlay - Show full preview */}
+                    {hoveredTemplateId === template.id && (
+                      <div className="absolute inset-0 bg-black bg-opacity-5 flex items-center justify-center">
+                        <div className="bg-white px-3 py-1.5 rounded shadow-lg text-xs font-semibold border">
+                          Click to preview full PDF
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
 
