@@ -1,8 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { NextResponse } from 'next/server'
-import { renderToStream } from '@react-pdf/renderer'
-import InvoicePDF from '@/lib/pdf/InvoicePdf'
+import { generatePdfFromHtml } from '@/lib/pdf/generatePdfFromHtml'
 
 export async function GET(
   request: Request,
@@ -112,29 +111,22 @@ export async function GET(
     const invoiceItems = items && Array.isArray(items) ? items : []
     
     // Log for debugging (remove in production if needed)
-    console.log('PDF Generation:', {
+    console.log('PDF Generation (HTML-to-PDF):', {
       invoiceId,
       itemsCount: invoiceItems.length,
       hasBranding: !!branding,
       hasTemplate: !!template,
       hasCustomer: !!invoice.customers,
+      templateLayout: template?.config_json?.layout || 'classic-blue',
     })
 
-    const pdfStream = await renderToStream(
-      InvoicePDF({
-        invoice,
-        items: invoiceItems,
-        branding: branding ? { ...branding, logoUrl } : null,
-        template: template || null,
-      })
+    // Generate PDF from HTML using Puppeteer
+    const pdfBuffer = await generatePdfFromHtml(
+      invoice,
+      invoiceItems,
+      branding ? { ...branding, logoUrl } : null,
+      template || null
     )
-
-    const chunks: Buffer[] = []
-    for await (const chunk of pdfStream) {
-      chunks.push(Buffer.from(chunk))
-    }
-
-    const pdfBuffer = Buffer.concat(chunks)
 
     // Check if download is explicitly requested
     const { searchParams } = new URL(request.url)
@@ -151,6 +143,9 @@ export async function GET(
     })
   } catch (error) {
     console.error('PDF generation error:', error)
-    return NextResponse.json({ error: 'Failed to generate PDF' }, { status: 500 })
+    return NextResponse.json({ 
+      error: 'Failed to generate PDF',
+      details: error instanceof Error ? error.message : 'Unknown error'
+    }, { status: 500 })
   }
 }
