@@ -381,7 +381,7 @@ export default function WYSIWYGInvoiceEditor({
   const missingFields = useMemo<MissingField[]>(() => {
     const fields: MissingField[] = [];
 
-    if (!invoice?.invoice_number || invoice.invoice_number.trim() === "") {
+    if (!invoice?.invoice_number || invoice?.invoice_number.trim() === "") {
       fields.push({
         id: "invoiceNumber",
         label: "Invoice number",
@@ -652,7 +652,7 @@ export default function WYSIWYGInvoiceEditor({
                 <span className="text-gray-600">Invoice #:</span>
                 <InlineEditableText
                   ref={invoiceNumberRef}
-                  value={invoice.invoice_number}
+                  value={invoice?.invoice_number || ""}
                   onChange={(value) => updateInvoice({ invoice_number: value })}
                   placeholder="Click to add invoice number"
                   className="font-mono"
@@ -663,7 +663,7 @@ export default function WYSIWYGInvoiceEditor({
                 <span className="text-base font-semibold text-gray-700">Issue Date:</span>
                 <div className="px-4 py-2.5 bg-amber-50 border-2 border-amber-300 rounded-lg shadow-sm">
                   <InlineEditableDate
-                    value={invoice.issue_date}
+                    value={invoice?.issue_date || new Date().toISOString().split('T')[0]}
                     onChange={(value) => updateInvoice({ issue_date: value.toISOString().split('T')[0] })}
                     className="text-base font-medium text-gray-900"
                   />
@@ -673,7 +673,7 @@ export default function WYSIWYGInvoiceEditor({
                 <span className="text-base font-semibold text-gray-700">Due Date:</span>
                 <div className="px-4 py-2.5 bg-amber-50 border-2 border-amber-300 rounded-lg shadow-sm">
                   <InlineEditableDate
-                    value={invoice.due_date || new Date()}
+                    value={invoice?.due_date || new Date()}
                     onChange={(value) => updateInvoice({ due_date: value.toISOString().split('T')[0] })}
                     className="text-base font-medium text-gray-900"
                   />
@@ -883,7 +883,7 @@ export default function WYSIWYGInvoiceEditor({
           <div className="border-t border-gray-200 pt-6">
             <div className="text-sm font-semibold text-gray-600 mb-2">Notes:</div>
             <InlineEditableText
-              value={invoice.notes || ""}
+              value={invoice?.notes || ""}
               onChange={(value) => updateInvoice({ notes: value })}
               placeholder="Click to add payment terms, thank you message, or other notes..."
               className="text-sm text-gray-600"
