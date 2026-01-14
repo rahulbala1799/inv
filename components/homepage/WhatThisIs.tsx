@@ -32,7 +32,7 @@ export function WhatThisIs() {
             </p>
 
             <p className="text-lg text-white">
-              Clean interface. Smart features. Everything you need, nothing you don't.
+              Clean interface. Smart features. Everything you need, nothing you don&apos;t.
             </p>
           </motion.div>
 

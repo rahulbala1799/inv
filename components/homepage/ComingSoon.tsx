@@ -28,7 +28,7 @@ export function ComingSoon() {
             Coming Soon
           </div>
           <h2 className="text-5xl md:text-6xl tracking-tight text-gray-900 mb-4">
-            What's Next
+            What&apos;s Next
           </h2>
           <p className="text-xl text-gray-500">
             Premium features launching soon
@@ -62,7 +62,7 @@ export function ComingSoon() {
               <div className="bg-white/80 backdrop-blur border border-violet-200 rounded-xl p-4 mb-6">
                 <p className="text-sm text-gray-500 mb-2">Type something like:</p>
                 <p className="text-gray-900 font-mono text-sm">
-                  "Invoice John €500 for web design, due in 14 days"
+                  &quot;Invoice John €500 for web design, due in 14 days&quot;
                 </p>
               </div>
 

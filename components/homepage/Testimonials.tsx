@@ -16,7 +16,7 @@ export function Testimonials() {
 
   const testimonials = [
     {
-      quote: "Finally, an invoicing app that doesn't feel like I need a degree in accounting to use it.",
+      quote: "Finally, an invoicing app that doesn&apos;t feel like I need a degree in accounting to use it.",
       author: "Sarah Chen",
       role: "Freelance Designer",
       image: "https://images.unsplash.com/photo-1560073743-0a45c01b68c4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxoYXBweSUyMHByb2Zlc3Npb25hbCUyMHdvbWFufGVufDF8fHx8MTc2ODI5NTE2Nnww&ixlib=rb-4.1.0&q=80&w=1080",
@@ -72,7 +72,7 @@ export function Testimonials() {
               </div>
               
               <p className="text-lg text-gray-900 mb-8 leading-relaxed">
-                "{testimonial.quote}"
+                &quot;{testimonial.quote}&quot;
               </p>
               
               <div className="flex items-center gap-4">

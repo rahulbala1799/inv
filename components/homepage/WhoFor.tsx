@@ -83,7 +83,7 @@ export function WhoFor() {
                 "You want full bookkeeping",
                 "You need expense tracking",
                 "You want reports and dashboards",
-                "You're looking for an accounting system"
+                "You&apos;re looking for an accounting system"
               ].map((item, i) => (
                 <motion.div
                   key={i}

@@ -33,12 +33,12 @@ export function HowItWorks() {
     { 
       icon: Zap, 
       title: "Totals update instantly",
-      details: "Change a price, quantity, or discount and watch the subtotal, tax, and total update in real-time. No 'calculate' button. No waiting. The invoice reflects your changes immediately as you type."
+      details: "Change a price, quantity, or discount and watch the subtotal, tax, and total update in real-time. No &apos;calculate&apos; button. No waiting. The invoice reflects your changes immediately as you type."
     },
     { 
       icon: Eye, 
       title: "What you see is what your client gets",
-      details: "There's no separate 'preview' mode because you're always looking at the final invoice. The PDF your client receives looks exactly like what you see on screen. No surprises, no formatting issues, no guesswork."
+      details: "There&apos;s no separate &apos;preview&apos; mode because you&apos;re always looking at the final invoice. The PDF your client receives looks exactly like what you see on screen. No surprises, no formatting issues, no guesswork."
     }
   ];
 

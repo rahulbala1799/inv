@@ -55,3 +55,6 @@ next-env.d.ts
 # Local notes and keys (keep this file local, never commit)
 local-notes.md
 local-keys.txt
+
+# Figma extracted files
+figma-extract/

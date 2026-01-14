@@ -32,7 +32,7 @@ export function Speed() {
     { 
       icon: Mail, 
       title: "Email & Track Payments", 
-      desc: "Send invoices directly and track when they're viewed, paid, or overdue"
+      desc: "Send invoices directly and track when they&apos;re viewed, paid, or overdue"
     },
     { 
       icon: TrendingUp, 
