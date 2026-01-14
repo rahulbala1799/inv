@@ -24,7 +24,6 @@ export const TechMatrix = ({ invoice, items, branding, template }: InvoiceTempla
             <h1 className="text-4xl font-bold text-gray-900 mb-2">
               {branding?.business_name || 'CREATIVE STUDIO'}
             </h1>
-            <p className="text-violet-600 font-semibold mb-3">Professional Design Services</p>
             <div className="text-sm text-gray-600 space-y-1">
               {branding?.address_line1 && <p>{branding.address_line1}</p>}
               {(branding?.city || branding?.postcode || branding?.country) && (

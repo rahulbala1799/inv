@@ -29,7 +29,6 @@ export const TechMinimal = ({ invoice, items, branding, template }: InvoiceTempl
             <h1 className="text-3xl font-bold text-gray-900 mb-1">
               {branding?.business_name || 'CREATIVE STUDIO'}
             </h1>
-            <p className="text-gray-600">Professional Design Services</p>
           </div>
         </div>
         <div className="text-right">

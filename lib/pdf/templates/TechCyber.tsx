@@ -26,7 +26,6 @@ export const TechCyber = ({ invoice, items, branding, template }: InvoiceTemplat
             )}
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{branding?.business_name || 'CREATIVE STUDIO'}</h1>
-              <p className="text-rose-600 font-medium">Creative Design Solutions</p>
             </div>
           </div>
           <div className="text-sm text-gray-600 space-y-1 ml-24">

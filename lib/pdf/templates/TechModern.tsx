@@ -24,7 +24,6 @@ export const TechModern = ({ invoice, items, branding, template }: InvoiceTempla
               )}
               <div>
                 <h1 className="text-3xl font-bold text-gray-900">{branding?.business_name || 'CREATIVE STUDIO'}</h1>
-                <p className="text-orange-600 font-medium">Professional Services</p>
               </div>
             </div>
             <div className="text-sm text-gray-600 space-y-1">

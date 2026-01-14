@@ -24,7 +24,6 @@ export const TechFuturistic = ({ invoice, items, branding, template }: InvoiceTe
             )}
             <div>
               <h1 className="text-3xl font-bold text-gray-900">{branding?.business_name || 'CREATIVE STUDIO'}</h1>
-              <p className="text-teal-600 font-semibold text-lg">Design Agency</p>
             </div>
           </div>
           <div className="bg-white px-8 py-4 shadow-lg">

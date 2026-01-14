@@ -25,7 +25,6 @@ export const TechGrid = ({ invoice, items, branding, template }: InvoiceTemplate
           )}
           <div className="pt-2">
             <h1 className="text-3xl font-bold text-gray-900">{branding?.business_name || 'CREATIVE STUDIO'}</h1>
-            <p className="text-emerald-600 font-semibold">Design & Development Agency</p>
             <div className="mt-3 text-sm text-gray-600 space-y-1">
               {(branding?.address_line1 || branding?.city || branding?.postcode) && (
                 <p>

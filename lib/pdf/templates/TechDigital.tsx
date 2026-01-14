@@ -28,7 +28,6 @@ export const TechDigital = ({ invoice, items, branding, template }: InvoiceTempl
               <h1 className="text-3xl font-bold text-gray-900 mb-1">
                 {branding?.business_name || 'CREATIVE STUDIO'}
               </h1>
-              <p className="text-cyan-600 font-semibold mb-3">Design & Development Services</p>
               <div className="text-sm text-gray-600">
                 {(branding?.address_line1 || branding?.city || branding?.postcode) && (
                   <p>
