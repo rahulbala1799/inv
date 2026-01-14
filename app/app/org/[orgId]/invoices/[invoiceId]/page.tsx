@@ -58,6 +58,14 @@ export default async function InvoiceDetailPage({
     .eq('org_id', orgId)
     .single()
 
+  // Get available templates (global templates + org-specific templates)
+  const { data: templates } = await supabase
+    .from('invoice_templates')
+    .select('*')
+    .or(`org_id.is.null,org_id.eq.${orgId}`)
+    .order('is_default', { ascending: false })
+    .order('name')
+
   return (
     <WYSIWYGInvoiceEditor
       invoice={invoice}
@@ -65,6 +73,7 @@ export default async function InvoiceDetailPage({
       customers={customers || []}
       orgId={orgId}
       branding={branding}
+      templates={templates || []}
     />
   )
 }

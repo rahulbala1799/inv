@@ -12,8 +12,9 @@ import { InlineEditableDate } from "@/components/invoices/InlineEditableDate";
 import { InlineCustomerSelect } from "@/components/invoices/InlineCustomerSelect";
 import { MissingFieldsSummary, MissingField } from "@/components/invoices/MissingFieldsSummary";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Download, Plus, X } from "lucide-react";
+import { ArrowLeft, Download, Plus, X, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
+import TemplateSelectionModal from "@/components/invoices/TemplateSelectionModal";
 
 interface InvoiceItem {
   id?: string;
@@ -83,12 +84,20 @@ interface OrgBranding {
 
 type SaveStatus = "idle" | "saving" | "saved";
 
+interface Template {
+  id: string;
+  name: string;
+  config_json: any;
+  is_default?: boolean;
+}
+
 interface WYSIWYGInvoiceEditorProps {
   invoice: Invoice;
   items: InvoiceItem[];
   customers: Customer[];
   orgId: string;
   branding?: OrgBranding | null;
+  templates?: Template[];
 }
 
 export default function WYSIWYGInvoiceEditor({
@@ -97,6 +106,7 @@ export default function WYSIWYGInvoiceEditor({
   customers,
   orgId,
   branding,
+  templates = [],
 }: WYSIWYGInvoiceEditorProps) {
   const router = useRouter();
   const [invoice, setInvoice] = useState(initialInvoice);
@@ -120,6 +130,7 @@ export default function WYSIWYGInvoiceEditor({
   const [selectedCustomerData, setSelectedCustomerData] = useState<Customer | null>(
     customers.find((c) => c.id === invoice.customer_id) || null
   );
+  const [templateModalOpen, setTemplateModalOpen] = useState(false);
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -461,6 +472,37 @@ export default function WYSIWYGInvoiceEditor({
 
   const currency = invoice.currency || branding?.default_currency || "EUR";
 
+  // Handle template selection
+  const handleSelectTemplate = async (templateId: string) => {
+    try {
+      const response = await fetch(`/api/org/${orgId}/invoices/${invoice.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          invoice: { ...invoice, template_id: templateId },
+          items 
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInvoice(data.invoice);
+      }
+    } catch (error) {
+      console.error('Error updating template:', error);
+    }
+  };
+
+  // Handle PDF generation with selected template
+  const handleGeneratePDF = async (templateId: string) => {
+    // Update invoice with template first
+    await handleSelectTemplate(templateId);
+    // Small delay to ensure invoice is updated, then open PDF
+    setTimeout(() => {
+      window.open(`/api/org/${orgId}/invoices/${invoice.id}/pdf`, '_blank');
+    }, 300);
+  };
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Top Bar */}
@@ -482,15 +524,14 @@ export default function WYSIWYGInvoiceEditor({
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <Link
-              href={`/api/org/${orgId}/invoices/${invoice.id}/pdf`}
-              target="_blank"
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setTemplateModalOpen(true)}
             >
-              <Button variant="outline" size="sm">
-                <Download className="w-4 h-4 mr-2" />
-                Download PDF
-              </Button>
-            </Link>
+              <FileText className="w-4 h-4 mr-2" />
+              Generate PDF
+            </Button>
             <select
               value={invoice.status}
               onChange={(e) => updateInvoice({ status: e.target.value })}
@@ -826,6 +867,16 @@ export default function WYSIWYGInvoiceEditor({
           </div>
         </div>
       </div>
+
+      {/* Template Selection Modal */}
+      <TemplateSelectionModal
+        open={templateModalOpen}
+        onOpenChange={setTemplateModalOpen}
+        templates={templates}
+        selectedTemplateId={invoice.template_id}
+        onSelectTemplate={handleSelectTemplate}
+        onGeneratePDF={handleGeneratePDF}
+      />
     </div>
   );
 }
