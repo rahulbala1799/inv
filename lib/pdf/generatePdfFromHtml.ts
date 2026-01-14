@@ -171,16 +171,38 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
     // Additional wait to ensure all styles are applied
     await new Promise(resolve => setTimeout(resolve, 500))
     
-    // Generate PDF
+    // Extract header/footer data from the page
+    const headerFooterData = await page.evaluate(() => {
+      const invoiceNumber = document.querySelector('[data-invoice-number]')?.textContent || 
+                           document.querySelector('h2')?.textContent?.match(/#[\w-]+/)?.[0] || ''
+      const businessName = document.querySelector('[data-business-name]')?.textContent || 
+                          document.querySelector('h1')?.textContent || ''
+      return { invoiceNumber, businessName }
+    })
+    
+    // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '30mm',
-        right: '30mm',
-        bottom: '30mm',
-        left: '30mm'
-      }
+        top: '15mm',
+        right: '15mm',
+        bottom: '15mm',
+        left: '15mm'
+      },
+      displayHeaderFooter: true,
+      headerTemplate: `
+        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
+          <span style="color: #6b7280;">${headerFooterData.invoiceNumber || 'Invoice'}</span>
+          <span style="color: #6b7280;">${headerFooterData.businessName || ''}</span>
+        </div>
+      `,
+      footerTemplate: `
+        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280;">
+          <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span>Thank you for your business</span>
+        </div>
+      `
     })
     
     return Buffer.from(pdfBuffer)
@@ -265,16 +287,49 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
     // Additional wait to ensure all styles are applied
     await new Promise(resolve => setTimeout(resolve, 500))
     
-    // Generate PDF
+    // Extract header/footer data from the page DOM using data attributes
+    const headerFooterData = await page.evaluate(() => {
+      // Get invoice number from data attribute (set in InvoiceHtmlTemplate)
+      const invoiceNumberEl = document.querySelector('[data-invoice-number]')
+      const invoiceNumber = invoiceNumberEl?.getAttribute('data-invoice-number') || 
+                           invoiceNumberEl?.textContent?.match(/#[\w-]+/)?.[0] || 
+                           'Invoice'
+      
+      // Get business name from data attribute
+      const businessNameEl = document.querySelector('[data-business-name]')
+      const businessName = businessNameEl?.getAttribute('data-business-name') || 
+                          businessNameEl?.textContent?.substring(0, 40) || 
+                          ''
+      
+      return { 
+        invoiceNumber: invoiceNumber.substring(0, 30),
+        businessName: businessName.substring(0, 40)
+      }
+    })
+    
+    // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '30mm',
-        right: '30mm',
-        bottom: '30mm',
-        left: '30mm'
-      }
+        top: '15mm',
+        right: '15mm',
+        bottom: '15mm',
+        left: '15mm'
+      },
+      displayHeaderFooter: true,
+      headerTemplate: `
+        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e5e7eb;">
+          <span style="color: #6b7280;">${headerFooterData.invoiceNumber || 'Invoice'}</span>
+          <span style="color: #6b7280;">${headerFooterData.businessName || ''}</span>
+        </div>
+      `,
+      footerTemplate: `
+        <div style="font-size: 10px; width: 100%; padding: 0 15mm; display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #e5e7eb; color: #6b7280;">
+          <span>Page <span class="pageNumber"></span> of <span class="totalPages"></span></span>
+          <span>Thank you for your business</span>
+        </div>
+      `
     })
     
     // Close page but keep browser instance
