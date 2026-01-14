@@ -56,7 +56,7 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             width: 100% !important;
             box-shadow: none !important;
             margin: 0 !important;
-            padding: 20px 10mm !important;  /* Reduced from 15mm to 10mm to use more page width */
+            padding: 20px 0 !important;  /* Zero side padding - use full A4 width (210mm) */
           }
           
           /* Prevent word breaking in the middle */

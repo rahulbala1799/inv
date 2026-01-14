@@ -193,15 +193,15 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
     // Increased top/bottom margins to accommodate header/footer without overlapping content
-    // Reduced side margins to use more page width
+    // Zero side margins to use full A4 width (210mm)
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
         top: '32mm',      // Increased to give header breathing room (was 15mm)
-        right: '10mm',    // Reduced from 15mm to use more page width
+        right: '0mm',     // Zero margin - use full width
         bottom: '25mm',   // Increased to give footer space (was 15mm)
-        left: '10mm'      // Reduced from 15mm to use more page width
+        left: '0mm'       // Zero margin - use full width
       },
       displayHeaderFooter: true,
       headerTemplate: `
@@ -322,15 +322,15 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
     // Increased top/bottom margins to accommodate header/footer without overlapping content
-    // Reduced side margins to use more page width
+    // Zero side margins to use full A4 width (210mm)
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
         top: '32mm',      // Increased to give header breathing room (was 15mm)
-        right: '10mm',    // Reduced from 15mm to use more page width
+        right: '0mm',     // Zero margin - use full width
         bottom: '25mm',   // Increased to give footer space (was 15mm)
-        left: '10mm'      // Reduced from 15mm to use more page width
+        left: '0mm'       // Zero margin - use full width
       },
       displayHeaderFooter: true,
       headerTemplate: `

@@ -17,9 +17,9 @@ const pdfBuffer = await page.pdf({
   printBackground: true,
   margin: {
     top: '32mm',      // Space for header
-    right: '10mm',    // Right margin (reduced to use more width)
+    right: '5mm',     // Minimal margin for maximum width usage
     bottom: '25mm',   // Space for footer
-    left: '10mm'      // Left margin (reduced to use more width)
+    left: '5mm'       // Minimal margin for maximum width usage
   },
   displayHeaderFooter: true,
   // ... header/footer templates
@@ -42,9 +42,9 @@ These are set in the `page.pdf()` call and define the printable area:
 ```typescript
 margin: {
   top: '32mm',      // Reserved for header (prevents overlap)
-  right: '10mm',    // Right page margin (reduced to use more width)
+  right: '5mm',     // Minimal margin for maximum width usage
   bottom: '25mm',   // Reserved for footer (prevents overlap)
-  left: '10mm'      // Left page margin (reduced to use more width)
+  left: '5mm'       // Minimal margin for maximum width usage
 }
 ```
 
@@ -59,7 +59,7 @@ Additional padding is applied to the content wrapper:
 
 ```css
 .pdf-page {
-  padding: 20px 10mm !important;  /* 20px top/bottom, 10mm left/right */
+  padding: 20px 5mm !important;  /* 20px top/bottom, 5mm left/right - minimal for maximum width */
 }
 ```
 
@@ -72,12 +72,12 @@ Additional padding is applied to the content wrapper:
 ### Effective Content Width
 ```
 A4 Width: 210mm
-- Left Puppeteer Margin: 10mm
-- Left CSS Padding: 10mm
-- Right CSS Padding: 10mm
-- Right Puppeteer Margin: 10mm
+- Left Puppeteer Margin: 5mm
+- Left CSS Padding: 5mm
+- Right CSS Padding: 5mm
+- Right Puppeteer Margin: 5mm
 ─────────────────────────────
-Available Content Width: 170mm (81% of page width)
+Available Content Width: 190mm (90% of page width)
 ```
 
 ### Effective Content Height
@@ -182,11 +182,11 @@ margin: {
 | Page Format | A4 (210mm × 297mm) | Standard international size |
 | Top Margin | 32mm | Header space (prevents overlap) |
 | Bottom Margin | 25mm | Footer space (prevents overlap) |
-| Left Margin | 10mm | Page edge spacing (reduced for more width) |
-| Right Margin | 10mm | Page edge spacing (reduced for more width) |
+| Left Margin | 5mm | Minimal margin for maximum width usage |
+| Right Margin | 5mm | Minimal margin for maximum width usage |
 | CSS Padding (top/bottom) | 20px (~7.5mm) | Content spacing |
-| CSS Padding (left/right) | 10mm | Content spacing |
-| **Effective Content Width** | **~170mm** | **81% of page** |
+| CSS Padding (left/right) | 5mm | Minimal padding for maximum width usage |
+| **Effective Content Width** | **~190mm** | **90% of page** |
 | **Effective Content Height** | **~225mm** | **76% of page** |
 
 ---
