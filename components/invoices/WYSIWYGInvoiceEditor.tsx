@@ -110,11 +110,7 @@ export default function WYSIWYGInvoiceEditor({
 }: WYSIWYGInvoiceEditorProps) {
   const router = useRouter();
   
-  // Guard clause: ensure invoice exists
-  if (!initialInvoice) {
-    return <div>Invoice not found</div>;
-  }
-  
+  // All hooks must be called before any conditional returns
   const [invoice, setInvoice] = useState(initialInvoice);
   const [items, setItems] = useState<InvoiceItem[]>(
     initialItems.length > 0
@@ -475,6 +471,18 @@ export default function WYSIWYGInvoiceEditor({
     // eslint-disable-next-line react-hooks/exhaustive-deps
     items.length > 0 ? items[0]?.unit_price : undefined,
   ]);
+
+  // Guard clause: ensure invoice exists (after all hooks)
+  if (!invoice) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+          <div className="text-center">
+          <h2 className="text-xl font-semibold text-gray-900 mb-2">Invoice not found</h2>
+          <p className="text-gray-600">The invoice you&apos;re looking for doesn&apos;t exist.</p>
+        </div>
+      </div>
+    );
+  }
 
   const currency = invoice.currency || branding?.default_currency || "EUR";
 
