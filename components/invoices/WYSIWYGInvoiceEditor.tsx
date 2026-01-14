@@ -572,14 +572,15 @@ export default function WYSIWYGInvoiceEditor({
             )}
           </div>
           <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              size="sm"
-              onClick={() => setTemplateModalOpen(true)}
-            >
-              <FileText className="w-4 h-4 mr-2" />
-              Generate PDF
-            </Button>
+            <Link href={`/app/org/${orgId}/invoices/${invoice?.id}/generate`}>
+              <Button 
+                variant="outline" 
+                size="sm"
+              >
+                <FileText className="w-4 h-4 mr-2" />
+                Generate Invoice
+              </Button>
+            </Link>
             <select
               value={invoice?.status || "DRAFT"}
               onChange={(e) => updateInvoice({ status: e.target.value })}
