@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useTransition } from 'react'
+import { useRouter } from 'next/navigation'
 import LogoUpload from './LogoUpload'
 import { updateBranding } from '@/app/app/org/[orgId]/settings/actions'
 
@@ -27,9 +28,23 @@ export default function OrganizationSettingsForm({
   logoUrl,
 }: OrganizationSettingsFormProps) {
   const [logoPath, setLogoPath] = useState(branding?.logo_storage_path || '')
+  const [isPending, startTransition] = useTransition()
+  const router = useRouter()
+
+  async function handleSubmit(formData: FormData) {
+    startTransition(async () => {
+      try {
+        await updateBranding(formData)
+        // Refresh the page to show updated data
+        router.refresh()
+      } catch (error) {
+        console.error('Error updating branding:', error)
+      }
+    })
+  }
 
   return (
-    <form action={updateBranding} className="space-y-6">
+    <form action={handleSubmit} className="space-y-6">
       <input type="hidden" name="orgId" value={orgId} />
       <input type="hidden" name="logo_storage_path" id="logo_storage_path" value={logoPath} />
 
@@ -174,10 +189,14 @@ export default function OrganizationSettingsForm({
       <div className="pt-4 border-t border-gray-200">
         <button
           type="submit"
-          className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+          disabled={isPending}
+          className="bg-indigo-600 text-white px-6 py-2 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          Save Organization Settings
+          {isPending ? 'Saving...' : 'Save Organization Settings'}
         </button>
+        {isPending && (
+          <p className="mt-2 text-sm text-gray-600">Saving your changes...</p>
+        )}
       </div>
     </form>
   )

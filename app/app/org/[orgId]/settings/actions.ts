@@ -58,5 +58,5 @@ export async function updateBranding(formData: FormData) {
     }
   }
 
-  redirect(`/app/org/${orgId}/settings`)
+  redirect(`/app/org/${orgId}/settings?success=Organization settings saved successfully`)
 }

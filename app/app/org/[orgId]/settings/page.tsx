@@ -5,10 +5,13 @@ import OrganizationSettingsForm from '@/components/settings/OrganizationSettings
 
 export default async function SettingsPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ orgId: string }>
+  searchParams: Promise<{ error?: string; success?: string }>
 }) {
   const { orgId } = await params
+  const { error: errorParam, success: successParam } = await searchParams
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -54,6 +57,18 @@ export default async function SettingsPage({
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Settings</h1>
         <p className="text-gray-600">Manage your organization settings and preferences</p>
       </div>
+
+      {/* Success/Error Messages */}
+      {successParam && (
+        <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+          <p className="text-sm text-green-800">{successParam}</p>
+        </div>
+      )}
+      {errorParam && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-sm text-red-800">Error: {errorParam}</p>
+        </div>
+      )}
 
       <div className="space-y-6">
         {/* Organization Settings Section */}
