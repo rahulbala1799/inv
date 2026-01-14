@@ -73,5 +73,16 @@ export async function PUT(
     }
   }
 
-  return NextResponse.json({ success: true })
+  // Fetch updated invoice to return
+  const { data: updatedInvoice } = await supabase
+    .from('invoices')
+    .select('*')
+    .eq('id', invoiceId)
+    .eq('org_id', orgId)
+    .single()
+
+  return NextResponse.json({ 
+    success: true, 
+    invoice: updatedInvoice 
+  })
 }

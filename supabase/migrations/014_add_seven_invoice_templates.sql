@@ -1,6 +1,11 @@
 -- Add 7 invoice templates from invtemplates.pdf
 -- These templates are based on the exact designs from the PDF
 
+-- Unset existing defaults before adding new templates
+UPDATE invoice_templates 
+SET is_default = false 
+WHERE org_id IS NULL AND is_default = true;
+
 -- Template 1: Classic with Orange Accent (Circular logo with orange accent, dark header bar)
 INSERT INTO invoice_templates (org_id, name, config_json, is_default) VALUES
 (

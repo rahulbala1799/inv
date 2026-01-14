@@ -135,6 +135,7 @@ export default function WYSIWYGInvoiceEditor({
   );
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
+  const [templateError, setTemplateError] = useState<string | null>(null);
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -504,16 +505,17 @@ export default function WYSIWYGInvoiceEditor({
 
   // Handle template selection - save to invoice and show preview
   const handleTemplateSelected = async (templateId: string) => {
-    // Use initialInvoice.id as it's guaranteed to exist from server
     const invoiceId = invoice?.id || initialInvoice.id;
     
     if (!invoiceId) {
       console.error('No invoice ID available');
+      setTemplateError('Cannot save template: No invoice ID');
       return;
     }
 
     try {
-      // Update invoice with template
+      setTemplateError(null);
+      
       const response = await fetch(`/api/org/${orgId}/invoices/${invoiceId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -523,12 +525,15 @@ export default function WYSIWYGInvoiceEditor({
         }),
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        setInvoice(data.invoice);
+      if (!response.ok) {
+        throw new Error('Failed to save template selection');
       }
+
+      const data = await response.json();
+      setInvoice(data.invoice);
     } catch (error) {
       console.error('Error updating template:', error);
+      setTemplateError('Failed to update template. Please try again.');
     }
   };
 
@@ -560,6 +565,11 @@ export default function WYSIWYGInvoiceEditor({
               {saveStatus === "saving" && "Saving..."}
               {saveStatus === "saved" && <span className="text-green-600">Saved</span>}
             </div>
+            {templateError && (
+              <div className="bg-red-50 border border-red-200 text-red-600 px-3 py-1.5 rounded-lg text-xs">
+                {templateError}
+              </div>
+            )}
           </div>
           <div className="flex items-center gap-3">
             <Button 

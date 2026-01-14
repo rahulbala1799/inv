@@ -18,6 +18,9 @@ interface OrganizationSettingsFormProps {
     country?: string | null
     logo_storage_path?: string | null
     default_currency?: string | null
+    email?: string | null
+    phone?: string | null
+    website?: string | null
     bank_name?: string | null
     bank_account_number?: string | null
     bank_sort_code?: string | null
@@ -189,6 +192,58 @@ export default function OrganizationSettingsForm({
           <option value="USD">USD</option>
           <option value="GBP">GBP</option>
         </select>
+      </div>
+
+      {/* Contact Information Section */}
+      <div className="pt-6 border-t border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Contact details that will appear on invoices
+        </p>
+        
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              Email
+            </label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              defaultValue={branding?.email || ''}
+              placeholder="your@email.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
+              Phone
+            </label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              defaultValue={branding?.phone || ''}
+              placeholder="+1 (555) 123-4567"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="website" className="block text-sm font-medium text-gray-700 mb-2">
+              Website
+            </label>
+            <input
+              type="url"
+              id="website"
+              name="website"
+              defaultValue={branding?.website || ''}
+              placeholder="https://yourwebsite.com"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+        </div>
       </div>
 
       {/* Bank Details Section */}

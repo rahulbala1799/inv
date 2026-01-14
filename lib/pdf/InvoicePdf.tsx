@@ -45,28 +45,34 @@ function getTemplateStyles(template: any) {
         header: {
           marginBottom: 20,
           paddingBottom: 15,
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
         },
         title: {
           fontSize: 28,
-          fontWeight: 'thin',
+          fontWeight: 'normal',
           color: textColor,
           letterSpacing: 2,
         },
         companyName: {
           fontSize: 14,
-          fontWeight: 'thin',
+          fontWeight: 'normal',
           color: textColor,
           letterSpacing: 1,
         },
         tableHeader: {
           backgroundColor: 'transparent',
           fontWeight: 'bold',
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         tableRow: {
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 6,
         },
         totalSection: {
@@ -82,7 +88,9 @@ function getTemplateStyles(template: any) {
           marginBottom: 30,
           padding: 20,
           backgroundColor: config.headerBackground || '#ECFDF5',
-          borderBottom: `3pt solid ${accentColor}`,
+          borderBottomWidth: 3,
+          borderBottomColor: accentColor,
+          borderBottomStyle: 'solid',
         },
         title: {
           fontSize: 32,
@@ -97,11 +105,15 @@ function getTemplateStyles(template: any) {
         tableHeader: {
           backgroundColor: config.tableHeaderBackground || '#F0FDF4',
           fontWeight: 'bold',
-          borderBottom: `2pt solid ${accentColor}`,
+          borderBottomWidth: 2,
+          borderBottomColor: accentColor,
+          borderBottomStyle: 'solid',
           paddingVertical: 10,
         },
         tableRow: {
-          borderBottom: '1pt solid #D1FAE5',
+          borderBottomWidth: 1,
+          borderBottomColor: '#D1FAE5',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
           backgroundColor: 'transparent',
         },
@@ -109,7 +121,9 @@ function getTemplateStyles(template: any) {
           marginTop: 20,
           padding: 15,
           backgroundColor: '#F9FAFB',
-          borderTop: `2pt solid ${accentColor}`,
+          borderTopWidth: 2,
+          borderTopColor: accentColor,
+          borderTopStyle: 'solid',
         },
       }
     
@@ -119,7 +133,9 @@ function getTemplateStyles(template: any) {
         header: {
           marginBottom: 25,
           paddingBottom: 20,
-          borderBottom: `2pt solid ${primaryColor}`,
+          borderBottomWidth: 2,
+          borderBottomColor: primaryColor,
+          borderBottomStyle: 'solid',
         },
         title: {
           fontSize: 24,
@@ -134,18 +150,24 @@ function getTemplateStyles(template: any) {
         tableHeader: {
           backgroundColor: '#F3F4F6',
           fontWeight: 'bold',
-          borderBottom: `1pt solid ${primaryColor}`,
+          borderBottomWidth: 1,
+          borderBottomColor: primaryColor,
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         tableRow: {
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         totalSection: {
           marginTop: 20,
           padding: 12,
           backgroundColor: '#F9FAFB',
-          borderTop: `2pt solid ${primaryColor}`,
+          borderTopWidth: 2,
+          borderTopColor: primaryColor,
+          borderTopStyle: 'solid',
         },
       }
     
@@ -169,17 +191,23 @@ function getTemplateStyles(template: any) {
         tableHeader: {
           backgroundColor: 'transparent',
           fontWeight: 'bold',
-          borderBottom: `1pt solid ${secondaryColor}`,
+          borderBottomWidth: 1,
+          borderBottomColor: secondaryColor,
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         tableRow: {
-          borderBottom: '0.5pt solid #e5e7eb',
+          borderBottomWidth: 0.5,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 6,
         },
         totalSection: {
           marginTop: 20,
           alignItems: 'flex-end',
-          borderTop: `1pt solid ${secondaryColor}`,
+          borderTopWidth: 1,
+          borderTopColor: secondaryColor,
+          borderTopStyle: 'solid',
           paddingTop: 10,
         },
       }
@@ -209,14 +237,18 @@ function getTemplateStyles(template: any) {
           paddingVertical: 10,
         },
         tableRow: {
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         totalSection: {
           marginTop: 20,
           padding: 15,
           backgroundColor: '#F3F4F6',
-          border: `2pt solid ${primaryColor}`,
+          borderWidth: 2,
+          borderColor: primaryColor,
+          borderStyle: 'solid',
         },
       }
     
@@ -239,11 +271,15 @@ function getTemplateStyles(template: any) {
         tableHeader: {
           backgroundColor: '#FAFAFA',
           fontWeight: 'bold',
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         tableRow: {
-          borderBottom: '1pt solid #f0f0f0',
+          borderBottomWidth: 1,
+          borderBottomColor: '#f0f0f0',
+          borderBottomStyle: 'solid',
           paddingVertical: 7,
         },
         totalSection: {
@@ -258,7 +294,11 @@ function getTemplateStyles(template: any) {
         header: {
           marginBottom: 30,
           paddingBottom: 15,
-          borderBottom: config.headerBackground === '#000000' ? 'none' : '2pt solid #e5e7eb',
+          ...(config.headerBackground !== '#000000' && {
+            borderBottomWidth: 2,
+            borderBottomColor: '#e5e7eb',
+            borderBottomStyle: 'solid',
+          }),
           backgroundColor: config.headerBackground || 'transparent',
         },
         title: {
@@ -274,19 +314,25 @@ function getTemplateStyles(template: any) {
         tableHeader: {
           backgroundColor: config.tableHeaderBackground || '#F3F4F6',
           fontWeight: 'bold',
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
           color: config.tableHeaderTextColor || textColor,
         },
         tableRow: {
-          borderBottom: '1pt solid #e5e7eb',
+          borderBottomWidth: 1,
+          borderBottomColor: '#e5e7eb',
+          borderBottomStyle: 'solid',
           paddingVertical: 8,
         },
         totalSection: {
           marginTop: 20,
           padding: 12,
           backgroundColor: '#F9FAFB',
-          borderTop: '2pt solid #000',
+          borderTopWidth: 2,
+          borderTopColor: '#000',
+          borderTopStyle: 'solid',
         },
       }
   }
@@ -311,10 +357,24 @@ function getTableColumns(config: any) {
     'AMOUNT': 'line_total',
   }
   
-  return columns.map((col: string) => ({
-    label: col,
-    field: columnMap[col.toUpperCase()] || col.toLowerCase(),
-  }))
+  // Map columns and filter out any that don't have valid field mappings
+  return columns
+    .map((col: string) => {
+      const normalizedCol = col.toUpperCase()
+      const field = columnMap[normalizedCol]
+      
+      // Only include columns with valid field mappings
+      if (!field) {
+        console.warn(`Unknown table column: ${col}`)
+        return null
+      }
+      
+      return {
+        label: col,
+        field: field,
+      }
+    })
+    .filter((col: any) => col !== null)
 }
 
 interface InvoicePDFProps {
@@ -392,7 +452,9 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
     footer: {
       marginTop: 40,
       paddingTop: 20,
-      borderTop: '1pt solid #e5e7eb',
+      borderTopWidth: 1,
+      borderTopColor: '#e5e7eb',
+      borderTopStyle: 'solid',
       fontSize: 10,
       color: '#6b7280',
     },
@@ -434,7 +496,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
 
   // Render header based on logo position
   const renderHeader = () => {
-    const hasLogo = logoUrl && branding?.logoUrl
+    const hasLogo = logoUrl !== null
     const headerTextColor = config.headerBackground === '#000000' || config.tableHeaderBackground === '#000000' 
       ? '#FFFFFF' 
       : (styles.title?.color || '#000000')
@@ -631,7 +693,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
           <View
             style={[
               styles.totalRow,
-              { borderTop: '1pt solid #000', paddingTop: 5, marginTop: 5 },
+              { borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', paddingTop: 5, marginTop: 5 },
             ]}
           >
             <Text style={[styles.totalLabel, { fontSize: 14 }]}>Total:</Text>
@@ -646,9 +708,9 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
           <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
             <View style={{ flex: 1, marginRight: 20 }}>
               <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Contact Info:</Text>
-              {branding.email && <Text style={{ fontSize: 10 }}>📧 {branding.email}</Text>}
-              {branding.phone && <Text style={{ fontSize: 10 }}>📞 {branding.phone}</Text>}
-              {branding.website && <Text style={{ fontSize: 10 }}>🌐 {branding.website}</Text>}
+              {branding.email && <Text style={{ fontSize: 10 }}>Email: {branding.email}</Text>}
+              {branding.phone && <Text style={{ fontSize: 10 }}>Phone: {branding.phone}</Text>}
+              {branding.website && <Text style={{ fontSize: 10 }}>Website: {branding.website}</Text>}
             </View>
             <View style={{ flex: 1 }}>
               <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Payment Info:</Text>
@@ -684,7 +746,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         {/* Signature Line */}
         {config.showSignatureLine && (
           <View style={{ marginTop: 40, marginBottom: 20 }}>
-            <View style={{ borderTop: '1pt solid #000', width: 200, marginBottom: 5 }} />
+            <View style={{ borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', width: 200, marginBottom: 5 }} />
             <Text style={{ fontSize: 10 }}>Signature</Text>
           </View>
         )}

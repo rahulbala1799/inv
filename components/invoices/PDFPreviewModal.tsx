@@ -62,7 +62,7 @@ export default function PDFPreviewModal({
   }
 
   const handleDownload = () => {
-    const pdfUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf${currentTemplateId ? `?template=${currentTemplateId}` : ''}`
+    const pdfUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf?download=true${currentTemplateId ? `&template=${currentTemplateId}` : ''}`
     window.open(pdfUrl, '_blank')
   }
 
