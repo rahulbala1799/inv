@@ -192,15 +192,15 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
     })
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
-    // Increased top/bottom margins to accommodate header/footer without overlapping content
+    // Minimal margins - only what's needed for header/footer to avoid overlap
     // Zero side margins to use full A4 width (210mm)
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '32mm',      // Increased to give header breathing room (was 15mm)
+        top: '20mm',      // Minimal top margin for header (reduced from 32mm for more height)
         right: '0mm',     // Zero margin - use full width
-        bottom: '25mm',   // Increased to give footer space (was 15mm)
+        bottom: '15mm',   // Minimal bottom margin for footer (reduced from 25mm for more height)
         left: '0mm'       // Zero margin - use full width
       },
       displayHeaderFooter: true,
@@ -321,15 +321,15 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
     })
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
-    // Increased top/bottom margins to accommodate header/footer without overlapping content
+    // Minimal margins - only what's needed for header/footer to avoid overlap
     // Zero side margins to use full A4 width (210mm)
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '32mm',      // Increased to give header breathing room (was 15mm)
+        top: '20mm',      // Minimal top margin for header (reduced from 32mm for more height)
         right: '0mm',     // Zero margin - use full width
-        bottom: '25mm',   // Increased to give footer space (was 15mm)
+        bottom: '15mm',   // Minimal bottom margin for footer (reduced from 25mm for more height)
         left: '0mm'       // Zero margin - use full width
       },
       displayHeaderFooter: true,

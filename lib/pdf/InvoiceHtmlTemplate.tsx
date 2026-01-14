@@ -114,19 +114,51 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             page-break-before: avoid;
           }
           
-          /* Only protect critical blocks from breaking */
+          /* CRITICAL: Prevent sections from being cut across pages */
+          /* Force these sections to stay together - if they don't fit, move to next page */
           .avoid-break {
-            break-inside: avoid;
-            page-break-inside: avoid;
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
           }
           
-          /* Apply avoid-break to totals, bank details, signature blocks */
+          /* Apply avoid-break to totals, bank details, signature blocks, notes */
           .totals,
           .bank-details,
           .signature-section,
-          .notes-section {
-            break-inside: avoid;
-            page-break-inside: avoid;
+          .notes-section,
+          /* Also target common div patterns that contain these sections */
+          div[class*="total"],
+          div[class*="bank"],
+          div[class*="payment"],
+          div[class*="signature"],
+          div[class*="note"] {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          
+          /* Target sections that typically contain totals/bank details */
+          /* These selectors catch common template patterns */
+          .flex.justify-end > div,
+          .grid > div:last-child,
+          div[class*="bg-"][class*="p-"],
+          div[class*="border-l-"] {
+            break-inside: avoid !important;
+            page-break-inside: avoid !important;
+          }
+          
+          /* Page-level borders - each page gets its own border */
+          @page {
+            margin: 0;  /* Let Puppeteer control margins */
+          }
+          
+          /* Create border on each page using page-level styling */
+          html {
+            box-sizing: border-box;
+          }
+          
+          /* Each page should have its own border if template uses borders */
+          body > * {
+            page-break-after: auto;
           }
           
           /* Force page breaks for major sections if needed */
