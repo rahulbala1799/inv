@@ -23,5 +23,5 @@
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules", "design-assets", "figma-extract"]
+  "exclude": ["node_modules", "design-assets", "figma-extract", "temp_templates"]
 }

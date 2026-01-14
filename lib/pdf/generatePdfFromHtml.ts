@@ -1,26 +1,12 @@
 import puppeteer from 'puppeteer'
-import { renderToString } from 'react-dom/server'
-import InvoiceHTMLTemplate from './InvoiceHtmlTemplate'
 
 /**
  * Generates a PDF from HTML using Puppeteer
  * 
- * @param invoice - Invoice data object
- * @param items - Array of invoice items
- * @param branding - Organization branding data
- * @param template - Template configuration object
+ * @param htmlString - Pre-rendered HTML string
  * @returns PDF buffer
  */
-export async function generatePdfFromHtml(
-  invoice: any,
-  items: any[],
-  branding: any,
-  template: any
-): Promise<Buffer> {
-  // Render React component to HTML string
-  const htmlString = renderToString(
-    InvoiceHTMLTemplate({ invoice, items, branding, template })
-  )
+export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
   
   // Launch Puppeteer
   const browser = await puppeteer.launch({
@@ -39,8 +25,12 @@ export async function generatePdfFromHtml(
   try {
     const page = await browser.newPage()
     
-    // Set HTML content
-    await page.setContent(htmlString, {
+    // Set HTML content (ensure it starts with DOCTYPE if not already)
+    const fullHtml = htmlString.trim().startsWith('<!DOCTYPE') 
+      ? htmlString 
+      : '<!DOCTYPE html>' + htmlString
+    
+    await page.setContent(fullHtml, {
       waitUntil: 'networkidle0'
     })
     
@@ -77,12 +67,7 @@ let browserInstance: any = null
  * @param template - Template configuration object
  * @returns PDF buffer
  */
-export async function generatePdfFromHtmlCached(
-  invoice: any,
-  items: any[],
-  branding: any,
-  template: any
-): Promise<Buffer> {
+export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buffer> {
   // Initialize browser if not already done
   if (!browserInstance) {
     browserInstance = await puppeteer.launch({
@@ -102,13 +87,12 @@ export async function generatePdfFromHtmlCached(
   try {
     const page = await browserInstance.newPage()
     
-    // Render React component to HTML string
-    const htmlString = renderToString(
-      InvoiceHTMLTemplate({ invoice, items, branding, template })
-    )
+    // Set HTML content (ensure it starts with DOCTYPE if not already)
+    const fullHtml = htmlString.trim().startsWith('<!DOCTYPE') 
+      ? htmlString 
+      : '<!DOCTYPE html>' + htmlString
     
-    // Set HTML content
-    await page.setContent(htmlString, {
+    await page.setContent(fullHtml, {
       waitUntil: 'networkidle0'
     })
     

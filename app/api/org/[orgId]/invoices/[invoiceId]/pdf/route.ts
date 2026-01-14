@@ -120,19 +120,29 @@ export async function GET(
       templateLayout: template?.config_json?.layout || 'classic-blue',
     })
 
-    // Generate PDF from HTML using Puppeteer
-    const pdfBuffer = await generatePdfFromHtml(
-      invoice,
-      invoiceItems,
-      branding ? { ...branding, logoUrl } : null,
-      template || null
+    // Dynamically import React and rendering utilities (only at runtime)
+    const React = (await import('react')).default
+    const { renderToStaticMarkup } = await import('react-dom/server')
+    const InvoiceHTMLTemplate = (await import('@/lib/pdf/InvoiceHtmlTemplate')).default
+    
+    // Render React component to HTML string (server-only, runtime only)
+    const htmlString = '<!DOCTYPE html>' + renderToStaticMarkup(
+      React.createElement(InvoiceHTMLTemplate, {
+        invoice,
+        items: invoiceItems,
+        branding: branding ? { ...branding, logoUrl } : null,
+        template: template || null,
+      })
     )
+
+    // Generate PDF from HTML using Puppeteer
+    const pdfBuffer = await generatePdfFromHtml(htmlString)
 
     // Check if download is explicitly requested
     const { searchParams } = new URL(request.url)
     const isDownload = searchParams.get('download') === 'true'
 
-    return new NextResponse(pdfBuffer, {
+    return new NextResponse(pdfBuffer as any, {
       headers: {
         'Content-Type': 'application/pdf',
         'Content-Disposition': isDownload 
