@@ -43,7 +43,8 @@ function getTemplateStyles(template: any) {
       return {
         ...baseStyles,
         header: {
-          marginBottom: 20,
+          marginBottom: 25,
+          marginTop: 0,
           paddingBottom: 15,
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
@@ -67,16 +68,19 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 30,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 6,
+          paddingVertical: 8,
+          minHeight: 25,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           alignItems: 'flex-end',
         },
       }
@@ -85,7 +89,8 @@ function getTemplateStyles(template: any) {
       return {
         ...baseStyles,
         header: {
-          marginBottom: 30,
+          marginBottom: 25,
+          marginTop: 0,
           padding: 20,
           backgroundColor: config.headerBackground || '#ECFDF5',
           borderBottomWidth: 3,
@@ -108,17 +113,20 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 2,
           borderBottomColor: accentColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
+          paddingVertical: 12,
+          minHeight: 32,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#D1FAE5',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
           backgroundColor: 'transparent',
+          minHeight: 28,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           padding: 15,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
@@ -132,6 +140,7 @@ function getTemplateStyles(template: any) {
         ...baseStyles,
         header: {
           marginBottom: 25,
+          marginTop: 0,
           paddingBottom: 20,
           borderBottomWidth: 2,
           borderBottomColor: primaryColor,
@@ -153,16 +162,19 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: primaryColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 30,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 9,
+          minHeight: 26,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           padding: 12,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
@@ -175,7 +187,8 @@ function getTemplateStyles(template: any) {
       return {
         ...baseStyles,
         header: {
-          marginBottom: 30,
+          marginBottom: 25,
+          marginTop: 0,
         },
         title: {
           fontSize: 26,
@@ -194,21 +207,24 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: secondaryColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 30,
         },
         tableRow: {
           borderBottomWidth: 0.5,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 6,
+          paddingVertical: 8,
+          minHeight: 24,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           alignItems: 'flex-end',
           borderTopWidth: 1,
           borderTopColor: secondaryColor,
           borderTopStyle: 'solid',
-          paddingTop: 10,
+          paddingTop: 12,
         },
       }
     
@@ -217,6 +233,7 @@ function getTemplateStyles(template: any) {
         ...baseStyles,
         header: {
           marginBottom: 25,
+          marginTop: 0,
           padding: 15,
           backgroundColor: primaryColor,
         },
@@ -234,16 +251,19 @@ function getTemplateStyles(template: any) {
           backgroundColor: primaryColor,
           fontWeight: 'bold',
           color: '#FFFFFF',
-          paddingVertical: 10,
+          paddingVertical: 12,
+          minHeight: 32,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 28,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           padding: 15,
           backgroundColor: '#F3F4F6',
           borderWidth: 2,
@@ -256,7 +276,8 @@ function getTemplateStyles(template: any) {
       return {
         ...baseStyles,
         header: {
-          marginBottom: 30,
+          marginBottom: 25,
+          marginTop: 0,
         },
         title: {
           fontSize: 22,
@@ -274,16 +295,19 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 30,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#f0f0f0',
           borderBottomStyle: 'solid',
-          paddingVertical: 7,
+          paddingVertical: 9,
+          minHeight: 26,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           alignItems: 'flex-end',
         },
       }
@@ -292,7 +316,8 @@ function getTemplateStyles(template: any) {
       return {
         ...baseStyles,
         header: {
-          marginBottom: 30,
+          marginBottom: 25,
+          marginTop: 0,
           paddingBottom: 15,
           ...(config.headerBackground !== '#000000' && {
             borderBottomWidth: 2,
@@ -317,17 +342,20 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 10,
+          minHeight: 30,
           color: config.tableHeaderTextColor || textColor,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
+          paddingVertical: 9,
+          minHeight: 26,
         },
         totalSection: {
-          marginTop: 20,
+          marginTop: 30,
+          marginBottom: 20,
           padding: 12,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
@@ -418,7 +446,8 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
     title: templateStyles.title,
     companyName: templateStyles.companyName,
     section: {
-      marginBottom: 20,
+      marginBottom: 25,
+      marginTop: 10,
     },
     row: {
       flexDirection: 'row',
@@ -429,8 +458,8 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       fontWeight: 'bold',
     },
     table: {
-      marginTop: 20,
-      marginBottom: 20,
+      marginTop: 25,
+      marginBottom: 25,
       width: '100%',
     },
     tableRow: {
@@ -452,6 +481,8 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       ...templateStyles.totalSection,
       width: '100%',
       alignItems: 'flex-end',
+      marginTop: 30,
+      marginBottom: 20,
     },
     totalRow: {
       flexDirection: 'row',
@@ -464,8 +495,10 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       fontWeight: 'bold',
     },
     footer: {
-      marginTop: 40,
-      paddingTop: 20,
+      marginTop: 30,
+      marginBottom: 15,
+      paddingTop: 15,
+      paddingBottom: 10,
       borderTopWidth: 1,
       borderTopColor: '#e5e7eb',
       borderTopStyle: 'solid',
@@ -495,14 +528,17 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       alignItems: 'flex-end',
     },
     companyInfo: {
-      marginBottom: 15,
+      marginBottom: 20,
+      marginTop: 10,
     },
     customerInfo: {
-      marginBottom: 15,
+      marginBottom: 20,
+      marginTop: 10,
     },
     bankDetails: {
-      marginTop: 20,
-      padding: 10,
+      marginTop: 30,
+      marginBottom: 15,
+      padding: 12,
       backgroundColor: '#F9FAFB',
       fontSize: 10,
     },
@@ -519,13 +555,13 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       return (
         <View style={styles.header}>
           {hasLogo && (
-            <View style={{ alignItems: 'center', marginBottom: 10 }}>
+            <View style={{ alignItems: 'center', marginBottom: 15 }}>
               <Image src={logoUrl!} style={styles.logo} />
             </View>
           )}
           <View style={{ alignItems: 'center' }}>
-            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
-            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+            <Text style={[styles.title, { color: headerTextColor, lineHeight: 1.3 }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 6, color: headerTextColor, lineHeight: 1.4 }}>
               Invoice #{invoice.invoice_number}
             </Text>
           </View>
@@ -537,13 +573,13 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       return (
         <View style={[styles.header, styles.headerContent]}>
           <View style={styles.headerLeft}>
-            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
-            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+            <Text style={[styles.title, { color: headerTextColor, lineHeight: 1.3 }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 6, color: headerTextColor, lineHeight: 1.4 }}>
               Invoice #{invoice.invoice_number}
             </Text>
           </View>
           {hasLogo && (
-            <View style={styles.headerRight}>
+            <View style={[styles.headerRight, { marginLeft: 20 }]}>
               <Image src={logoUrl!} style={styles.logo} />
             </View>
           )}
@@ -560,9 +596,9 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
               <Image src={logoUrl!} style={styles.logo} />
             </View>
           )}
-          <View style={{ flex: 1, marginLeft: hasLogo ? 15 : 0 }}>
-            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
-            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+          <View style={{ flex: 1, marginLeft: hasLogo ? 20 : 0 }}>
+            <Text style={[styles.title, { color: headerTextColor, lineHeight: 1.3 }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 6, color: headerTextColor, lineHeight: 1.4 }}>
               Invoice #{invoice.invoice_number}
             </Text>
           </View>
@@ -577,69 +613,69 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         {renderHeader()}
 
         {/* Company Information */}
-        <View style={styles.section}>
+        <View style={[styles.section, { marginTop: 15 }]}>
           {branding ? (
             <View style={styles.companyInfo}>
-              <Text style={styles.companyName}>
+              <Text style={[styles.companyName, { lineHeight: 1.5 }]}>
                 {branding.business_name || 'Your Business'}
               </Text>
-              {branding.address_line1 && <Text>{branding.address_line1}</Text>}
-              {branding.address_line2 && <Text>{branding.address_line2}</Text>}
+              {branding.address_line1 && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.address_line1}</Text>}
+              {branding.address_line2 && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.address_line2}</Text>}
               {(branding.city || branding.postcode) && (
-                <Text>
+                <Text style={{ marginTop: 4, lineHeight: 1.4 }}>
                   {[branding.city, branding.postcode].filter(Boolean).join(' ')}
                 </Text>
               )}
-              {branding.country && <Text>{branding.country}</Text>}
+              {branding.country && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.country}</Text>}
               {branding.vat_number && (
-                <Text style={{ marginTop: 5 }}>VAT: {branding.vat_number}</Text>
+                <Text style={{ marginTop: 10, lineHeight: 1.4 }}>VAT: {branding.vat_number}</Text>
               )}
             </View>
           ) : (
             <View style={styles.companyInfo}>
               <Text style={styles.companyName}>Your Business</Text>
-              <Text style={{ fontSize: 10, color: '#666' }}>Please configure organization settings</Text>
+              <Text style={{ fontSize: 10, color: '#666', marginTop: 3 }}>Please configure organization settings</Text>
             </View>
           )}
         </View>
 
         {/* Invoice Details and Customer Info Side by Side */}
-        <View style={{ flexDirection: 'row', marginBottom: 20, width: '100%' }}>
+        <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: 25, width: '100%' }}>
           <View style={{ flex: 1, marginRight: 20 }}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Bill To:</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Bill To:</Text>
             {invoice.customers ? (
               <View>
-                <Text>{invoice.customers.name || 'No customer name'}</Text>
-                {invoice.customers.email && <Text>{invoice.customers.email}</Text>}
+                <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.name || 'No customer name'}</Text>
+                {invoice.customers.email && <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.email}</Text>}
                 {invoice.customers.address_line1 && (
-                  <Text>{invoice.customers.address_line1}</Text>
+                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.address_line1}</Text>
                 )}
                 {invoice.customers.address_line2 && (
-                  <Text>{invoice.customers.address_line2}</Text>
+                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.address_line2}</Text>
                 )}
                 {(invoice.customers.city || invoice.customers.postcode) && (
-                  <Text>
+                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>
                     {[invoice.customers.city, invoice.customers.postcode].filter(Boolean).join(' ')}
                   </Text>
                 )}
-                {invoice.customers.country && <Text>{invoice.customers.country}</Text>}
+                {invoice.customers.country && <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.country}</Text>}
                 {invoice.customers.vat_number && (
-                  <Text style={{ marginTop: 5 }}>VAT: {invoice.customers.vat_number}</Text>
+                  <Text style={{ marginTop: 10, lineHeight: 1.4 }}>VAT: {invoice.customers.vat_number}</Text>
                 )}
               </View>
             ) : (
-              <Text style={{ fontStyle: 'italic', color: '#666' }}>No customer selected</Text>
+              <Text style={{ fontStyle: 'italic', color: '#666', lineHeight: 1.4 }}>No customer selected</Text>
             )}
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
-            <View style={{ flexDirection: 'row', marginBottom: 5 }}>
-              <Text style={styles.label}>Issue Date:</Text>
-              <Text>{formatDate(invoice.issue_date)}</Text>
+            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
+              <Text style={[styles.label, { lineHeight: 1.4 }]}>Issue Date:</Text>
+              <Text style={{ lineHeight: 1.4 }}>{formatDate(invoice.issue_date)}</Text>
             </View>
             {invoice.due_date && (
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.label}>Due Date:</Text>
-                <Text>{formatDate(invoice.due_date)}</Text>
+                <Text style={[styles.label, { lineHeight: 1.4 }]}>Due Date:</Text>
+                <Text style={{ lineHeight: 1.4 }}>{formatDate(invoice.due_date)}</Text>
               </View>
             )}
           </View>
@@ -656,12 +692,13 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
               <>
                 <View style={[styles.tableRow, styles.tableHeader]}>
                   {tableColumns.map((col: any, idx: number) => (
-                    <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: idx === 0 ? 0 : 5 }}>
+                    <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: idx === 0 ? 5 : 5, justifyContent: 'center' }}>
                       <Text
                         style={{
                           textAlign: idx === 0 ? 'left' : 'right',
                           fontWeight: 'bold',
                           color: config.tableHeaderTextColor || config.textColor || '#000000',
+                          lineHeight: 1.4,
                         }}
                       >
                         {col.label}
@@ -687,10 +724,11 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
                         }
                         
                         return (
-                          <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: idx === 0 ? 0 : 5 }}>
+                          <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: 5, justifyContent: 'center' }}>
                             <Text
                               style={{
                                 textAlign: idx === 0 ? 'left' : 'right',
+                                lineHeight: 1.4,
                               }}
                             >
                               {value}
@@ -715,23 +753,23 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         {/* Totals */}
         <View style={styles.totals}>
           <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Subtotal:</Text>
-            <Text>{formatCurrency(Number(invoice.subtotal), invoice.currency)}</Text>
+            <Text style={[styles.totalLabel, { lineHeight: 1.5 }]}>Subtotal:</Text>
+            <Text style={{ lineHeight: 1.5 }}>{formatCurrency(Number(invoice.subtotal), invoice.currency)}</Text>
           </View>
           {config.showTaxBreakdown !== false && (
             <View style={styles.totalRow}>
-              <Text style={styles.totalLabel}>Tax:</Text>
-              <Text>{formatCurrency(Number(invoice.tax_total), invoice.currency)}</Text>
+              <Text style={[styles.totalLabel, { lineHeight: 1.5 }]}>Tax:</Text>
+              <Text style={{ lineHeight: 1.5 }}>{formatCurrency(Number(invoice.tax_total), invoice.currency)}</Text>
             </View>
           )}
           <View
             style={[
               styles.totalRow,
-              { borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', paddingTop: 5, marginTop: 5 },
+              { borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', paddingTop: 8, marginTop: 8 },
             ]}
           >
-            <Text style={[styles.totalLabel, { fontSize: 14 }]}>Total:</Text>
-            <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
+            <Text style={[styles.totalLabel, { fontSize: 14, lineHeight: 1.5 }]}>Total:</Text>
+            <Text style={{ fontSize: 14, fontWeight: 'bold', lineHeight: 1.5 }}>
               {formatCurrency(Number(invoice.total), invoice.currency)}
             </Text>
           </View>
@@ -739,24 +777,24 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
 
         {/* Bank Details and Contact Info - Two Column Layout if specified */}
         {config.footerLayout === 'two-column' && branding && (
-          <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
-            <View style={{ flex: 1, marginRight: 20 }}>
-              <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Contact Info:</Text>
-              {branding.email && <Text style={{ fontSize: 10 }}>Email: {branding.email}</Text>}
-              {branding.phone && <Text style={{ fontSize: 10 }}>Phone: {branding.phone}</Text>}
-              {branding.website && <Text style={{ fontSize: 10 }}>Website: {branding.website}</Text>}
+          <View style={{ marginTop: 40, marginBottom: 20, flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+            <View style={{ flex: 1, marginRight: 30, paddingRight: 10 }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 11 }}>Contact Info:</Text>
+              {branding.email && <Text style={{ fontSize: 10, marginBottom: 4 }}>Email: {branding.email}</Text>}
+              {branding.phone && <Text style={{ fontSize: 10, marginBottom: 4 }}>Phone: {branding.phone}</Text>}
+              {branding.website && <Text style={{ fontSize: 10, marginBottom: 4 }}>Website: {branding.website}</Text>}
             </View>
-            <View style={{ flex: 1 }}>
-              <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Payment Info:</Text>
-              {branding.bank_name && <Text style={{ fontSize: 10 }}>Bank Name: {branding.bank_name}</Text>}
+            <View style={{ flex: 1, paddingLeft: 10 }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 10, fontSize: 11 }}>Payment Info:</Text>
+              {branding.bank_name && <Text style={{ fontSize: 10, marginBottom: 4 }}>Bank Name: {branding.bank_name}</Text>}
               {branding.bank_account_number && (
-                <Text style={{ fontSize: 10 }}>Account No: {branding.bank_account_number}</Text>
+                <Text style={{ fontSize: 10, marginBottom: 4 }}>Account No: {branding.bank_account_number}</Text>
               )}
               {branding.bank_sort_code && (
-                <Text style={{ fontSize: 10 }}>Sort Code: {branding.bank_sort_code}</Text>
+                <Text style={{ fontSize: 10, marginBottom: 4 }}>Sort Code: {branding.bank_sort_code}</Text>
               )}
-              {branding.bank_iban && <Text style={{ fontSize: 10 }}>IBAN: {branding.bank_iban}</Text>}
-              {branding.bank_bic && <Text style={{ fontSize: 10 }}>BIC/SWIFT: {branding.bank_bic}</Text>}
+              {branding.bank_iban && <Text style={{ fontSize: 10, marginBottom: 4 }}>IBAN: {branding.bank_iban}</Text>}
+              {branding.bank_bic && <Text style={{ fontSize: 10, marginBottom: 4 }}>BIC/SWIFT: {branding.bank_bic}</Text>}
             </View>
           </View>
         )}
@@ -779,17 +817,17 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         
         {/* Signature Line */}
         {config.showSignatureLine && (
-          <View style={{ marginTop: 40, marginBottom: 20 }}>
-            <View style={{ borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', width: 200, marginBottom: 5 }} />
-            <Text style={{ fontSize: 10 }}>Signature</Text>
+          <View style={{ marginTop: 50, marginBottom: 25 }}>
+            <View style={{ borderTopWidth: 1, borderTopColor: '#000', borderTopStyle: 'solid', width: 200, marginBottom: 8 }} />
+            <Text style={{ fontSize: 10, lineHeight: 1.4 }}>Signature</Text>
           </View>
         )}
 
         {/* Notes */}
         {invoice.notes && (
           <View style={styles.footer}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Notes:</Text>
-            <Text>{invoice.notes}</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 8, lineHeight: 1.4 }}>Notes:</Text>
+            <Text style={{ lineHeight: 1.5 }}>{invoice.notes}</Text>
           </View>
         )}
       </Page>
