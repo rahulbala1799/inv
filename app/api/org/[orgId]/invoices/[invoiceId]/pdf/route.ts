@@ -3,6 +3,9 @@ import { verifyOrgMembership } from '@/lib/utils-server'
 import { NextResponse } from 'next/server'
 import { generatePdfFromHtml } from '@/lib/pdf/generatePdfFromHtml'
 
+// Set max duration for PDF generation (30 seconds)
+export const maxDuration = 30
+
 export async function GET(
   request: Request,
   { params }: { params: Promise<{ orgId: string; invoiceId: string }> }
