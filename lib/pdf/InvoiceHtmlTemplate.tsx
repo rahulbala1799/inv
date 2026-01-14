@@ -33,7 +33,7 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
         <style>{`
           @page {
             size: A4;
-            margin: 0;
+            /* Removed margin: 0 to let Puppeteer control margins */
           }
           
           * {
@@ -44,29 +44,19 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
           
           html, body {
             width: 100%;
-            min-height: 100vh;
             font-family: ${config.fontFamily || 'Helvetica, Arial, sans-serif'};
             background-color: white;
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
           }
           
-          /* Remove max-width constraints and shadows for PDF - target the actual template content */
-          body > div:first-of-type:not([data-invoice-number]) {
+          /* PDF page wrapper - avoids flex pagination weirdness */
+          .pdf-page {
             max-width: none !important;
             width: 100% !important;
             box-shadow: none !important;
             margin: 0 !important;
             padding: 20px 15mm !important;
-            min-height: calc(100vh - 30mm) !important;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-          }
-          
-          /* If content is short, expand footer to push to bottom */
-          body > div:first-of-type:not([data-invoice-number]) > div:last-child {
-            margin-top: auto;
           }
           
           /* Prevent word breaking in the middle */
@@ -82,9 +72,16 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             hyphens: auto;
           }
           
-          /* Page break rules - ensure content uses full pages */
+          /* Table description cells - better word breaking for long content */
+          td.description {
+            word-break: normal;
+            overflow-wrap: anywhere;
+          }
+          
+          /* Safer modern break rules - allow tables to break across pages */
           table {
-            page-break-inside: avoid;
+            break-inside: auto;
+            page-break-inside: auto;
             width: 100%;
             border-collapse: collapse;
           }
@@ -97,63 +94,50 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             display: table-footer-group;
           }
           
-          /* Prevent breaking table rows across pages */
+          /* Keep table rows together, but allow table to break */
           tr {
+            break-inside: avoid;
             page-break-inside: avoid;
+            break-after: auto;
             page-break-after: auto;
           }
           
-          /* Prevent breaking cells across pages */
-          td, th {
-            page-break-inside: avoid;
-          }
-          
-          /* Allow table to break if it's too long, but keep rows together */
+          /* Allow table body to break if it's too long */
           tbody {
+            break-inside: auto;
             page-break-inside: auto;
           }
           
           /* Keep header row with first data row */
           thead + tbody tr:first-child {
+            break-before: avoid;
             page-break-before: avoid;
           }
           
-          /* Prevent breaking sections awkwardly */
-          div {
-            orphans: 3;
-            widows: 3;
+          /* Only protect critical blocks from breaking */
+          .avoid-break {
+            break-inside: avoid;
+            page-break-inside: avoid;
           }
           
-          /* Prevent breaking paragraphs in the middle */
-          p {
+          /* Apply avoid-break to totals, bank details, signature blocks */
+          .totals,
+          .bank-details,
+          .signature-section,
+          .notes-section {
+            break-inside: avoid;
             page-break-inside: avoid;
-            orphans: 2;
-            widows: 2;
           }
           
           /* Force page breaks for major sections if needed */
           .page-break-before {
+            break-before: always;
             page-break-before: always;
           }
           
           .page-break-after {
+            break-after: always;
             page-break-after: always;
-          }
-          
-          .no-page-break {
-            page-break-inside: avoid;
-          }
-          
-          /* Ensure content expands to fill available space on single page */
-          body > div[data-invoice-number] > div {
-            display: flex;
-            flex-direction: column;
-          }
-          
-          /* Push footer to bottom on single page invoices */
-          body > div[data-invoice-number] > div > div:last-child {
-            margin-top: auto;
-            padding-top: 2rem;
           }
           
           /* Ensure images load properly */
@@ -172,6 +156,18 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
             * {
               box-shadow: none !important;
             }
+            
+            /* Avoid flex pagination weirdness in print */
+            .pdf-page {
+              display: block !important;
+              min-height: auto !important;
+            }
+            
+            /* Remove flex tricks that cause pagination issues */
+            body > div:first-of-type:not([data-invoice-number]) {
+              display: block !important;
+              min-height: auto !important;
+            }
           }
         `}</style>
       </head>
@@ -179,8 +175,10 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
         {/* Hidden data attributes for header/footer extraction - not visible in PDF */}
         <div data-invoice-number={`#${props.invoice.invoice_number}`} data-business-name={props.branding?.business_name || ''} style={{ display: 'none', visibility: 'hidden', height: 0, width: 0, overflow: 'hidden', position: 'absolute' }}>
         </div>
-        {/* Actual invoice content */}
-        {templateComponent}
+        {/* Actual invoice content - wrapped in pdf-page class to avoid flex pagination issues */}
+        <div className="pdf-page">
+          {templateComponent}
+        </div>
       </body>
     </html>
   )

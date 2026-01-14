@@ -192,13 +192,14 @@ export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
     })
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
+    // Increased top/bottom margins to accommodate header/footer without overlapping content
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '15mm',
+        top: '32mm',      // Increased to give header breathing room (was 15mm)
         right: '15mm',
-        bottom: '15mm',
+        bottom: '25mm',   // Increased to give footer space (was 15mm)
         left: '15mm'
       },
       displayHeaderFooter: true,
@@ -319,13 +320,14 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
     })
     
     // Generate PDF with proper A4 sizing, full page usage, and repeating headers/footers
+    // Increased top/bottom margins to accommodate header/footer without overlapping content
     const pdfBuffer = await page.pdf({
       format: 'A4',
       printBackground: true,
       margin: {
-        top: '15mm',
+        top: '32mm',      // Increased to give header breathing room (was 15mm)
         right: '15mm',
-        bottom: '15mm',
+        bottom: '25mm',   // Increased to give footer space (was 15mm)
         left: '15mm'
       },
       displayHeaderFooter: true,
