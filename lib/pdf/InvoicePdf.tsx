@@ -431,20 +431,34 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
     table: {
       marginTop: 20,
       marginBottom: 20,
+      width: '100%',
     },
-    tableRow: templateStyles.tableRow,
-    tableHeader: templateStyles.tableHeader,
-    tableCol1: { width: '40%' },
-    tableCol2: { width: '15%', textAlign: 'right' },
-    tableCol3: { width: '15%', textAlign: 'right' },
-    tableCol4: { width: '15%', textAlign: 'right' },
-    tableCol5: { width: '15%', textAlign: 'right' },
-    totals: templateStyles.totalSection,
+    tableRow: {
+      ...templateStyles.tableRow,
+      flexDirection: 'row',
+      width: '100%',
+    },
+    tableHeader: {
+      ...templateStyles.tableHeader,
+      flexDirection: 'row',
+      width: '100%',
+    },
+    tableCol1: { flex: 2, paddingRight: 5 },
+    tableCol2: { flex: 1, textAlign: 'right', paddingHorizontal: 5 },
+    tableCol3: { flex: 1, textAlign: 'right', paddingHorizontal: 5 },
+    tableCol4: { flex: 1, textAlign: 'right', paddingHorizontal: 5 },
+    tableCol5: { flex: 1, textAlign: 'right', paddingLeft: 5 },
+    totals: {
+      ...templateStyles.totalSection,
+      width: '100%',
+      alignItems: 'flex-end',
+    },
     totalRow: {
       flexDirection: 'row',
-      width: 200,
+      width: 250,
       justifyContent: 'space-between',
       marginBottom: 5,
+      paddingHorizontal: 5,
     },
     totalLabel: {
       fontWeight: 'bold',
@@ -564,7 +578,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
 
         {/* Company Information */}
         <View style={styles.section}>
-          {branding && (
+          {branding ? (
             <View style={styles.companyInfo}>
               <Text style={styles.companyName}>
                 {branding.business_name || 'Your Business'}
@@ -573,7 +587,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
               {branding.address_line2 && <Text>{branding.address_line2}</Text>}
               {(branding.city || branding.postcode) && (
                 <Text>
-                  {branding.city} {branding.postcode}
+                  {[branding.city, branding.postcode].filter(Boolean).join(' ')}
                 </Text>
               )}
               {branding.country && <Text>{branding.country}</Text>}
@@ -581,38 +595,49 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
                 <Text style={{ marginTop: 5 }}>VAT: {branding.vat_number}</Text>
               )}
             </View>
+          ) : (
+            <View style={styles.companyInfo}>
+              <Text style={styles.companyName}>Your Business</Text>
+              <Text style={{ fontSize: 10, color: '#666' }}>Please configure organization settings</Text>
+            </View>
           )}
         </View>
 
         {/* Invoice Details and Customer Info Side by Side */}
-        <View style={[styles.row, { marginBottom: 20 }]}>
-          <View style={{ flex: 1 }}>
+        <View style={{ flexDirection: 'row', marginBottom: 20, width: '100%' }}>
+          <View style={{ flex: 1, marginRight: 20 }}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Bill To:</Text>
-            {invoice.customers && (
+            {invoice.customers ? (
               <View>
-                <Text>{invoice.customers.name}</Text>
+                <Text>{invoice.customers.name || 'No customer name'}</Text>
                 {invoice.customers.email && <Text>{invoice.customers.email}</Text>}
                 {invoice.customers.address_line1 && (
                   <Text>{invoice.customers.address_line1}</Text>
                 )}
-                {invoice.customers.city && (
+                {invoice.customers.address_line2 && (
+                  <Text>{invoice.customers.address_line2}</Text>
+                )}
+                {(invoice.customers.city || invoice.customers.postcode) && (
                   <Text>
-                    {invoice.customers.city} {invoice.customers.postcode}
+                    {[invoice.customers.city, invoice.customers.postcode].filter(Boolean).join(' ')}
                   </Text>
                 )}
+                {invoice.customers.country && <Text>{invoice.customers.country}</Text>}
                 {invoice.customers.vat_number && (
                   <Text style={{ marginTop: 5 }}>VAT: {invoice.customers.vat_number}</Text>
                 )}
               </View>
+            ) : (
+              <Text style={{ fontStyle: 'italic', color: '#666' }}>No customer selected</Text>
             )}
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
-            <View style={styles.row}>
+            <View style={{ flexDirection: 'row', marginBottom: 5 }}>
               <Text style={styles.label}>Issue Date:</Text>
               <Text>{formatDate(invoice.issue_date)}</Text>
             </View>
             {invoice.due_date && (
-              <View style={styles.row}>
+              <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.label}>Due Date:</Text>
                 <Text>{formatDate(invoice.due_date)}</Text>
               </View>
@@ -624,55 +649,64 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         <View style={styles.table}>
           {(() => {
             const tableColumns = getTableColumns(config)
-            const colWidths = ['40%', '15%', '15%', '15%', '15%']
+            // Use flex values: description gets more space (flex: 2), others get equal (flex: 1)
+            const colFlex = [2, 1, 1, 1, 1]
             
             return (
               <>
                 <View style={[styles.tableRow, styles.tableHeader]}>
                   {tableColumns.map((col: any, idx: number) => (
-                    <Text
-                      key={idx}
-                      style={{
-                        width: colWidths[idx] || '15%',
-                        textAlign: idx === 0 ? 'left' : 'right',
-                        fontWeight: 'bold',
-                        color: config.tableHeaderTextColor || config.textColor || '#000000',
-                      }}
-                    >
-                      {col.label}
-                    </Text>
+                    <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: idx === 0 ? 0 : 5 }}>
+                      <Text
+                        style={{
+                          textAlign: idx === 0 ? 'left' : 'right',
+                          fontWeight: 'bold',
+                          color: config.tableHeaderTextColor || config.textColor || '#000000',
+                        }}
+                      >
+                        {col.label}
+                      </Text>
+                    </View>
                   ))}
                 </View>
-                {items.map((item: any, index: number) => (
-                  <View key={index} style={styles.tableRow}>
-                    {tableColumns.map((col: any, idx: number) => {
-                      let value: string = ''
-                      if (col.field === 'description') {
-                        value = item.description
-                      } else if (col.field === 'quantity') {
-                        value = item.quantity.toString()
-                      } else if (col.field === 'unit_price') {
-                        value = formatCurrency(Number(item.unit_price), invoice.currency)
-                      } else if (col.field === 'tax_rate') {
-                        value = `${item.tax_rate}%`
-                      } else if (col.field === 'line_total') {
-                        value = formatCurrency(Number(item.line_total), invoice.currency)
-                      }
-                      
-                      return (
-                        <Text
-                          key={idx}
-                          style={{
-                            width: colWidths[idx] || '15%',
-                            textAlign: idx === 0 ? 'left' : 'right',
-                          }}
-                        >
-                          {value}
-                        </Text>
-                      )
-                    })}
+                {items && items.length > 0 ? (
+                  items.map((item: any, index: number) => (
+                    <View key={index} style={styles.tableRow}>
+                      {tableColumns.map((col: any, idx: number) => {
+                        let value: string = ''
+                        if (col.field === 'description') {
+                          value = item.description || ''
+                        } else if (col.field === 'quantity') {
+                          value = item.quantity ? item.quantity.toString() : '0'
+                        } else if (col.field === 'unit_price') {
+                          value = formatCurrency(Number(item.unit_price || 0), invoice.currency)
+                        } else if (col.field === 'tax_rate') {
+                          value = `${item.tax_rate || 0}%`
+                        } else if (col.field === 'line_total') {
+                          value = formatCurrency(Number(item.line_total || 0), invoice.currency)
+                        }
+                        
+                        return (
+                          <View key={idx} style={{ flex: colFlex[idx] || 1, paddingHorizontal: idx === 0 ? 0 : 5 }}>
+                            <Text
+                              style={{
+                                textAlign: idx === 0 ? 'left' : 'right',
+                              }}
+                            >
+                              {value}
+                            </Text>
+                          </View>
+                        )
+                      })}
+                    </View>
+                  ))
+                ) : (
+                  <View style={styles.tableRow}>
+                    <View style={{ flex: 1 }}>
+                      <Text style={{ fontStyle: 'italic', color: '#666' }}>No items</Text>
+                    </View>
                   </View>
-                ))}
+                )}
               </>
             )
           })()}

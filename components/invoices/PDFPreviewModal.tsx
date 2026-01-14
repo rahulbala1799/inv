@@ -70,8 +70,8 @@ export default function PDFPreviewModal({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-6xl max-h-[95vh] overflow-hidden flex flex-col">
-        <DialogHeader>
+      <DialogContent className="max-w-6xl h-[95vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b">
           <div className="flex items-center justify-between">
             <div>
               <DialogTitle>PDF Preview</DialogTitle>
@@ -121,20 +121,28 @@ export default function PDFPreviewModal({
           </div>
         </DialogHeader>
 
-        <div className="flex-1 overflow-hidden mt-4">
+        <div className="flex-1 overflow-auto p-6 min-h-0">
           {isLoading ? (
-            <div className="flex items-center justify-center h-full">
+            <div className="flex items-center justify-center h-full min-h-[600px]">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
                 <p className="text-gray-600">Loading preview...</p>
               </div>
             </div>
           ) : (
-            <iframe
-              src={pdfUrl}
-              className="w-full h-full border border-gray-200 rounded-lg"
-              title="PDF Preview"
-            />
+            <div className="w-full flex justify-center">
+              <iframe
+                src={pdfUrl}
+                className="border border-gray-200 rounded-lg shadow-sm"
+                style={{ 
+                  height: 'calc(95vh - 220px)', // Account for header and padding
+                  minHeight: '1123px', // A4 page height (297mm at 96 DPI)
+                  width: '100%',
+                  maxWidth: '794px' // A4 width (210mm at 96 DPI)
+                }}
+                title="PDF Preview"
+              />
+            </div>
           )}
         </div>
       </DialogContent>

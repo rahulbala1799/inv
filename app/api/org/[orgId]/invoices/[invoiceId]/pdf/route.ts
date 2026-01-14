@@ -108,10 +108,22 @@ export async function GET(
 
   // Generate PDF
   try {
+    // Ensure items is an array
+    const invoiceItems = items && Array.isArray(items) ? items : []
+    
+    // Log for debugging (remove in production if needed)
+    console.log('PDF Generation:', {
+      invoiceId,
+      itemsCount: invoiceItems.length,
+      hasBranding: !!branding,
+      hasTemplate: !!template,
+      hasCustomer: !!invoice.customers,
+    })
+
     const pdfStream = await renderToStream(
       InvoicePDF({
         invoice,
-        items: items || [],
+        items: invoiceItems,
         branding: branding ? { ...branding, logoUrl } : null,
         template: template || null,
       })
