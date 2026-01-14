@@ -37,6 +37,11 @@ export async function updateBranding(formData: FormData) {
     country: formData.get('country') as string || null,
     logo_storage_path: formData.get('logo_storage_path') as string || null,
     default_currency: formData.get('default_currency') as string || 'EUR',
+    bank_name: formData.get('bank_name') as string || null,
+    bank_account_number: formData.get('bank_account_number') as string || null,
+    bank_sort_code: formData.get('bank_sort_code') as string || null,
+    bank_iban: formData.get('bank_iban') as string || null,
+    bank_bic: formData.get('bank_bic') as string || null,
   }
 
   if (existing) {

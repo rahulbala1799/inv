@@ -18,6 +18,11 @@ interface OrganizationSettingsFormProps {
     country?: string | null
     logo_storage_path?: string | null
     default_currency?: string | null
+    bank_name?: string | null
+    bank_account_number?: string | null
+    bank_sort_code?: string | null
+    bank_iban?: string | null
+    bank_bic?: string | null
   } | null
   logoUrl: string | null
 }
@@ -184,6 +189,88 @@ export default function OrganizationSettingsForm({
           <option value="USD">USD</option>
           <option value="GBP">GBP</option>
         </select>
+      </div>
+
+      {/* Bank Details Section */}
+      <div className="pt-6 border-t border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Bank Details</h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Bank information that will appear on invoices for payment
+        </p>
+        
+        <div className="space-y-4">
+          <div>
+            <label htmlFor="bank_name" className="block text-sm font-medium text-gray-700 mb-2">
+              Bank Name
+            </label>
+            <input
+              type="text"
+              id="bank_name"
+              name="bank_name"
+              defaultValue={branding?.bank_name || ''}
+              placeholder="Bank name"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            />
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="bank_account_number" className="block text-sm font-medium text-gray-700 mb-2">
+                Account Number
+              </label>
+              <input
+                type="text"
+                id="bank_account_number"
+                name="bank_account_number"
+                defaultValue={branding?.bank_account_number || ''}
+                placeholder="Account number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label htmlFor="bank_sort_code" className="block text-sm font-medium text-gray-700 mb-2">
+                Sort Code
+              </label>
+              <input
+                type="text"
+                id="bank_sort_code"
+                name="bank_sort_code"
+                defaultValue={branding?.bank_sort_code || ''}
+                placeholder="Sort code"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div>
+              <label htmlFor="bank_iban" className="block text-sm font-medium text-gray-700 mb-2">
+                IBAN
+              </label>
+              <input
+                type="text"
+                id="bank_iban"
+                name="bank_iban"
+                defaultValue={branding?.bank_iban || ''}
+                placeholder="IBAN"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+            <div>
+              <label htmlFor="bank_bic" className="block text-sm font-medium text-gray-700 mb-2">
+                BIC / SWIFT Code
+              </label>
+              <input
+                type="text"
+                id="bank_bic"
+                name="bank_bic"
+                defaultValue={branding?.bank_bic || ''}
+                placeholder="BIC / SWIFT"
+                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+              />
+            </div>
+          </div>
+        </div>
       </div>
 
       <div className="pt-4 border-t border-gray-200">

@@ -74,6 +74,11 @@ interface OrgBranding {
   country?: string | null;
   logo_storage_path?: string | null;
   default_currency?: string | null;
+  bank_name?: string | null;
+  bank_account_number?: string | null;
+  bank_sort_code?: string | null;
+  bank_iban?: string | null;
+  bank_bic?: string | null;
 }
 
 type SaveStatus = "idle" | "saving" | "saved";
@@ -139,6 +144,16 @@ export default function WYSIWYGInvoiceEditor({
   const companyPostcode = branding?.postcode || "";
   const companyCountry = branding?.country || "";
   const companyVat = branding?.vat_number || "";
+  
+  // Bank details from branding
+  const bankName = branding?.bank_name || "";
+  const bankAccountNumber = branding?.bank_account_number || "";
+  const bankSortCode = branding?.bank_sort_code || "";
+  const bankIban = branding?.bank_iban || "";
+  const bankBic = branding?.bank_bic || "";
+  
+  // Check if any bank details exist
+  const hasBankDetails = bankName || bankAccountNumber || bankSortCode || bankIban || bankBic;
   
   // Get logo URL if exists
   const [logoUrl, setLogoUrl] = useState<string | null>(null);
@@ -758,6 +773,45 @@ export default function WYSIWYGInvoiceEditor({
               </div>
             </div>
           </div>
+
+          {/* Bank Details */}
+          {hasBankDetails && (
+            <div className="border-t border-gray-200 pt-6 mb-6">
+              <div className="text-sm font-semibold text-gray-900 mb-3">Payment Details:</div>
+              <div className="text-sm text-gray-700 space-y-1">
+                {bankName && (
+                  <div>
+                    <span className="font-medium">Bank:</span> {bankName}
+                  </div>
+                )}
+                {bankAccountNumber && bankSortCode && (
+                  <div>
+                    <span className="font-medium">Account:</span> {bankAccountNumber} | <span className="font-medium">Sort Code:</span> {bankSortCode}
+                  </div>
+                )}
+                {bankAccountNumber && !bankSortCode && (
+                  <div>
+                    <span className="font-medium">Account Number:</span> {bankAccountNumber}
+                  </div>
+                )}
+                {!bankAccountNumber && bankSortCode && (
+                  <div>
+                    <span className="font-medium">Sort Code:</span> {bankSortCode}
+                  </div>
+                )}
+                {bankIban && (
+                  <div>
+                    <span className="font-medium">IBAN:</span> {bankIban}
+                  </div>
+                )}
+                {bankBic && (
+                  <div>
+                    <span className="font-medium">BIC/SWIFT:</span> {bankBic}
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
 
           {/* Notes */}
           <div className="border-t border-gray-200 pt-6">
