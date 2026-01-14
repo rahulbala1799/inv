@@ -1,5 +1,14 @@
 import puppeteer from 'puppeteer-core'
-import chromium from '@sparticuz/chromium'
+
+// Dynamically import chromium to avoid build-time issues
+let chromium: any = null
+async function getChromium() {
+  if (!chromium && isServerless()) {
+    chromium = await import('@sparticuz/chromium-min')
+    return chromium.default || chromium
+  }
+  return chromium
+}
 
 /**
  * Detects if we're in a serverless environment (Vercel, AWS Lambda, etc.)
@@ -18,8 +27,39 @@ function isServerless(): boolean {
  */
 async function getChromeExecutablePath(): Promise<string | undefined> {
   if (isServerless()) {
-    // Use Chromium for serverless
-    return await chromium.executablePath()
+    try {
+      const chromiumModule = await getChromium()
+      if (!chromiumModule) {
+        throw new Error('Could not load @sparticuz/chromium-min module')
+      }
+      
+      // Option 1: Use remote Chromium binary if configured (recommended for Vercel)
+      if (process.env.CHROMIUM_REMOTE_EXEC_PATH) {
+        console.log('Using remote Chromium binary from:', process.env.CHROMIUM_REMOTE_EXEC_PATH)
+        return await chromiumModule.executablePath(process.env.CHROMIUM_REMOTE_EXEC_PATH)
+      }
+      
+      // Option 2: Try to get executable path
+      // Note: This may fail in Vercel if Chromium can't be extracted
+      // For Vercel, it's recommended to use CHROMIUM_REMOTE_EXEC_PATH
+      const executablePath = await chromiumModule.executablePath()
+      
+      if (!executablePath) {
+        throw new Error('Chromium executable path is null or undefined')
+      }
+      
+      return executablePath
+    } catch (error) {
+      console.error('Failed to get Chromium executable path:', error)
+      
+      // Provide helpful error message with solutions
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error'
+      throw new Error(
+        `Could not locate Chromium executable in serverless environment: ${errorMessage}. ` +
+        `SOLUTION: Set CHROMIUM_REMOTE_EXEC_PATH environment variable in Vercel to a hosted Chromium binary URL. ` +
+        `See SERVERLESS_PUPPETEER_SETUP.md for instructions.`
+      )
+    }
   }
   // For local development, use system Chrome or let Puppeteer find it
   return undefined
@@ -28,10 +68,20 @@ async function getChromeExecutablePath(): Promise<string | undefined> {
 /**
  * Gets Chrome launch arguments based on environment
  */
-function getChromeArgs(): string[] {
+async function getChromeArgs(): Promise<string[]> {
   if (isServerless()) {
     // Use Chromium args for serverless
-    return chromium.args
+    const chromiumModule = await getChromium()
+    return chromiumModule?.args || [
+      '--no-sandbox',
+      '--disable-setuid-sandbox',
+      '--disable-dev-shm-usage',
+      '--disable-accelerated-2d-canvas',
+      '--no-first-run',
+      '--no-zygote',
+      '--disable-gpu',
+      '--single-process'
+    ]
   }
   // Local development args
   return [
@@ -54,13 +104,15 @@ function getChromeArgs(): string[] {
 export async function generatePdfFromHtml(htmlString: string): Promise<Buffer> {
   // Launch Puppeteer with environment-appropriate settings
   const launchOptions: any = {
-    args: getChromeArgs(),
-    headless: isServerless() ? chromium.headless : true,
+    args: await getChromeArgs(),
+    headless: true,
   }
   
   // Only set executablePath in serverless environments
   if (isServerless()) {
+    const chromiumModule = await getChromium()
     launchOptions.executablePath = await getChromeExecutablePath()
+    launchOptions.headless = chromiumModule?.headless ?? true
   }
   
   const browser = await puppeteer.launch(launchOptions)
@@ -114,13 +166,15 @@ export async function generatePdfFromHtmlCached(htmlString: string): Promise<Buf
   // Initialize browser if not already done
   if (!browserInstance) {
     const launchOptions: any = {
-      args: getChromeArgs(),
-      headless: isServerless() ? chromium.headless : true,
+      args: await getChromeArgs(),
+      headless: true,
     }
     
     // Only set executablePath in serverless environments
     if (isServerless()) {
+      const chromiumModule = await getChromium()
       launchOptions.executablePath = await getChromeExecutablePath()
+      launchOptions.headless = chromiumModule?.headless ?? true
     }
     
     browserInstance = await puppeteer.launch(launchOptions)

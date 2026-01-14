@@ -1,8 +1,9 @@
 # Serverless Puppeteer Setup
 
-## Issue Fixed
+## Issues Fixed
 
-The error "Could not find Chrome" occurs in serverless environments (Vercel, AWS Lambda) because Puppeteer can't download Chrome automatically.
+1. **"Could not find Chrome"** - Fixed by using `puppeteer-core` with `@sparticuz/chromium-min`
+2. **"The input directory does not exist"** - Requires hosted Chromium binary for Vercel (see solution below)
 
 ## Solution
 
@@ -34,10 +35,43 @@ If you have Chrome installed system-wide, the code will automatically use it.
 
 ## Serverless Deployment
 
-The code automatically works in serverless environments:
-- ✅ Vercel - Automatically detected and uses Chromium
-- ✅ AWS Lambda - Automatically detected and uses Chromium
-- ✅ Other serverless platforms - Should work if they set environment variables
+### For Vercel (Recommended Solution)
+
+**Vercel requires a hosted Chromium binary** because the file system is read-only and Chromium cannot be extracted locally.
+
+#### Step 1: Host Chromium Binary
+
+You have two options:
+
+**Option A: Use Public Chromium Binary (Easiest)**
+- Use a pre-hosted Chromium binary from a CDN
+- Example: `https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar`
+
+**Option B: Host Your Own**
+1. Download Chromium from [Sparticuz releases](https://github.com/Sparticuz/chromium/releases)
+2. Upload to a public storage (S3, Cloudflare R2, etc.)
+3. Get the public URL
+
+#### Step 2: Set Environment Variable in Vercel
+
+1. Go to your Vercel project settings
+2. Navigate to **Environment Variables**
+3. Add a new variable:
+   - **Name**: `CHROMIUM_REMOTE_EXEC_PATH`
+   - **Value**: URL to your hosted Chromium binary (e.g., `https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar`)
+   - **Environment**: Production, Preview, Development (select all)
+
+#### Step 3: Redeploy
+
+After setting the environment variable, redeploy your application.
+
+### For AWS Lambda
+
+AWS Lambda works better with `@sparticuz/chromium` (not min). The code should automatically detect and use Chromium.
+
+### For Other Serverless Platforms
+
+The code automatically detects serverless environments and uses Chromium if available.
 
 ## Environment Detection
 
@@ -57,15 +91,31 @@ npx puppeteer browsers install chrome
 ```
 
 **In Serverless:**
-- The code should automatically use `@sparticuz/chromium`
-- If it still fails, check that `@sparticuz/chromium` is installed
+- The code should automatically use `@sparticuz/chromium-min`
+- If it still fails, check that `@sparticuz/chromium-min` is installed
 - Verify environment variables are set correctly
+
+### Error: "The input directory does not exist" (Vercel)
+
+This error occurs because Vercel's file system is read-only and Chromium cannot be extracted.
+
+**Solution:**
+1. Set `CHROMIUM_REMOTE_EXEC_PATH` environment variable in Vercel
+2. Point it to a hosted Chromium binary URL
+3. Redeploy your application
+
+**Quick Fix:**
+```bash
+# In Vercel dashboard, add environment variable:
+CHROMIUM_REMOTE_EXEC_PATH=https://github.com/Sparticuz/chromium/releases/download/v133.0.0/chromium-v133.0.0-pack.tar
+```
 
 ### Error: "Chromium executable not found"
 
-1. Check that `@sparticuz/chromium` is in `package.json`
-2. Verify the package is installed: `npm list @sparticuz/chromium`
-3. Check serverless environment variables are set
+1. Check that `@sparticuz/chromium-min` is in `package.json`
+2. Verify the package is installed: `npm list @sparticuz/chromium-min`
+3. For Vercel: Ensure `CHROMIUM_REMOTE_EXEC_PATH` is set
+4. Check serverless environment variables are set correctly
 
 ## Package Changes
 
