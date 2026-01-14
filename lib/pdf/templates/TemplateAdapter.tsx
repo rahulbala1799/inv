@@ -4,8 +4,7 @@ import { ClassicBlue } from './ClassicBlue'
 import { ModernMinimal } from './ModernMinimal'
 import { BaseTemplate } from './BaseTemplate'
 
-// Import remaining templates (will be converted in Phase 3)
-// For now, they'll use BaseTemplate as fallback
+// Import all original templates (all fully converted)
 import { CorporateElegant } from './CorporateElegant'
 import { CreativeBold } from './CreativeBold'
 import { SimpleBlackWhite } from './SimpleBlackWhite'
@@ -40,15 +39,15 @@ const templateMap: Record<string, TemplateComponent> = {
   'classic-blue': ClassicBlue,
   'modern-minimal': ModernMinimal,
   
-  // Templates using BaseTemplate temporarily (to be converted in Phase 3)
-  'corporate-elegant': BaseTemplate, // TODO: Convert CorporateElegant
-  'creative-bold': BaseTemplate, // TODO: Convert CreativeBold
-  'simple-bw': BaseTemplate, // TODO: Convert SimpleBlackWhite
-  'gradient-modern': BaseTemplate, // TODO: Convert GradientModern
-  'professional-gray': BaseTemplate, // TODO: Convert ProfessionalGray
-  'vibrant-purple': BaseTemplate, // TODO: Convert VibrantPurple
-  'clean-green': BaseTemplate, // TODO: Convert CleanGreen
-  'luxury-gold': BaseTemplate, // TODO: Convert LuxuryGold,
+  // Fully converted templates
+  'corporate-elegant': CorporateElegant,
+  'creative-bold': CreativeBold,
+  'simple-bw': SimpleBlackWhite,
+  'gradient-modern': GradientModern,
+  'professional-gray': ProfessionalGray,
+  'vibrant-purple': VibrantPurple,
+  'clean-green': CleanGreen,
+  'luxury-gold': LuxuryGold,
   
   // New tech-themed templates (all fully converted with dynamic data)
   'tech-minimal': TechMinimal,
@@ -65,11 +64,11 @@ const templateMap: Record<string, TemplateComponent> = {
   // Legacy mappings (from old template system)
   'classic': ClassicBlue,
   'minimal': ModernMinimal,
-  'elegant': BaseTemplate,
-  'bold': BaseTemplate,
-  'clean': BaseTemplate,
-  'modern': BaseTemplate,
-  'professional': BaseTemplate,
+  'elegant': CorporateElegant,
+  'bold': CreativeBold,
+  'clean': CleanGreen,
+  'modern': GradientModern,
+  'professional': ProfessionalGray,
 }
 
 /**
