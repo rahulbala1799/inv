@@ -472,18 +472,6 @@ export default function WYSIWYGInvoiceEditor({
     items.length > 0 ? items[0]?.unit_price : undefined,
   ]);
 
-  // Guard clause: ensure invoice exists (after all hooks)
-  if (!invoice) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-          <div className="text-center">
-          <h2 className="text-xl font-semibold text-gray-900 mb-2">Invoice not found</h2>
-          <p className="text-gray-600">The invoice you&apos;re looking for doesn&apos;t exist.</p>
-        </div>
-      </div>
-    );
-  }
-
   const currency = invoice?.currency || branding?.default_currency || "EUR";
 
   // Handle template selection
@@ -509,12 +497,32 @@ export default function WYSIWYGInvoiceEditor({
 
   // Handle PDF generation with selected template
   const handleGeneratePDF = async (templateId: string) => {
-    // Update invoice with template first
-    await handleSelectTemplate(templateId);
-    // Small delay to ensure invoice is updated, then open PDF
-    setTimeout(() => {
-      window.open(`/api/org/${orgId}/invoices/${invoice.id}/pdf`, '_blank');
-    }, 300);
+    try {
+      // Update invoice with template first
+      const response = await fetch(`/api/org/${orgId}/invoices/${invoice?.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+          invoice: { ...invoice, template_id: templateId },
+          items 
+        }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setInvoice(data.invoice);
+        // Open PDF with template_id in URL to ensure it's used
+        window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
+      } else {
+        console.error('Failed to update invoice with template');
+        // Still try to open PDF with template in query param
+        window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
+      }
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      // Fallback: open PDF with template in query param
+      window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
+    }
   };
 
   return (

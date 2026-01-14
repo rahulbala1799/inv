@@ -51,15 +51,36 @@ export async function GET(
     .eq('org_id', orgId)
     .single()
 
-  // Fetch template if specified
+  // Fetch template if specified (check both invoice.template_id and query param)
+  const { searchParams } = new URL(request.url)
+  const templateIdFromQuery = searchParams.get('template')
+  const templateId = templateIdFromQuery || invoice.template_id
+  
   let template = null
-  if (invoice.template_id) {
+  if (templateId) {
     const { data: templateData } = await supabase
       .from('invoice_templates')
       .select('*')
-      .eq('id', invoice.template_id)
+      .eq('id', templateId)
       .single()
     template = templateData
+    
+    // If template was passed via query param but not saved to invoice, save it
+    if (templateData && templateIdFromQuery && !invoice.template_id) {
+      await supabase
+        .from('invoices')
+        .update({ template_id: templateId })
+        .eq('id', invoiceId)
+    }
+  } else {
+    // If no template specified, use default template
+    const { data: defaultTemplate } = await supabase
+      .from('invoice_templates')
+      .select('*')
+      .or(`org_id.is.null,org_id.eq.${orgId}`)
+      .eq('is_default', true)
+      .single()
+    template = defaultTemplate
   }
 
   // Get logo URL if available
