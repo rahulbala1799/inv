@@ -110,10 +110,17 @@ export async function GET(
 
     const pdfBuffer = Buffer.concat(chunks)
 
+    // Check if this is a preview request (from iframe) or download request
+    const referer = request.headers.get('referer') || ''
+    const isPreview = referer.includes('/app/org/') || request.headers.get('sec-fetch-dest') === 'iframe'
+
     return new NextResponse(pdfBuffer, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': `attachment; filename="invoice-${invoice.invoice_number}.pdf"`,
+        'Content-Disposition': isPreview 
+          ? `inline; filename="invoice-${invoice.invoice_number}.pdf"`
+          : `attachment; filename="invoice-${invoice.invoice_number}.pdf"`,
+        'X-Content-Type-Options': 'nosniff',
       },
     })
   } catch (error) {

@@ -15,6 +15,7 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Plus, X, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import TemplateSelectionModal from "@/components/invoices/TemplateSelectionModal";
+import PDFPreviewModal from "@/components/invoices/PDFPreviewModal";
 
 interface InvoiceItem {
   id?: string;
@@ -133,6 +134,7 @@ export default function WYSIWYGInvoiceEditor({
     invoice?.customer_id ? customers.find((c) => c.id === invoice?.customer_id) || null : null
   );
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
+  const [previewModalOpen, setPreviewModalOpen] = useState(false);
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -495,10 +497,10 @@ export default function WYSIWYGInvoiceEditor({
     }
   };
 
-  // Handle PDF generation with selected template
-  const handleGeneratePDF = async (templateId: string) => {
+  // Handle template selection - save to invoice and show preview
+  const handleTemplateSelected = async (templateId: string) => {
     try {
-      // Update invoice with template first
+      // Update invoice with template
       const response = await fetch(`/api/org/${orgId}/invoices/${invoice?.id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -511,18 +513,19 @@ export default function WYSIWYGInvoiceEditor({
       if (response.ok) {
         const data = await response.json();
         setInvoice(data.invoice);
-        // Open PDF with template_id in URL to ensure it's used
-        window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
-      } else {
-        console.error('Failed to update invoice with template');
-        // Still try to open PDF with template in query param
-        window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
       }
     } catch (error) {
-      console.error('Error generating PDF:', error);
-      // Fallback: open PDF with template in query param
-      window.open(`/api/org/${orgId}/invoices/${invoice?.id}/pdf?template=${templateId}`, '_blank');
+      console.error('Error updating template:', error);
     }
+  };
+
+  // Handle PDF preview - show preview modal instead of downloading
+  const handleGeneratePDF = async (templateId: string) => {
+    // Save template first
+    await handleTemplateSelected(templateId);
+    // Close template selection modal and open preview
+    setTemplateModalOpen(false);
+    setPreviewModalOpen(true);
   };
 
   return (
@@ -555,7 +558,7 @@ export default function WYSIWYGInvoiceEditor({
               Generate PDF
             </Button>
             <select
-              value={invoice.status}
+              value={invoice?.status || "DRAFT"}
               onChange={(e) => updateInvoice({ status: e.target.value })}
               className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 text-sm"
             >
@@ -895,9 +898,20 @@ export default function WYSIWYGInvoiceEditor({
         open={templateModalOpen}
         onOpenChange={setTemplateModalOpen}
         templates={templates}
-        selectedTemplateId={invoice.template_id}
+        selectedTemplateId={invoice?.template_id}
         onSelectTemplate={handleSelectTemplate}
         onGeneratePDF={handleGeneratePDF}
+      />
+
+      {/* PDF Preview Modal */}
+      <PDFPreviewModal
+        open={previewModalOpen}
+        onOpenChange={setPreviewModalOpen}
+        templates={templates}
+        selectedTemplateId={invoice?.template_id}
+        invoiceId={invoice?.id || ''}
+        orgId={orgId}
+        onTemplateChange={handleTemplateSelected}
       />
     </div>
   );
