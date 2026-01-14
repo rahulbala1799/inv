@@ -32,7 +32,7 @@ interface Invoice {
   status: string;
   issue_date: string;
   due_date: string | null;
-  customer_id: string;
+  customer_id: string | null;
   currency: string;
   subtotal: number;
   tax_total: number;
@@ -109,6 +109,12 @@ export default function WYSIWYGInvoiceEditor({
   templates = [],
 }: WYSIWYGInvoiceEditorProps) {
   const router = useRouter();
+  
+  // Guard clause: ensure invoice exists
+  if (!initialInvoice) {
+    return <div>Invoice not found</div>;
+  }
+  
   const [invoice, setInvoice] = useState(initialInvoice);
   const [items, setItems] = useState<InvoiceItem[]>(
     initialItems.length > 0
@@ -128,7 +134,7 @@ export default function WYSIWYGInvoiceEditor({
   const [saveTimeoutId, setSaveTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [customersList, setCustomersList] = useState<Customer[]>(customers);
   const [selectedCustomerData, setSelectedCustomerData] = useState<Customer | null>(
-    customers.find((c) => c.id === invoice.customer_id) || null
+    invoice?.customer_id ? customers.find((c) => c.id === invoice?.customer_id) || null : null
   );
   const [templateModalOpen, setTemplateModalOpen] = useState(false);
 
@@ -144,7 +150,7 @@ export default function WYSIWYGInvoiceEditor({
   const firstItemPriceRef = useRef<HTMLDivElement>(null);
 
   // Get selected customer
-  const selectedCustomer = selectedCustomerData || customersList.find((c) => c.id === invoice.customer_id) || null;
+  const selectedCustomer = selectedCustomerData || (invoice?.customer_id ? customersList.find((c) => c.id === invoice?.customer_id) || null : null);
 
   // Company info from branding
   const companyName = branding?.business_name || "";
@@ -377,7 +383,7 @@ export default function WYSIWYGInvoiceEditor({
   const missingFields = useMemo<MissingField[]>(() => {
     const fields: MissingField[] = [];
 
-    if (!invoice.invoice_number || invoice.invoice_number.trim() === "") {
+    if (!invoice?.invoice_number || invoice.invoice_number.trim() === "") {
       fields.push({
         id: "invoiceNumber",
         label: "Invoice number",
@@ -421,7 +427,7 @@ export default function WYSIWYGInvoiceEditor({
       });
     }
 
-    if (!invoice.customer_id || !customerName || customerName.trim() === "") {
+    if (!invoice?.customer_id || !customerName || customerName.trim() === "") {
       fields.push({
         id: "customer",
         label: "Customer name",
@@ -457,8 +463,8 @@ export default function WYSIWYGInvoiceEditor({
 
     return fields;
   }, [
-    invoice.invoice_number,
-    invoice.customer_id,
+    invoice?.invoice_number,
+    invoice?.customer_id,
     companyName,
     companyAddress,
     companyCity,
