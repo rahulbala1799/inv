@@ -184,14 +184,14 @@ export default function WYSIWYGInvoiceEditor({
   }, [branding?.logo_storage_path]);
 
   // Customer info - use selectedCustomerData if available, otherwise fall back to invoice.customers or selectedCustomer
-  const customerName = selectedCustomerData?.name || invoice.customers?.name || "";
-  const customerEmail = selectedCustomerData?.email || invoice.customers?.email || "";
-  const customerAddress = selectedCustomerData?.address_line1 || invoice.customers?.address_line1 || "";
-  const customerAddress2 = selectedCustomerData?.address_line2 || invoice.customers?.address_line2 || "";
-  const customerCity = selectedCustomerData?.city || invoice.customers?.city || "";
-  const customerPostcode = selectedCustomerData?.postcode || invoice.customers?.postcode || "";
-  const customerCountry = selectedCustomerData?.country || invoice.customers?.country || "";
-  const customerVat = selectedCustomerData?.vat_number || invoice.customers?.vat_number || "";
+  const customerName = selectedCustomerData?.name || invoice?.customers?.name || "";
+  const customerEmail = selectedCustomerData?.email || invoice?.customers?.email || "";
+  const customerAddress = selectedCustomerData?.address_line1 || invoice?.customers?.address_line1 || "";
+  const customerAddress2 = selectedCustomerData?.address_line2 || invoice?.customers?.address_line2 || "";
+  const customerCity = selectedCustomerData?.city || invoice?.customers?.city || "";
+  const customerPostcode = selectedCustomerData?.postcode || invoice?.customers?.postcode || "";
+  const customerCountry = selectedCustomerData?.country || invoice?.customers?.country || "";
+  const customerVat = selectedCustomerData?.vat_number || invoice?.customers?.vat_number || "";
 
   // Auto-save function
   const triggerAutoSave = useCallback(() => {
@@ -202,7 +202,7 @@ export default function WYSIWYGInvoiceEditor({
     const timeout = setTimeout(async () => {
       setSaveStatus("saving");
       try {
-        const response = await fetch(`/api/org/${orgId}/invoices/${invoice.id}`, {
+        const response = await fetch(`/api/org/${orgId}/invoices/${invoice?.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ invoice, items }),
@@ -484,7 +484,7 @@ export default function WYSIWYGInvoiceEditor({
     );
   }
 
-  const currency = invoice.currency || branding?.default_currency || "EUR";
+  const currency = invoice?.currency || branding?.default_currency || "EUR";
 
   // Handle template selection
   const handleSelectTemplate = async (templateId: string) => {
