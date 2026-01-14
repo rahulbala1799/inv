@@ -42,15 +42,15 @@ export function Speed() {
   ];
 
   return (
-    <section ref={ref} className="py-24 bg-black text-white">
-      <motion.div style={{ y }} className="mx-auto max-w-6xl px-8">
+    <section ref={ref} className="py-32 bg-white">
+      <motion.div style={{ y }} className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="text-center mb-16">
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="text-5xl md:text-6xl tracking-tight mb-6"
+            className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-6"
           >
             Powerful Features
           </motion.h2>
@@ -60,7 +60,7 @@ export function Speed() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-xl text-gray-400"
+            className="text-xl text-gray-600"
           >
             Everything you need for professional invoicing
           </motion.p>
@@ -75,13 +75,13 @@ export function Speed() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: i * 0.1 }}
               whileHover={{ y: -5 }}
-              className="bg-white/5 border border-white/10 rounded-2xl p-8 backdrop-blur hover:bg-white/10 transition-all"
+              className="bg-white border-2 border-gray-200 rounded-2xl p-8 hover:border-gray-300 hover:shadow-lg transition-all group"
             >
-              <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mb-6">
-                <card.icon className="w-6 h-6 text-black" />
+              <div className="w-12 h-12 bg-gradient-to-br from-gray-900 to-gray-700 rounded-xl flex items-center justify-center mb-6 shadow-md group-hover:scale-110 transition-transform">
+                <card.icon className="w-6 h-6 text-white" />
               </div>
-              <h3 className="text-xl mb-3">{card.title}</h3>
-              <p className="text-gray-400 leading-relaxed">{card.desc}</p>
+              <h3 className="text-xl font-semibold text-gray-900 mb-3">{card.title}</h3>
+              <p className="text-gray-600 leading-relaxed">{card.desc}</p>
             </motion.div>
           ))}
         </div>
@@ -93,7 +93,7 @@ export function Speed() {
           transition={{ duration: 0.8, delay: 0.5 }}
           className="mt-16 text-center"
         >
-          <p className="text-xl text-white">
+          <p className="text-xl text-gray-700 font-medium">
             Professional features without the complexity
           </p>
         </motion.div>

@@ -39,8 +39,8 @@ export function Testimonials() {
   ];
 
   return (
-    <section ref={ref} className="py-24 bg-white">
-      <motion.div style={{ y }} className="mx-auto max-w-6xl px-8">
+    <section ref={ref} id="testimonials" className="py-32 bg-gradient-to-b from-white to-gray-50">
+      <motion.div style={{ y }} className="mx-auto max-w-6xl px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -48,10 +48,10 @@ export function Testimonials() {
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
-          <h2 className="text-5xl md:text-6xl tracking-tight text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
             Loved by freelancers
           </h2>
-          <p className="text-xl text-gray-500">Join thousands of happy customers</p>
+          <p className="text-xl text-gray-600">Join thousands of happy customers</p>
         </motion.div>
 
         <div className="grid md:grid-cols-3 gap-8">
@@ -63,7 +63,7 @@ export function Testimonials() {
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               whileHover={{ y: -5 }}
-              className="bg-white border border-gray-200 rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow"
+              className="bg-white border-2 border-gray-200 rounded-2xl p-8 shadow-md hover:shadow-xl hover:border-gray-300 transition-all"
             >
               <div className="flex gap-1 mb-6">
                 {[...Array(testimonial.rating)].map((_, i) => (
@@ -71,7 +71,7 @@ export function Testimonials() {
                 ))}
               </div>
               
-              <p className="text-lg text-gray-900 mb-8 leading-relaxed">
+              <p className="text-lg text-gray-800 mb-8 leading-relaxed font-medium">
                 &quot;{testimonial.quote}&quot;
               </p>
               

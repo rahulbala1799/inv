@@ -43,8 +43,8 @@ export function HowItWorks() {
   ];
 
   return (
-    <section ref={ref} id="features" className="py-24 bg-white">
-      <motion.div style={{ y }} className="mx-auto max-w-6xl px-8">
+    <section ref={ref} id="features" className="py-32 bg-white">
+      <motion.div style={{ y }} className="mx-auto max-w-6xl px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-16 items-start">
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -52,23 +52,23 @@ export function HowItWorks() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            <h2 className="text-5xl md:text-6xl tracking-tight text-gray-900 mb-6">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-6">
               Edit the invoice itself
             </h2>
             
-            <p className="text-xl text-gray-500 mb-8">
+            <p className="text-xl text-gray-600 mb-6 leading-relaxed">
               Most invoicing apps make you fill out forms and then preview an invoice.
             </p>
 
-            <p className="text-xl text-gray-900 mb-8">
+            <p className="text-xl text-gray-900 font-semibold mb-8">
               This works differently.
             </p>
 
-            <div className="bg-gray-50 border border-gray-200 rounded-xl p-6 mb-8">
-              <p className="text-lg text-gray-900 mb-4">
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 border-2 border-gray-200 rounded-2xl p-6 mb-8 shadow-sm">
+              <p className="text-lg text-gray-900 font-semibold mb-3">
                 You edit the invoice directly — just like editing a document.
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-gray-600">
                 No preview mode. No guessing.
               </p>
             </div>
@@ -91,12 +91,12 @@ export function HowItWorks() {
               >
                 <button
                   onClick={() => setExpandedIndex(expandedIndex === i ? null : i)}
-                  className="w-full flex items-center gap-4 bg-gray-50 rounded-lg p-4 border border-gray-200 hover:border-gray-300 transition-all text-left"
+                  className="w-full flex items-center gap-4 bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-gray-300 hover:shadow-md transition-all text-left"
                 >
-                  <div className="flex-shrink-0 w-10 h-10 bg-gray-900 rounded-lg flex items-center justify-center">
+                  <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-gray-900 to-gray-700 rounded-xl flex items-center justify-center shadow-sm">
                     <feature.icon className="w-5 h-5 text-white" />
                   </div>
-                  <span className="text-gray-700 flex-1">{feature.title}</span>
+                  <span className="text-gray-900 font-medium flex-1">{feature.title}</span>
                   <ChevronDown 
                     className={`w-5 h-5 text-gray-400 transition-transform ${
                       expandedIndex === i ? 'rotate-180' : ''
@@ -113,8 +113,8 @@ export function HowItWorks() {
                       transition={{ duration: 0.3 }}
                       className="overflow-hidden"
                     >
-                      <div className="px-4 py-4 bg-white border-l-4 border-gray-900 ml-4 mt-2">
-                        <p className="text-sm text-gray-600 leading-relaxed">
+                      <div className="px-4 py-4 bg-gray-50 border-l-4 border-gray-900 ml-4 mt-2 rounded-r-lg">
+                        <p className="text-sm text-gray-700 leading-relaxed">
                           {feature.details}
                         </p>
                       </div>

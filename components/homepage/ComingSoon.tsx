@@ -14,8 +14,8 @@ export function ComingSoon() {
   const y = useTransform(scrollYProgress, [0, 1], [50, -50]);
 
   return (
-    <section ref={ref} className="py-24 bg-white">
-      <motion.div style={{ y }} className="mx-auto max-w-6xl px-8">
+    <section ref={ref} className="py-32 bg-gradient-to-b from-white to-gray-50">
+      <motion.div style={{ y }} className="mx-auto max-w-6xl px-6 lg:px-8">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -27,7 +27,7 @@ export function ComingSoon() {
             <Sparkles className="w-4 h-4" />
             Coming Soon
           </div>
-          <h2 className="text-5xl md:text-6xl tracking-tight text-gray-900 mb-4">
+          <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-gray-900 mb-4">
             What&apos;s Next
           </h2>
           <p className="text-xl text-gray-500">

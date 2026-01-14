@@ -3,6 +3,7 @@
 import { motion, useScroll, useTransform } from "motion/react";
 import { useRef } from "react";
 import Link from "next/link";
+import { Check, Sparkles } from "lucide-react";
 
 export function Hero() {
   const ref = useRef(null);
@@ -15,71 +16,113 @@ export function Hero() {
   const y = useTransform(scrollYProgress, [0, 1], [0, -100]);
 
   return (
-    <section ref={ref} className="relative h-screen flex items-center justify-center bg-white">
-      <motion.div style={{ opacity, y }} className="text-center px-8">
+    <section ref={ref} className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-white via-gray-50 to-white pt-24 pb-16">
+      {/* Background Pattern */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#f0f0f0_1px,transparent_1px),linear-gradient(to_bottom,#f0f0f0_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_80%_50%_at_50%_0%,#000_70%,transparent_110%)] opacity-30" />
+      
+      <motion.div style={{ opacity, y }} className="relative z-10 max-w-6xl mx-auto px-6 text-center">
+        {/* Badge */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-black text-white text-sm font-medium mb-8"
+        >
+          <Sparkles className="w-4 h-4" />
+          <span>14-day free trial • No credit card required</span>
+        </motion.div>
+
+        {/* Main Heading */}
         <motion.h1 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="text-[5rem] md:text-[8rem] lg:text-[12rem] leading-none tracking-tighter text-gray-900 mb-8"
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="text-5xl md:text-7xl lg:text-8xl font-bold leading-[1.1] tracking-tight text-gray-900 mb-6"
         >
-          Invozify
+          Professional Invoicing
+          <br />
+          <span className="bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">Made Simple</span>
         </motion.h1>
 
+        {/* Subheading */}
         <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-2xl md:text-3xl text-gray-500 mb-16"
+          className="text-xl md:text-2xl text-gray-600 mb-8 max-w-3xl mx-auto leading-relaxed"
         >
-          Simple invoicing. No nonsense.
+          Create, send, and track invoices in seconds. Built for freelancers, consultants, and small businesses who value simplicity.
         </motion.p>
 
+        {/* Key Features */}
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
-          className="text-6xl md:text-8xl tracking-tight text-gray-900 mb-16"
+          className="flex flex-wrap items-center justify-center gap-4 md:gap-6 mb-12"
         >
-          €5<span className="text-3xl text-gray-400">/mo</span>
+          {[
+            "Unlimited invoices",
+            "WYSIWYG editor",
+            "Multi-currency",
+            "PDF export"
+          ].map((feature, i) => (
+            <div key={i} className="flex items-center gap-2 text-sm md:text-base text-gray-700">
+              <Check className="w-5 h-5 text-green-600" />
+              <span>{feature}</span>
+            </div>
+          ))}
         </motion.div>
 
+        {/* CTAs */}
         <motion.div 
-          id="download"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.4 }}
-          className="flex flex-col sm:flex-row gap-4 justify-center"
+          className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8"
         >
-          <motion.a 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            href="#" 
-            className="inline-flex items-center justify-center px-6 py-3 bg-black text-white rounded-lg"
+          <Link
+            href="/signup"
+            className="group relative inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-white bg-black rounded-xl hover:bg-gray-800 transition-all shadow-lg hover:shadow-xl"
           >
-            <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.71 19.5C17.88 20.74 17 21.95 15.66 21.97C14.32 22 13.89 21.18 12.37 21.18C10.84 21.18 10.37 21.95 9.09997 22C7.78997 22.05 6.79997 20.68 5.95997 19.47C4.24997 17 2.93997 12.45 4.69997 9.39C5.56997 7.87 7.12997 6.91 8.81997 6.88C10.1 6.86 11.32 7.75 12.11 7.75C12.89 7.75 14.37 6.68 15.92 6.84C16.57 6.87 18.39 7.1 19.56 8.82C19.47 8.88 17.39 10.1 17.41 12.63C17.44 15.65 20.06 16.66 20.09 16.67C20.06 16.74 19.67 18.11 18.71 19.5ZM13 3.5C13.73 2.67 14.94 2.04 15.94 2C16.07 3.17 15.6 4.35 14.9 5.19C14.21 6.04 13.07 6.7 11.95 6.61C11.8 5.46 12.36 4.26 13 3.5Z"/>
+            Start Free Trial
+            <svg className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
-            <div className="text-left">
-              <div className="text-xs opacity-70">Download on the</div>
-              <div className="text-sm font-medium">App Store</div>
-            </div>
-          </motion.a>
+          </Link>
           
-          <motion.a 
-            whileHover={{ scale: 1.02 }}
-            whileTap={{ scale: 0.98 }}
-            href="#" 
-            className="inline-flex items-center justify-center px-6 py-3 bg-black text-white rounded-lg"
+          <a 
+            href="#features"
+            className="inline-flex items-center justify-center px-8 py-4 text-lg font-semibold text-gray-900 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-300 transition-all"
           >
-            <svg className="w-6 h-6 mr-3" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M3,20.5V3.5C3,2.91 3.34,2.39 3.84,2.15L13.69,12L3.84,21.85C3.34,21.6 3,21.09 3,20.5M16.81,15.12L6.05,21.34L14.54,12.85L16.81,15.12M20.16,10.81C20.5,11.08 20.75,11.5 20.75,12C20.75,12.5 20.53,12.9 20.18,13.18L17.89,14.5L15.39,12L17.89,9.5L20.16,10.81M6.05,2.66L16.81,8.88L14.54,11.15L6.05,2.66Z"/>
-            </svg>
-            <div className="text-left">
-              <div className="text-xs opacity-70">GET IT ON</div>
-              <div className="text-sm font-medium">Google Play</div>
-            </div>
-          </motion.a>
+            See How It Works
+          </a>
+        </motion.div>
+
+        {/* Pricing */}
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.5 }}
+          className="text-gray-500 text-sm"
+        >
+          Then just <span className="font-semibold text-gray-900">€5/month</span> • Cancel anytime
+        </motion.p>
+
+        {/* Social Proof */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-16 pt-12 border-t border-gray-200"
+        >
+          <p className="text-sm text-gray-500 mb-6">Trusted by thousands of professionals worldwide</p>
+          <div className="flex flex-wrap items-center justify-center gap-8 opacity-40 grayscale">
+            {/* Placeholder for company logos - you can add real logos here */}
+            {[1, 2, 3, 4, 5].map((i) => (
+              <div key={i} className="h-8 w-24 bg-gray-300 rounded"></div>
+            ))}
+          </div>
         </motion.div>
       </motion.div>
     </section>
