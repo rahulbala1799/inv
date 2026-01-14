@@ -62,13 +62,22 @@ export async function GET(
     template = templateData
   }
 
+  // Get logo URL if available
+  let logoUrl: string | null = null
+  if (branding?.logo_storage_path) {
+    const { data: { publicUrl } } = supabase.storage
+      .from('logos')
+      .getPublicUrl(branding.logo_storage_path)
+    logoUrl = publicUrl
+  }
+
   // Generate PDF
   try {
     const pdfStream = await renderToStream(
       InvoicePDF({
         invoice,
         items: items || [],
-        branding: branding || null,
+        branding: branding ? { ...branding, logoUrl } : null,
         template: template || null,
       })
     )

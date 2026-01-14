@@ -1,70 +1,321 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 
-const styles = StyleSheet.create({
-  page: {
-    padding: 40,
-    fontSize: 12,
-    fontFamily: 'Helvetica',
-  },
-  header: {
-    marginBottom: 30,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  section: {
-    marginBottom: 20,
-  },
-  row: {
-    flexDirection: 'row',
-    marginBottom: 5,
-  },
-  label: {
-    width: 100,
-    fontWeight: 'bold',
-  },
-  table: {
-    marginTop: 20,
-    marginBottom: 20,
-  },
-  tableRow: {
-    flexDirection: 'row',
-    borderBottom: '1pt solid #e5e7eb',
-    paddingVertical: 8,
-  },
-  tableHeader: {
-    backgroundColor: '#f3f4f6',
-    fontWeight: 'bold',
-  },
-  tableCol1: { width: '40%' },
-  tableCol2: { width: '15%', textAlign: 'right' },
-  tableCol3: { width: '15%', textAlign: 'right' },
-  tableCol4: { width: '15%', textAlign: 'right' },
-  tableCol5: { width: '15%', textAlign: 'right' },
-  totals: {
-    marginTop: 20,
-    alignItems: 'flex-end',
-  },
-  totalRow: {
-    flexDirection: 'row',
-    width: 200,
-    justifyContent: 'space-between',
-    marginBottom: 5,
-  },
-  totalLabel: {
-    fontWeight: 'bold',
-  },
-  footer: {
-    marginTop: 40,
-    paddingTop: 20,
-    borderTop: '1pt solid #e5e7eb',
-    fontSize: 10,
-    color: '#6b7280',
-  },
-})
+// Helper function to get logo URL from storage path
+function getLogoUrl(branding: any, supabase: any): string | null {
+  if (!branding?.logo_storage_path) return null
+  try {
+    const { data: { publicUrl } } = supabase.storage
+      .from('logos')
+      .getPublicUrl(branding.logo_storage_path)
+    return publicUrl
+  } catch {
+    return null
+  }
+}
+
+// Template style generator
+function getTemplateStyles(template: any) {
+  const config = template?.config_json || {}
+  const layout = config.layout || 'classic'
+  
+  // Base colors
+  const primaryColor = config.primaryColor || '#000000'
+  const secondaryColor = config.secondaryColor || '#666666'
+  const backgroundColor = config.backgroundColor || '#FFFFFF'
+  const textColor = config.textColor || '#000000'
+  const accentColor = config.accentColor || primaryColor
+
+  // Layout-specific base styles
+  const baseStyles: any = {
+    page: {
+      padding: config.pagePadding || 40,
+      fontSize: config.fontSize || 12,
+      fontFamily: config.fontFamily || 'Helvetica',
+      backgroundColor: backgroundColor,
+      color: textColor,
+    },
+  }
+
+  // Template-specific style variations
+  switch (layout) {
+    case 'minimal':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 20,
+          paddingBottom: 15,
+          borderBottom: '1pt solid #e5e7eb',
+        },
+        title: {
+          fontSize: 28,
+          fontWeight: 'thin',
+          color: textColor,
+          letterSpacing: 2,
+        },
+        companyName: {
+          fontSize: 14,
+          fontWeight: 'thin',
+          color: textColor,
+          letterSpacing: 1,
+        },
+        tableHeader: {
+          backgroundColor: 'transparent',
+          fontWeight: 'bold',
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 6,
+        },
+        totalSection: {
+          marginTop: 20,
+          alignItems: 'flex-end',
+        },
+      }
+    
+    case 'modern':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 30,
+          padding: 20,
+          backgroundColor: config.headerBackground || '#ECFDF5',
+          borderBottom: `3pt solid ${accentColor}`,
+        },
+        title: {
+          fontSize: 32,
+          fontWeight: 'bold',
+          color: accentColor,
+        },
+        companyName: {
+          fontSize: 16,
+          fontWeight: 'bold',
+          color: textColor,
+        },
+        tableHeader: {
+          backgroundColor: config.tableHeaderBackground || '#F0FDF4',
+          fontWeight: 'bold',
+          borderBottom: `2pt solid ${accentColor}`,
+          paddingVertical: 10,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #D1FAE5',
+          paddingVertical: 8,
+          backgroundColor: 'transparent',
+        },
+        totalSection: {
+          marginTop: 20,
+          padding: 15,
+          backgroundColor: '#F9FAFB',
+          borderTop: `2pt solid ${accentColor}`,
+        },
+      }
+    
+    case 'professional':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 25,
+          paddingBottom: 20,
+          borderBottom: `2pt solid ${primaryColor}`,
+        },
+        title: {
+          fontSize: 24,
+          fontWeight: 'bold',
+          color: primaryColor,
+        },
+        companyName: {
+          fontSize: 14,
+          fontWeight: 'bold',
+          color: textColor,
+        },
+        tableHeader: {
+          backgroundColor: '#F3F4F6',
+          fontWeight: 'bold',
+          borderBottom: `1pt solid ${primaryColor}`,
+          paddingVertical: 8,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+        },
+        totalSection: {
+          marginTop: 20,
+          padding: 12,
+          backgroundColor: '#F9FAFB',
+          borderTop: `2pt solid ${primaryColor}`,
+        },
+      }
+    
+    case 'elegant':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 30,
+        },
+        title: {
+          fontSize: 26,
+          fontWeight: 'normal',
+          color: textColor,
+          fontStyle: 'italic',
+        },
+        companyName: {
+          fontSize: 13,
+          fontWeight: 'normal',
+          color: secondaryColor,
+        },
+        tableHeader: {
+          backgroundColor: 'transparent',
+          fontWeight: 'bold',
+          borderBottom: `1pt solid ${secondaryColor}`,
+          paddingVertical: 8,
+        },
+        tableRow: {
+          borderBottom: '0.5pt solid #e5e7eb',
+          paddingVertical: 6,
+        },
+        totalSection: {
+          marginTop: 20,
+          alignItems: 'flex-end',
+          borderTop: `1pt solid ${secondaryColor}`,
+          paddingTop: 10,
+        },
+      }
+    
+    case 'bold':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 25,
+          padding: 15,
+          backgroundColor: primaryColor,
+        },
+        title: {
+          fontSize: 30,
+          fontWeight: 'bold',
+          color: '#FFFFFF',
+        },
+        companyName: {
+          fontSize: 14,
+          fontWeight: 'bold',
+          color: '#FFFFFF',
+        },
+        tableHeader: {
+          backgroundColor: primaryColor,
+          fontWeight: 'bold',
+          color: '#FFFFFF',
+          paddingVertical: 10,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+        },
+        totalSection: {
+          marginTop: 20,
+          padding: 15,
+          backgroundColor: '#F3F4F6',
+          border: `2pt solid ${primaryColor}`,
+        },
+      }
+    
+    case 'clean':
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 30,
+        },
+        title: {
+          fontSize: 22,
+          fontWeight: 'normal',
+          color: textColor,
+        },
+        companyName: {
+          fontSize: 13,
+          fontWeight: 'normal',
+          color: textColor,
+        },
+        tableHeader: {
+          backgroundColor: '#FAFAFA',
+          fontWeight: 'bold',
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #f0f0f0',
+          paddingVertical: 7,
+        },
+        totalSection: {
+          marginTop: 20,
+          alignItems: 'flex-end',
+        },
+      }
+    
+    default: // classic
+      return {
+        ...baseStyles,
+        header: {
+          marginBottom: 30,
+          paddingBottom: 15,
+          borderBottom: config.headerBackground === '#000000' ? 'none' : '2pt solid #e5e7eb',
+          backgroundColor: config.headerBackground || 'transparent',
+        },
+        title: {
+          fontSize: 24,
+          fontWeight: 'bold',
+          color: config.headerBackground === '#000000' ? '#FFFFFF' : primaryColor,
+        },
+        companyName: {
+          fontSize: 14,
+          fontWeight: 'bold',
+          color: config.headerBackground === '#000000' ? '#FFFFFF' : textColor,
+        },
+        tableHeader: {
+          backgroundColor: config.tableHeaderBackground || '#F3F4F6',
+          fontWeight: 'bold',
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+          color: config.tableHeaderTextColor || textColor,
+        },
+        tableRow: {
+          borderBottom: '1pt solid #e5e7eb',
+          paddingVertical: 8,
+        },
+        totalSection: {
+          marginTop: 20,
+          padding: 12,
+          backgroundColor: '#F9FAFB',
+          borderTop: '2pt solid #000',
+        },
+      }
+  }
+}
+
+// Get table column configuration based on template
+function getTableColumns(config: any) {
+  const columns = config.tableColumns || ['DESCRIPTION', 'QTY', 'PRICE', 'TAX %', 'TOTAL']
+  
+  // Map column names to data fields
+  const columnMap: any = {
+    'DESCRIPTION': 'description',
+    'QTY': 'quantity',
+    'QUANTITY': 'quantity',
+    'PRICE': 'unit_price',
+    'UNIT PRICE': 'unit_price',
+    'RATE': 'unit_price',
+    'HOURS': 'quantity',
+    'TAX %': 'tax_rate',
+    'TAX': 'tax_rate',
+    'TOTAL': 'line_total',
+    'AMOUNT': 'line_total',
+  }
+  
+  return columns.map((col: string) => ({
+    label: col,
+    field: columnMap[col.toUpperCase()] || col.toLowerCase(),
+  }))
+}
 
 interface InvoicePDFProps {
   invoice: any
@@ -82,6 +333,7 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
   }
 
   const formatDate = (date: string) => {
+    if (!date) return ''
     return new Date(date).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'long',
@@ -89,18 +341,169 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
     })
   }
 
+  // Get template styles
+  const templateStyles = getTemplateStyles(template)
+  const config = template?.config_json || {}
+  const layout = config.layout || 'classic'
+  const logoPosition = config.logoPosition || 'top-left'
+
+  // Get logo URL from branding (set by API route)
+  const logoUrl = branding?.logoUrl || null
+
+  // Dynamic styles based on template
+  const styles = StyleSheet.create({
+    page: templateStyles.page,
+    header: templateStyles.header,
+    title: templateStyles.title,
+    companyName: templateStyles.companyName,
+    section: {
+      marginBottom: 20,
+    },
+    row: {
+      flexDirection: 'row',
+      marginBottom: 5,
+    },
+    label: {
+      width: 100,
+      fontWeight: 'bold',
+    },
+    table: {
+      marginTop: 20,
+      marginBottom: 20,
+    },
+    tableRow: templateStyles.tableRow,
+    tableHeader: templateStyles.tableHeader,
+    tableCol1: { width: '40%' },
+    tableCol2: { width: '15%', textAlign: 'right' },
+    tableCol3: { width: '15%', textAlign: 'right' },
+    tableCol4: { width: '15%', textAlign: 'right' },
+    tableCol5: { width: '15%', textAlign: 'right' },
+    totals: templateStyles.totalSection,
+    totalRow: {
+      flexDirection: 'row',
+      width: 200,
+      justifyContent: 'space-between',
+      marginBottom: 5,
+    },
+    totalLabel: {
+      fontWeight: 'bold',
+    },
+    footer: {
+      marginTop: 40,
+      paddingTop: 20,
+      borderTop: '1pt solid #e5e7eb',
+      fontSize: 10,
+      color: '#6b7280',
+    },
+    logoContainer: {
+      width: 80,
+      height: 80,
+      marginBottom: 10,
+    },
+    logo: {
+      width: '100%',
+      height: '100%',
+      objectFit: 'contain',
+    },
+    headerContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-start',
+    },
+    headerLeft: {
+      flex: 1,
+    },
+    headerRight: {
+      flex: 1,
+      alignItems: 'flex-end',
+    },
+    companyInfo: {
+      marginBottom: 15,
+    },
+    customerInfo: {
+      marginBottom: 15,
+    },
+    bankDetails: {
+      marginTop: 20,
+      padding: 10,
+      backgroundColor: '#F9FAFB',
+      fontSize: 10,
+    },
+  })
+
+  // Render header based on logo position
+  const renderHeader = () => {
+    const hasLogo = logoUrl && branding?.logoUrl
+    const headerTextColor = config.headerBackground === '#000000' || config.tableHeaderBackground === '#000000' 
+      ? '#FFFFFF' 
+      : (styles.title?.color || '#000000')
+    
+    if (logoPosition === 'top-center') {
+      return (
+        <View style={styles.header}>
+          {hasLogo && (
+            <View style={{ alignItems: 'center', marginBottom: 10 }}>
+              <Image src={logoUrl!} style={styles.logo} />
+            </View>
+          )}
+          <View style={{ alignItems: 'center' }}>
+            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+              Invoice #{invoice.invoice_number}
+            </Text>
+          </View>
+        </View>
+      )
+    }
+
+    if (logoPosition === 'top-right') {
+      return (
+        <View style={[styles.header, styles.headerContent]}>
+          <View style={styles.headerLeft}>
+            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+              Invoice #{invoice.invoice_number}
+            </Text>
+          </View>
+          {hasLogo && (
+            <View style={styles.headerRight}>
+              <Image src={logoUrl!} style={styles.logo} />
+            </View>
+          )}
+        </View>
+      )
+    }
+
+    // Default: top-left
+    return (
+      <View style={styles.header}>
+        <View style={styles.headerContent}>
+          {hasLogo && (
+            <View style={styles.logoContainer}>
+              <Image src={logoUrl!} style={styles.logo} />
+            </View>
+          )}
+          <View style={{ flex: 1, marginLeft: hasLogo ? 15 : 0 }}>
+            <Text style={[styles.title, { color: headerTextColor }]}>INVOICE</Text>
+            <Text style={{ fontSize: 10, marginTop: 5, color: headerTextColor }}>
+              Invoice #{invoice.invoice_number}
+            </Text>
+          </View>
+        </View>
+      </View>
+    )
+  }
+
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <View style={styles.header}>
-          <Text style={styles.title}>INVOICE</Text>
-          <Text>Invoice #{invoice.invoice_number}</Text>
-        </View>
+        {renderHeader()}
 
+        {/* Company Information */}
         <View style={styles.section}>
           {branding && (
-            <View>
-              <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>
+            <View style={styles.companyInfo}>
+              <Text style={styles.companyName}>
                 {branding.business_name || 'Your Business'}
               </Text>
               {branding.address_line1 && <Text>{branding.address_line1}</Text>}
@@ -111,70 +514,125 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
                 </Text>
               )}
               {branding.country && <Text>{branding.country}</Text>}
-              {branding.vat_number && <Text style={{ marginTop: 5 }}>VAT: {branding.vat_number}</Text>}
-            </View>
-          )}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Bill To:</Text>
-          {invoice.customers && (
-            <View>
-              <Text>{invoice.customers.name}</Text>
-              {invoice.customers.email && <Text>{invoice.customers.email}</Text>}
-              {invoice.customers.address_line1 && <Text>{invoice.customers.address_line1}</Text>}
-              {invoice.customers.city && (
-                <Text>
-                  {invoice.customers.city} {invoice.customers.postcode}
-                </Text>
-              )}
-              {invoice.customers.vat_number && (
-                <Text style={{ marginTop: 5 }}>VAT: {invoice.customers.vat_number}</Text>
+              {branding.vat_number && (
+                <Text style={{ marginTop: 5 }}>VAT: {branding.vat_number}</Text>
               )}
             </View>
           )}
         </View>
 
-        <View style={styles.row}>
-          <Text style={styles.label}>Issue Date:</Text>
-          <Text>{formatDate(invoice.issue_date)}</Text>
-        </View>
-        {invoice.due_date && (
-          <View style={styles.row}>
-            <Text style={styles.label}>Due Date:</Text>
-            <Text>{formatDate(invoice.due_date)}</Text>
+        {/* Invoice Details and Customer Info Side by Side */}
+        <View style={[styles.row, { marginBottom: 20 }]}>
+          <View style={{ flex: 1 }}>
+            <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Bill To:</Text>
+            {invoice.customers && (
+              <View>
+                <Text>{invoice.customers.name}</Text>
+                {invoice.customers.email && <Text>{invoice.customers.email}</Text>}
+                {invoice.customers.address_line1 && (
+                  <Text>{invoice.customers.address_line1}</Text>
+                )}
+                {invoice.customers.city && (
+                  <Text>
+                    {invoice.customers.city} {invoice.customers.postcode}
+                  </Text>
+                )}
+                {invoice.customers.vat_number && (
+                  <Text style={{ marginTop: 5 }}>VAT: {invoice.customers.vat_number}</Text>
+                )}
+              </View>
+            )}
           </View>
-        )}
+          <View style={{ flex: 1, alignItems: 'flex-end' }}>
+            <View style={styles.row}>
+              <Text style={styles.label}>Issue Date:</Text>
+              <Text>{formatDate(invoice.issue_date)}</Text>
+            </View>
+            {invoice.due_date && (
+              <View style={styles.row}>
+                <Text style={styles.label}>Due Date:</Text>
+                <Text>{formatDate(invoice.due_date)}</Text>
+              </View>
+            )}
+          </View>
+        </View>
 
+        {/* Items Table */}
         <View style={styles.table}>
-          <View style={[styles.tableRow, styles.tableHeader]}>
-            <Text style={styles.tableCol1}>Description</Text>
-            <Text style={styles.tableCol2}>Qty</Text>
-            <Text style={styles.tableCol3}>Unit Price</Text>
-            <Text style={styles.tableCol4}>Tax %</Text>
-            <Text style={styles.tableCol5}>Total</Text>
-          </View>
-          {items.map((item, index) => (
-            <View key={index} style={styles.tableRow}>
-              <Text style={styles.tableCol1}>{item.description}</Text>
-              <Text style={styles.tableCol2}>{item.quantity}</Text>
-              <Text style={styles.tableCol3}>{formatCurrency(Number(item.unit_price), invoice.currency)}</Text>
-              <Text style={styles.tableCol4}>{item.tax_rate}%</Text>
-              <Text style={styles.tableCol5}>{formatCurrency(Number(item.line_total), invoice.currency)}</Text>
-            </View>
-          ))}
+          {(() => {
+            const tableColumns = getTableColumns(config)
+            const colWidths = ['40%', '15%', '15%', '15%', '15%']
+            
+            return (
+              <>
+                <View style={[styles.tableRow, styles.tableHeader]}>
+                  {tableColumns.map((col: any, idx: number) => (
+                    <Text
+                      key={idx}
+                      style={{
+                        width: colWidths[idx] || '15%',
+                        textAlign: idx === 0 ? 'left' : 'right',
+                        fontWeight: 'bold',
+                        color: config.tableHeaderTextColor || textColor,
+                      }}
+                    >
+                      {col.label}
+                    </Text>
+                  ))}
+                </View>
+                {items.map((item: any, index: number) => (
+                  <View key={index} style={styles.tableRow}>
+                    {tableColumns.map((col: any, idx: number) => {
+                      let value: string = ''
+                      if (col.field === 'description') {
+                        value = item.description
+                      } else if (col.field === 'quantity') {
+                        value = item.quantity.toString()
+                      } else if (col.field === 'unit_price') {
+                        value = formatCurrency(Number(item.unit_price), invoice.currency)
+                      } else if (col.field === 'tax_rate') {
+                        value = `${item.tax_rate}%`
+                      } else if (col.field === 'line_total') {
+                        value = formatCurrency(Number(item.line_total), invoice.currency)
+                      }
+                      
+                      return (
+                        <Text
+                          key={idx}
+                          style={{
+                            width: colWidths[idx] || '15%',
+                            textAlign: idx === 0 ? 'left' : 'right',
+                          }}
+                        >
+                          {value}
+                        </Text>
+                      )
+                    })}
+                  </View>
+                ))}
+              </>
+            )
+          })()}
         </View>
 
+        {/* Totals */}
         <View style={styles.totals}>
           <View style={styles.totalRow}>
             <Text style={styles.totalLabel}>Subtotal:</Text>
             <Text>{formatCurrency(Number(invoice.subtotal), invoice.currency)}</Text>
           </View>
-          <View style={styles.totalRow}>
-            <Text style={styles.totalLabel}>Tax:</Text>
-            <Text>{formatCurrency(Number(invoice.tax_total), invoice.currency)}</Text>
-          </View>
-          <View style={[styles.totalRow, { borderTop: '1pt solid #000', paddingTop: 5, marginTop: 5 }]}>
+          {config.showTaxBreakdown !== false && (
+            <View style={styles.totalRow}>
+              <Text style={styles.totalLabel}>Tax:</Text>
+              <Text>{formatCurrency(Number(invoice.tax_total), invoice.currency)}</Text>
+            </View>
+          )}
+          <View
+            style={[
+              styles.totalRow,
+              { borderTop: '1pt solid #000', paddingTop: 5, marginTop: 5 },
+            ]}
+          >
             <Text style={[styles.totalLabel, { fontSize: 14 }]}>Total:</Text>
             <Text style={{ fontSize: 14, fontWeight: 'bold' }}>
               {formatCurrency(Number(invoice.total), invoice.currency)}
@@ -182,6 +640,55 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
           </View>
         </View>
 
+        {/* Bank Details and Contact Info - Two Column Layout if specified */}
+        {config.footerLayout === 'two-column' && branding && (
+          <View style={{ marginTop: 30, flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ flex: 1, marginRight: 20 }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Contact Info:</Text>
+              {branding.email && <Text style={{ fontSize: 10 }}>📧 {branding.email}</Text>}
+              {branding.phone && <Text style={{ fontSize: 10 }}>📞 {branding.phone}</Text>}
+              {branding.website && <Text style={{ fontSize: 10 }}>🌐 {branding.website}</Text>}
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Payment Info:</Text>
+              {branding.bank_name && <Text style={{ fontSize: 10 }}>Bank Name: {branding.bank_name}</Text>}
+              {branding.bank_account_number && (
+                <Text style={{ fontSize: 10 }}>Account No: {branding.bank_account_number}</Text>
+              )}
+              {branding.bank_sort_code && (
+                <Text style={{ fontSize: 10 }}>Sort Code: {branding.bank_sort_code}</Text>
+              )}
+              {branding.bank_iban && <Text style={{ fontSize: 10 }}>IBAN: {branding.bank_iban}</Text>}
+              {branding.bank_bic && <Text style={{ fontSize: 10 }}>BIC/SWIFT: {branding.bank_bic}</Text>}
+            </View>
+          </View>
+        )}
+        
+        {/* Single Column Bank Details */}
+        {config.footerLayout !== 'two-column' && config.showBankDetails !== false && branding && (
+          (branding.bank_name || branding.bank_account_number || branding.bank_iban) && (
+            <View style={styles.bankDetails}>
+              <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Payment Details:</Text>
+              {branding.bank_name && <Text>Bank: {branding.bank_name}</Text>}
+              {branding.bank_account_number && (
+                <Text>Account: {branding.bank_account_number}</Text>
+              )}
+              {branding.bank_sort_code && <Text>Sort Code: {branding.bank_sort_code}</Text>}
+              {branding.bank_iban && <Text>IBAN: {branding.bank_iban}</Text>}
+              {branding.bank_bic && <Text>BIC/SWIFT: {branding.bank_bic}</Text>}
+            </View>
+          )
+        )}
+        
+        {/* Signature Line */}
+        {config.showSignatureLine && (
+          <View style={{ marginTop: 40, marginBottom: 20 }}>
+            <View style={{ borderTop: '1pt solid #000', width: 200, marginBottom: 5 }} />
+            <Text style={{ fontSize: 10 }}>Signature</Text>
+          </View>
+        )}
+
+        {/* Notes */}
         {invoice.notes && (
           <View style={styles.footer}>
             <Text style={{ fontWeight: 'bold', marginBottom: 5 }}>Notes:</Text>

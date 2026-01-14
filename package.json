@@ -40,6 +40,7 @@
   },
   "devDependencies": {
     "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.35"
+    "eslint-config-next": "^14.2.35",
+    "pdf-parse": "^2.2.2"
   }
 }
