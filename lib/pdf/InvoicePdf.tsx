@@ -68,19 +68,19 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
-          minHeight: 30,
+          paddingVertical: 6,
+          minHeight: 24,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
-          minHeight: 25,
+          paddingVertical: 5,
+          minHeight: 20,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
+          marginTop: 15,
+          marginBottom: 12,
           alignItems: 'flex-end',
         },
       }
@@ -113,21 +113,21 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 2,
           borderBottomColor: accentColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 12,
-          minHeight: 32,
+          paddingVertical: 8,
+          minHeight: 26,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#D1FAE5',
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
+          paddingVertical: 6,
           backgroundColor: 'transparent',
-          minHeight: 28,
+          minHeight: 22,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
-          padding: 15,
+          marginTop: 15,
+          marginBottom: 12,
+          padding: 12,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
           borderTopColor: accentColor,
@@ -162,20 +162,20 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: primaryColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
-          minHeight: 30,
+          paddingVertical: 6,
+          minHeight: 24,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 9,
-          minHeight: 26,
+          paddingVertical: 6,
+          minHeight: 22,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
-          padding: 12,
+          marginTop: 15,
+          marginBottom: 12,
+          padding: 10,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
           borderTopColor: primaryColor,
@@ -207,24 +207,24 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: secondaryColor,
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
-          minHeight: 30,
+          paddingVertical: 6,
+          minHeight: 24,
         },
         tableRow: {
           borderBottomWidth: 0.5,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 8,
-          minHeight: 24,
+          paddingVertical: 5,
+          minHeight: 20,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
+          marginTop: 15,
+          marginBottom: 12,
           alignItems: 'flex-end',
           borderTopWidth: 1,
           borderTopColor: secondaryColor,
           borderTopStyle: 'solid',
-          paddingTop: 12,
+          paddingTop: 8,
         },
       }
     
@@ -251,20 +251,20 @@ function getTemplateStyles(template: any) {
           backgroundColor: primaryColor,
           fontWeight: 'bold',
           color: '#FFFFFF',
-          paddingVertical: 12,
-          minHeight: 32,
+          paddingVertical: 8,
+          minHeight: 26,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
-          minHeight: 28,
+          paddingVertical: 6,
+          minHeight: 22,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
-          padding: 15,
+          marginTop: 15,
+          marginBottom: 12,
+          padding: 12,
           backgroundColor: '#F3F4F6',
           borderWidth: 2,
           borderColor: primaryColor,
@@ -295,19 +295,19 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 10,
-          minHeight: 30,
+          paddingVertical: 6,
+          minHeight: 24,
         },
         tableRow: {
           borderBottomWidth: 1,
           borderBottomColor: '#f0f0f0',
           borderBottomStyle: 'solid',
-          paddingVertical: 9,
-          minHeight: 26,
+          paddingVertical: 6,
+          minHeight: 22,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
+          marginTop: 15,
+          marginBottom: 12,
           alignItems: 'flex-end',
         },
       }
@@ -350,13 +350,13 @@ function getTemplateStyles(template: any) {
           borderBottomWidth: 1,
           borderBottomColor: '#e5e7eb',
           borderBottomStyle: 'solid',
-          paddingVertical: 9,
-          minHeight: 26,
+          paddingVertical: 6,
+          minHeight: 22,
         },
         totalSection: {
-          marginTop: 30,
-          marginBottom: 20,
-          padding: 12,
+          marginTop: 15,
+          marginBottom: 12,
+          padding: 10,
           backgroundColor: '#F9FAFB',
           borderTopWidth: 2,
           borderTopColor: '#000',
@@ -446,20 +446,20 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
     title: templateStyles.title,
     companyName: templateStyles.companyName,
     section: {
-      marginBottom: 25,
-      marginTop: 10,
+      marginBottom: 12,
+      marginTop: 5,
     },
     row: {
       flexDirection: 'row',
-      marginBottom: 5,
+      marginBottom: 3,
     },
     label: {
       width: 100,
       fontWeight: 'bold',
     },
     table: {
-      marginTop: 25,
-      marginBottom: 25,
+      marginTop: 15,
+      marginBottom: 15,
       width: '100%',
     },
     tableRow: {
@@ -481,8 +481,8 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       ...templateStyles.totalSection,
       width: '100%',
       alignItems: 'flex-end',
-      marginTop: 30,
-      marginBottom: 20,
+      marginTop: 15,
+      marginBottom: 12,
     },
     totalRow: {
       flexDirection: 'row',
@@ -495,10 +495,10 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       fontWeight: 'bold',
     },
     footer: {
-      marginTop: 30,
-      marginBottom: 15,
-      paddingTop: 15,
-      paddingBottom: 10,
+      marginTop: 15,
+      marginBottom: 10,
+      paddingTop: 10,
+      paddingBottom: 8,
       borderTopWidth: 1,
       borderTopColor: '#e5e7eb',
       borderTopStyle: 'solid',
@@ -528,17 +528,17 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
       alignItems: 'flex-end',
     },
     companyInfo: {
-      marginBottom: 20,
-      marginTop: 10,
+      marginBottom: 12,
+      marginTop: 5,
     },
     customerInfo: {
-      marginBottom: 20,
-      marginTop: 10,
+      marginBottom: 12,
+      marginTop: 5,
     },
     bankDetails: {
-      marginTop: 30,
-      marginBottom: 15,
-      padding: 12,
+      marginTop: 15,
+      marginBottom: 10,
+      padding: 10,
       backgroundColor: '#F9FAFB',
       fontSize: 10,
     },
@@ -613,69 +613,69 @@ export default function InvoicePDF({ invoice, items, branding, template }: Invoi
         {renderHeader()}
 
         {/* Company Information */}
-        <View style={[styles.section, { marginTop: 15 }]}>
+        <View style={[styles.section, { marginTop: 8 }]}>
           {branding ? (
             <View style={styles.companyInfo}>
-              <Text style={[styles.companyName, { lineHeight: 1.5 }]}>
+              <Text style={[styles.companyName, { lineHeight: 1.3 }]}>
                 {branding.business_name || 'Your Business'}
               </Text>
-              {branding.address_line1 && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.address_line1}</Text>}
-              {branding.address_line2 && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.address_line2}</Text>}
+              {branding.address_line1 && <Text style={{ marginTop: 2, lineHeight: 1.3 }}>{branding.address_line1}</Text>}
+              {branding.address_line2 && <Text style={{ marginTop: 2, lineHeight: 1.3 }}>{branding.address_line2}</Text>}
               {(branding.city || branding.postcode) && (
-                <Text style={{ marginTop: 4, lineHeight: 1.4 }}>
+                <Text style={{ marginTop: 2, lineHeight: 1.3 }}>
                   {[branding.city, branding.postcode].filter(Boolean).join(' ')}
                 </Text>
               )}
-              {branding.country && <Text style={{ marginTop: 4, lineHeight: 1.4 }}>{branding.country}</Text>}
+              {branding.country && <Text style={{ marginTop: 2, lineHeight: 1.3 }}>{branding.country}</Text>}
               {branding.vat_number && (
-                <Text style={{ marginTop: 10, lineHeight: 1.4 }}>VAT: {branding.vat_number}</Text>
+                <Text style={{ marginTop: 4, lineHeight: 1.3 }}>VAT: {branding.vat_number}</Text>
               )}
             </View>
           ) : (
             <View style={styles.companyInfo}>
               <Text style={styles.companyName}>Your Business</Text>
-              <Text style={{ fontSize: 10, color: '#666', marginTop: 3 }}>Please configure organization settings</Text>
+              <Text style={{ fontSize: 10, color: '#666', marginTop: 2 }}>Please configure organization settings</Text>
             </View>
           )}
         </View>
 
         {/* Invoice Details and Customer Info Side by Side */}
-        <View style={{ flexDirection: 'row', marginTop: 15, marginBottom: 25, width: '100%' }}>
+        <View style={{ flexDirection: 'row', marginTop: 10, marginBottom: 15, width: '100%' }}>
           <View style={{ flex: 1, marginRight: 20 }}>
-            <Text style={{ fontWeight: 'bold', marginBottom: 8 }}>Bill To:</Text>
+            <Text style={{ fontWeight: 'bold', marginBottom: 4 }}>Bill To:</Text>
             {invoice.customers ? (
               <View>
-                <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.name || 'No customer name'}</Text>
-                {invoice.customers.email && <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.email}</Text>}
+                <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>{invoice.customers.name || 'No customer name'}</Text>
+                {invoice.customers.email && <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>{invoice.customers.email}</Text>}
                 {invoice.customers.address_line1 && (
-                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.address_line1}</Text>
+                  <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>{invoice.customers.address_line1}</Text>
                 )}
                 {invoice.customers.address_line2 && (
-                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.address_line2}</Text>
+                  <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>{invoice.customers.address_line2}</Text>
                 )}
                 {(invoice.customers.city || invoice.customers.postcode) && (
-                  <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>
+                  <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>
                     {[invoice.customers.city, invoice.customers.postcode].filter(Boolean).join(' ')}
                   </Text>
                 )}
-                {invoice.customers.country && <Text style={{ marginBottom: 4, lineHeight: 1.4 }}>{invoice.customers.country}</Text>}
+                {invoice.customers.country && <Text style={{ marginBottom: 2, lineHeight: 1.3 }}>{invoice.customers.country}</Text>}
                 {invoice.customers.vat_number && (
-                  <Text style={{ marginTop: 10, lineHeight: 1.4 }}>VAT: {invoice.customers.vat_number}</Text>
+                  <Text style={{ marginTop: 4, lineHeight: 1.3 }}>VAT: {invoice.customers.vat_number}</Text>
                 )}
               </View>
             ) : (
-              <Text style={{ fontStyle: 'italic', color: '#666', lineHeight: 1.4 }}>No customer selected</Text>
+              <Text style={{ fontStyle: 'italic', color: '#666', lineHeight: 1.3 }}>No customer selected</Text>
             )}
           </View>
           <View style={{ flex: 1, alignItems: 'flex-end' }}>
-            <View style={{ flexDirection: 'row', marginBottom: 10 }}>
-              <Text style={[styles.label, { lineHeight: 1.4 }]}>Issue Date:</Text>
-              <Text style={{ lineHeight: 1.4 }}>{formatDate(invoice.issue_date)}</Text>
+            <View style={{ flexDirection: 'row', marginBottom: 5 }}>
+              <Text style={[styles.label, { lineHeight: 1.3 }]}>Issue Date:</Text>
+              <Text style={{ lineHeight: 1.3 }}>{formatDate(invoice.issue_date)}</Text>
             </View>
             {invoice.due_date && (
               <View style={{ flexDirection: 'row' }}>
-                <Text style={[styles.label, { lineHeight: 1.4 }]}>Due Date:</Text>
-                <Text style={{ lineHeight: 1.4 }}>{formatDate(invoice.due_date)}</Text>
+                <Text style={[styles.label, { lineHeight: 1.3 }]}>Due Date:</Text>
+                <Text style={{ lineHeight: 1.3 }}>{formatDate(invoice.due_date)}</Text>
               </View>
             )}
           </View>
