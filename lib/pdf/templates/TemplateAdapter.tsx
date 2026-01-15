@@ -14,6 +14,10 @@ import { VibrantPurple } from './VibrantPurple'
 import { CleanGreen } from './CleanGreen'
 import { LuxuryGold } from './LuxuryGold'
 
+// Import new A4 print-ready templates
+import { ProfessionalClassic } from './ProfessionalClassic'
+import { BoldContemporary } from './BoldContemporary'
+
 // Import new tech-themed templates
 import { TechMinimal } from './TechMinimal'
 import { TechDark } from './TechDark'
@@ -38,6 +42,10 @@ const templateMap: Record<string, TemplateComponent> = {
   // Fully converted templates
   'classic-blue': ClassicBlue,
   'modern-minimal': ModernMinimal,
+  
+  // New A4 print-ready templates
+  'professional-classic': ProfessionalClassic,
+  'bold-contemporary': BoldContemporary,
   
   // Fully converted templates
   'corporate-elegant': CorporateElegant,

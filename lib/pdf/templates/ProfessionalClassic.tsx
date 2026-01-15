@@ -1,7 +1,7 @@
 import React from 'react'
 import { InvoiceTemplateProps, formatCurrency, formatDate } from './types'
 
-export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTemplateProps) => {
+export const ProfessionalClassic = ({ invoice, items, branding, template }: InvoiceTemplateProps) => {
   return (
     <>
       <style>{`
@@ -36,23 +36,21 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           max-width: 210mm;
           margin: 0 auto;
           padding: 10mm;
-          font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+          font-family: 'Georgia', 'Times New Roman', serif;
           font-size: 10pt;
-          color: #1a1a1a;
+          color: #2c2c2c;
         }
         .header-section {
-          display: flex;
-          justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 20px;
-          padding-bottom: 15px;
-          border-bottom: 1px solid #e5e5e5;
-        }
-        .logo-container {
-          flex-shrink: 0;
+          display: grid;
+          grid-template-columns: auto 1fr auto;
+          gap: 20px;
+          align-items: start;
+          margin-bottom: 25px;
+          padding-bottom: 20px;
+          border-bottom: 3px solid #2c2c2c;
         }
         .logo-container img {
-          height: 80px;
+          height: 100px;
           max-width: 200px;
           width: auto;
           object-fit: contain;
@@ -63,165 +61,169 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           display: none;
         }
         .company-info {
-          flex: 1;
-          margin-left: 20px;
+          padding-left: 15px;
         }
         .company-name {
-          font-size: 18pt;
-          font-weight: 600;
-          color: #1a1a1a;
-          margin-bottom: 4px;
+          font-size: 20pt;
+          font-weight: 700;
+          color: #2c2c2c;
+          margin-bottom: 6px;
+          letter-spacing: 0.5px;
         }
         .company-details {
-          font-size: 9pt;
-          color: #666;
-          line-height: 1.4;
+          font-size: 9.5pt;
+          color: #555;
+          line-height: 1.5;
         }
-        .invoice-details {
+        .invoice-details-box {
+          background-color: #f5f5f5;
+          padding: 15px 20px;
+          border: 2px solid #2c2c2c;
           text-align: right;
-          flex-shrink: 0;
         }
         .invoice-title {
-          font-size: 32pt;
-          font-weight: 300;
-          color: #1a1a1a;
-          margin-bottom: 12px;
-          letter-spacing: 2px;
+          font-size: 28pt;
+          font-weight: 700;
+          color: #2c2c2c;
+          margin-bottom: 10px;
         }
         .invoice-meta {
-          font-size: 9pt;
-          color: #666;
-          line-height: 1.6;
+          font-size: 10pt;
+          line-height: 1.8;
         }
         .invoice-meta strong {
-          color: #1a1a1a;
-          font-weight: 600;
+          font-weight: 700;
         }
         .bill-to-section {
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 30px;
-          margin-bottom: 25px;
-          padding: 15px 0;
+          gap: 40px;
+          margin-bottom: 30px;
+          padding: 20px;
+          background-color: #fafafa;
+          border-left: 4px solid #2c2c2c;
         }
-        .bill-to-title {
-          font-size: 8pt;
-          font-weight: 600;
+        .section-title {
+          font-size: 11pt;
+          font-weight: 700;
           text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #999;
-          margin-bottom: 8px;
+          margin-bottom: 10px;
+          color: #2c2c2c;
         }
-        .bill-to-content {
+        .section-content {
           font-size: 10pt;
-          line-height: 1.5;
+          line-height: 1.6;
         }
-        .bill-to-content strong {
-          font-weight: 600;
-          color: #1a1a1a;
+        .section-content strong {
+          font-weight: 700;
+          font-size: 11pt;
         }
         .items-table {
           width: 100%;
           border-collapse: collapse;
-          margin-bottom: 20px;
+          margin-bottom: 25px;
+          border: 1px solid #2c2c2c;
         }
         .items-table thead {
-          background-color: #f8f8f8;
-          border-bottom: 2px solid #e5e5e5;
+          background-color: #2c2c2c;
+          color: #fff;
         }
         .items-table th {
           text-align: left;
-          padding: 10px 8px;
-          font-size: 9pt;
-          font-weight: 600;
+          padding: 12px 10px;
+          font-size: 10pt;
+          font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.5px;
-          color: #666;
         }
         .items-table th:last-child,
         .items-table td:last-child {
           text-align: right;
         }
         .items-table td {
-          padding: 10px 8px;
+          padding: 12px 10px;
           font-size: 10pt;
-          border-bottom: 1px solid #f0f0f0;
+          border-bottom: 1px solid #ddd;
         }
         .items-table td:first-child {
           word-wrap: break-word;
           word-break: break-word;
-          max-width: 300px;
+          max-width: 350px;
           overflow-wrap: break-word;
         }
-        .items-table tbody tr:hover {
-          background-color: #fafafa;
+        .items-table tbody tr:nth-child(even) {
+          background-color: #f9f9f9;
         }
         .totals-section {
-          margin-top: 20px;
+          margin-top: 25px;
           margin-bottom: 30px;
         }
         .totals-container {
-          width: 280px;
+          width: 300px;
           margin-left: auto;
+          border: 2px solid #2c2c2c;
         }
         .total-row {
           display: flex;
           justify-content: space-between;
-          padding: 8px 0;
-          font-size: 10pt;
+          padding: 10px 15px;
+          font-size: 10.5pt;
+          border-bottom: 1px solid #ddd;
+        }
+        .total-row:last-child {
+          border-bottom: none;
         }
         .total-row.grand-total {
-          border-top: 2px solid #1a1a1a;
-          margin-top: 8px;
-          padding-top: 12px;
+          background-color: #2c2c2c;
+          color: #fff;
           font-size: 14pt;
-          font-weight: 600;
+          font-weight: 700;
         }
         .footer-section {
           margin-top: 30px;
-          padding-top: 20px;
-          border-top: 1px solid #e5e5e5;
-          font-size: 9pt;
-          color: #666;
-          line-height: 1.6;
+          padding: 20px;
+          background-color: #f5f5f5;
+          border-top: 2px solid #2c2c2c;
+          font-size: 9.5pt;
+          line-height: 1.7;
         }
       `}</style>
 
       <div className="invoice-container">
-        {/* Header Section - Always on first page */}
+        {/* Header Section */}
         <div className="header-section no-break">
-          <div style={{ display: 'flex', alignItems: 'flex-start' }}>
-            {branding?.logoUrl && (
-              <div className="logo-container">
-                <img 
-                  src={branding.logoUrl} 
-                  alt={branding?.business_name || 'Company Logo'}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
-            )}
-            <div className="company-info">
-              <div className="company-name">
-                {branding?.business_name || 'Company Name'}
-              </div>
-              <div className="company-details">
-                {branding?.address_line1 && <div>{branding.address_line1}</div>}
-                {branding?.address_line2 && <div>{branding.address_line2}</div>}
-                {(branding?.city || branding?.postcode) && (
-                  <div>
-                    {[branding.city, branding.postcode].filter(Boolean).join(', ')}
-                    {branding?.country && `, ${branding.country}`}
-                  </div>
-                )}
-                {branding?.vat_number && (
-                  <div style={{ marginTop: '4px' }}>VAT: {branding.vat_number}</div>
-                )}
-              </div>
+          {branding?.logoUrl && (
+            <div className="logo-container">
+              <img 
+                src={branding.logoUrl} 
+                alt={branding?.business_name || 'Company Logo'}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
+            </div>
+          )}
+          <div className="company-info">
+            <div className="company-name">
+              {branding?.business_name || 'Company Name'}
+            </div>
+            <div className="company-details">
+              {branding?.address_line1 && <div>{branding.address_line1}</div>}
+              {branding?.address_line2 && <div>{branding.address_line2}</div>}
+              {(branding?.city || branding?.postcode) && (
+                <div>
+                  {[branding.city, branding.postcode].filter(Boolean).join(', ')}
+                  {branding?.country && `, ${branding.country}`}
+                </div>
+              )}
+              {branding?.vat_number && (
+                <div style={{ marginTop: '6px', fontWeight: 600 }}>
+                  VAT Number: {branding.vat_number}
+                </div>
+              )}
             </div>
           </div>
-          <div className="invoice-details">
+          <div className="invoice-details-box">
             <div className="invoice-title">INVOICE</div>
             <div className="invoice-meta">
               <div><strong>Invoice #:</strong> {invoice.invoice_number}</div>
@@ -233,11 +235,11 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           </div>
         </div>
 
-        {/* Bill To Section - Compact */}
+        {/* Bill To Section */}
         <div className="bill-to-section no-break">
           <div>
-            <div className="bill-to-title">Bill To</div>
-            <div className="bill-to-content">
+            <div className="section-title">Bill To</div>
+            <div className="section-content">
               {invoice.customers?.name ? (
                 <>
                   <div><strong>{invoice.customers.name}</strong></div>
@@ -253,7 +255,9 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
                     </div>
                   )}
                   {invoice.customers.vat_number && (
-                    <div style={{ marginTop: '4px' }}>VAT: {invoice.customers.vat_number}</div>
+                    <div style={{ marginTop: '6px' }}>
+                      <strong>VAT:</strong> {invoice.customers.vat_number}
+                    </div>
                   )}
                 </>
               ) : (
@@ -266,7 +270,7 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           <div></div>
         </div>
 
-        {/* Line Items Table - Can span multiple pages */}
+        {/* Line Items Table */}
         <table className="items-table">
           <thead className="table-header">
             <tr>
@@ -302,7 +306,7 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           </tbody>
         </table>
 
-        {/* Totals Section - Only on last page */}
+        {/* Totals Section */}
         <div className="totals-section no-break">
           <div className="totals-container">
             <div className="total-row">
@@ -316,7 +320,7 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
               </div>
             )}
             <div className="total-row grand-total">
-              <span>Total</span>
+              <span>TOTAL DUE</span>
               <span>{formatCurrency(Number(invoice.total), invoice.currency)}</span>
             </div>
           </div>
@@ -326,20 +330,23 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
         {(invoice.notes || branding?.bank_name || branding?.bank_iban) && (
           <div className="footer-section no-break">
             {invoice.notes && (
-              <div style={{ marginBottom: '12px' }}>
-                <strong>Notes:</strong> {invoice.notes}
+              <div style={{ marginBottom: '15px' }}>
+                <strong>Payment Terms & Notes:</strong>
+                <div style={{ marginTop: '5px' }}>{invoice.notes}</div>
               </div>
             )}
             {(branding?.bank_name || branding?.bank_account_number || branding?.bank_iban) && (
               <div>
-                <strong>Payment Details:</strong>
-                {branding.bank_name && <div>Bank: {branding.bank_name}</div>}
-                {branding.bank_account_number && (
-                  <div>Account: {branding.bank_account_number}</div>
-                )}
-                {branding.bank_sort_code && <div>Sort Code: {branding.bank_sort_code}</div>}
-                {branding.bank_iban && <div>IBAN: {branding.bank_iban}</div>}
-                {branding.bank_bic && <div>BIC: {branding.bank_bic}</div>}
+                <strong>Banking Information:</strong>
+                <div style={{ marginTop: '5px' }}>
+                  {branding.bank_name && <div>Bank: {branding.bank_name}</div>}
+                  {branding.bank_account_number && (
+                    <div>Account Number: {branding.bank_account_number}</div>
+                  )}
+                  {branding.bank_sort_code && <div>Sort Code: {branding.bank_sort_code}</div>}
+                  {branding.bank_iban && <div>IBAN: {branding.bank_iban}</div>}
+                  {branding.bank_bic && <div>BIC/SWIFT: {branding.bank_bic}</div>}
+                </div>
               </div>
             )}
           </div>
