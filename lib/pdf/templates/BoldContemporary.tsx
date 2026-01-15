@@ -241,7 +241,13 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
           <div className="header-left">
             {branding?.logoUrl && (
               <div className="logo-container">
-                <img src={branding.logoUrl} alt="Logo" />
+                <img 
+                  src={branding.logoUrl} 
+                  alt={branding?.business_name || 'Company Logo'}
+                  onError={(e) => {
+                    e.currentTarget.style.display = 'none';
+                  }}
+                />
               </div>
             )}
             <div className="company-info-header">
@@ -348,3 +354,50 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
 
         {/* Totals Section */}
         <div className="totals-section no-break">
+          <div className="totals-container">
+            <div className="total-row">
+              <span>Subtotal</span>
+              <span>{formatCurrency(Number(invoice.subtotal), invoice.currency)}</span>
+            </div>
+            {invoice.tax_total > 0 && (
+              <div className="total-row">
+                <span>Tax</span>
+                <span>{formatCurrency(Number(invoice.tax_total), invoice.currency)}</span>
+              </div>
+            )}
+            <div className="total-row grand-total">
+              <span>TOTAL DUE</span>
+              <span>{formatCurrency(Number(invoice.total), invoice.currency)}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer Section */}
+        {(invoice.notes || branding?.bank_name || branding?.bank_iban) && (
+          <div className="footer-section no-break">
+            {invoice.notes && (
+              <div style={{ marginBottom: '15px' }}>
+                <strong>Notes:</strong>
+                <div style={{ marginTop: '5px' }}>{invoice.notes}</div>
+              </div>
+            )}
+            {(branding?.bank_name || branding?.bank_account_number || branding?.bank_iban) && (
+              <div>
+                <strong>Payment Information:</strong>
+                <div style={{ marginTop: '5px' }}>
+                  {branding.bank_name && <div>Bank: {branding.bank_name}</div>}
+                  {branding.bank_account_number && (
+                    <div>Account: {branding.bank_account_number}</div>
+                  )}
+                  {branding.bank_sort_code && <div>Sort Code: {branding.bank_sort_code}</div>}
+                  {branding.bank_iban && <div>IBAN: {branding.bank_iban}</div>}
+                  {branding.bank_bic && <div>BIC: {branding.bank_bic}</div>}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </>
+  )
+}
