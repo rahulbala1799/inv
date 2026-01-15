@@ -8,11 +8,12 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
         @media print {
           @page {
             size: A4;
-            margin: 10mm;
+            margin: 10mm 10mm 20mm 10mm;
             @bottom-right {
               content: "Page " counter(page) " of " counter(pages);
               font-size: 9pt;
               color: #666;
+              margin-bottom: 5mm;
             }
           }
           .page-break {
@@ -30,314 +31,279 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
             page-break-inside: avoid;
             break-inside: avoid;
           }
-          .header-banner {
-            background: #667eea !important;
-            print-color-adjust: economy;
-            -webkit-print-color-adjust: economy;
+          body {
+            margin: 0;
+            padding: 0;
           }
         }
         .invoice-container {
           width: 100%;
           max-width: 210mm;
           margin: 0 auto;
-          padding: 10mm;
+          padding: 8mm;
           font-family: 'Roboto', 'Helvetica Neue', Arial, sans-serif;
           font-size: 10pt;
           color: #1a1a1a;
+          min-height: 270mm;
+          padding-bottom: 15mm;
         }
-        .header-banner {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          color: #fff;
-          padding: 20px 25px;
-          margin: -10mm -10mm 25px -10mm;
-        }
-        .logo-invoice-row {
+        .top-bar {
           display: flex;
           justify-content: space-between;
-          align-items: flex-start;
-          margin-bottom: 20px;
+          align-items: center;
+          margin-bottom: 25px;
+          padding: 15px 20px;
+          background: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
+          border-radius: 8px;
+          box-shadow: 0 4px 12px rgba(22, 160, 133, 0.2);
         }
         .logo-container {
           display: inline-block;
         }
         .logo-container img {
-          height: 70px;
-          max-width: 180px;
+          height: 60px;
+          max-width: 160px;
           width: auto;
           object-fit: contain;
-          background: #fff;
-          padding: 8px;
-          border-radius: 4px;
           display: block;
+          background: #fff;
+          padding: 6px 10px;
+          border-radius: 6px;
         }
         .logo-container img[src=""],
         .logo-container img:not([src]) {
           display: none;
         }
-        .invoice-title-top {
-          font-size: 36pt;
-          font-weight: 900;
-          letter-spacing: 3px;
-          color: #fff;
+        .invoice-header-right {
           text-align: right;
+          color: #fff;
         }
-        .header-left {
+        .invoice-title {
+          font-size: 38pt;
+          font-weight: 900;
+          color: #fff;
+          margin-bottom: 4px;
+          letter-spacing: 2px;
+          text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .invoice-number {
+          font-size: 12pt;
+          font-weight: 600;
+          opacity: 0.95;
+        }
+        .invoice-dates {
           display: flex;
-          align-items: center;
-          gap: 20px;
-        }
-        .logo-container img {
-          height: 70px;
-          max-width: 180px;
-          width: auto;
-          object-fit: contain;
-          background: #fff;
-          padding: 8px;
-          border-radius: 4px;
-          display: block;
-        }
-        .logo-container img[src=""],
-        .logo-container img:not([src]) {
-          display: none;
-        }
-        .company-info-header {
-          color: #fff;
-        }
-        .company-name-header {
-          font-size: 22pt;
-          font-weight: 700;
-          margin-bottom: 4px;
-        }
-        .company-details-header {
-          font-size: 9pt;
-          opacity: 0.95;
-          line-height: 1.4;
-        }
-        .invoice-title-header {
-          text-align: right;
-        }
-        .invoice-title-text {
-          font-size: 36pt;
-          font-weight: 900;
-          letter-spacing: 3px;
-          margin-bottom: 8px;
-        }
-        .invoice-number-header {
-          font-size: 14pt;
-          font-weight: 600;
-          opacity: 0.95;
-        }
-        .header-details {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 30px;
-          margin-bottom: 25px;
-          padding: 20px;
-          background-color: #f8f9fa;
-          border-radius: 8px;
-        }
-        .detail-group {
-          font-size: 10pt;
-        }
-        .detail-label {
-          font-size: 8pt;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #666;
-          margin-bottom: 4px;
-          font-weight: 600;
-        }
-        .detail-value {
-          font-size: 11pt;
-          font-weight: 600;
-          color: #1a1a1a;
-        }
-        .bill-from-to-section {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
           gap: 30px;
           margin-bottom: 25px;
           padding: 15px 20px;
-          background-color: #fff;
-          border-left: 5px solid #667eea;
+          background-color: #f8f9fa;
+          border-left: 5px solid #16a085;
+          border-radius: 6px;
+        }
+        .date-item {
+          flex: 1;
+        }
+        .date-label {
+          font-size: 8pt;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #16a085;
+          margin-bottom: 6px;
+          font-weight: 700;
+        }
+        .date-value {
+          font-size: 11pt;
+          font-weight: 600;
+          color: #2c3e50;
+        }
+        .parties-section {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 25px;
+          margin-bottom: 30px;
+        }
+        .party-card {
+          padding: 20px;
+          background: #fff;
+          border: 2px solid #16a085;
+          border-radius: 8px;
+          box-shadow: 0 2px 8px rgba(22, 160, 133, 0.15);
+        }
+        .party-title {
+          font-size: 10pt;
+          font-weight: 700;
+          text-transform: uppercase;
+          margin-bottom: 12px;
+          color: #fff;
+          background: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
+          padding: 8px 12px;
           border-radius: 4px;
+          letter-spacing: 0.5px;
         }
-        .bill-from-section {
-          display: flex;
-          flex-direction: column;
-        }
-        .bill-from-title {
-          font-size: 9pt;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #667eea;
-          margin-bottom: 10px;
-        }
-        .bill-from-content {
+        .party-content {
           font-size: 10pt;
+          line-height: 1.7;
+        }
+        .company-name {
+          font-size: 15pt;
+          font-weight: 700;
+          color: #2c3e50;
+          margin-bottom: 8px;
+        }
+        .company-details {
+          font-size: 9.5pt;
+          color: #555;
           line-height: 1.6;
         }
-        .bill-from-content .company-name {
-          font-size: 16pt;
-          font-weight: 700;
-          color: #1a1a1a;
-          margin-bottom: 4px;
-        }
-        .bill-from-content .company-details {
-          font-size: 9pt;
-          color: #666;
-          line-height: 1.4;
-        }
-        .bill-to-compact {
-          display: flex;
-          flex-direction: column;
-        }
-        .bill-to-title {
-          font-size: 9pt;
-          font-weight: 700;
-          text-transform: uppercase;
-          letter-spacing: 1px;
-          color: #667eea;
-          margin-bottom: 10px;
-        }
-        .bill-to-content {
-          font-size: 10pt;
-          line-height: 1.6;
-        }
-        .bill-to-content strong {
+        .party-content strong {
           font-size: 12pt;
           font-weight: 700;
-          color: #1a1a1a;
+          color: #2c3e50;
         }
         .items-table {
           width: 100%;
-          border-collapse: collapse;
+          border-collapse: separate;
+          border-spacing: 0;
           margin-bottom: 25px;
-          box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+          border: 3px solid #16a085;
+          border-radius: 8px;
+          overflow: hidden;
+          box-shadow: 0 4px 12px rgba(22, 160, 133, 0.2);
         }
         .items-table thead {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          background: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
           color: #fff;
         }
         .items-table th {
           text-align: left;
-          padding: 14px 12px;
-          font-size: 9.5pt;
+          padding: 16px 14px;
+          font-size: 10pt;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 1px;
+          border-right: 2px solid rgba(255, 255, 255, 0.3);
+        }
+        .items-table th:last-child {
+          border-right: none;
         }
         .items-table th:last-child,
         .items-table td:last-child {
           text-align: right;
         }
         .items-table td {
-          padding: 12px;
+          padding: 16px 14px;
           font-size: 10pt;
-          border-bottom: 1px solid #e9ecef;
+          border-bottom: 2px solid #e8f8f5;
+          border-right: 2px solid #e8f8f5;
+          background-color: #fff;
+        }
+        .items-table td:last-child {
+          border-right: none;
         }
         .items-table td:first-child {
           word-wrap: break-word;
           word-break: break-word;
-          max-width: 320px;
+          max-width: 350px;
           overflow-wrap: break-word;
         }
-        .items-table tbody tr {
-          transition: background-color 0.2s;
+        .items-table tbody tr:nth-child(even) {
+          background-color: #f0fdf4;
+        }
+        .items-table tbody tr:nth-child(odd) {
+          background-color: #ffffff;
+        }
+        .items-table tbody tr:last-child td {
+          border-bottom: none;
         }
         .items-table tbody tr:hover {
-          background-color: #f8f9fa;
-        }
-        .items-table tbody tr:nth-child(even) {
-          background-color: #fafbfc;
+          background-color: #e8f8f5 !important;
         }
         .totals-section {
           margin-top: 25px;
-          margin-bottom: 30px;
+          margin-bottom: 20px;
         }
         .totals-container {
-          width: 320px;
+          width: 340px;
           margin-left: auto;
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-          border-radius: 8px;
-          padding: 20px;
+          background: linear-gradient(135deg, #16a085 0%, #27ae60 100%);
+          border-radius: 10px;
+          padding: 24px;
           color: #fff;
+          box-shadow: 0 6px 16px rgba(22, 160, 133, 0.3);
+          border: 3px solid #0d8c6f;
         }
         .total-row {
           display: flex;
           justify-content: space-between;
-          padding: 8px 0;
-          font-size: 10.5pt;
-          border-bottom: 1px solid rgba(255,255,255,0.2);
+          padding: 12px 0;
+          font-size: 11.5pt;
+          border-bottom: 2px solid rgba(255, 255, 255, 0.3);
         }
         .total-row:last-child {
           border-bottom: none;
         }
         .total-row.grand-total {
-          margin-top: 10px;
-          padding-top: 15px;
-          border-top: 2px solid rgba(255,255,255,0.3);
-          font-size: 18pt;
-          font-weight: 700;
+          margin-top: 15px;
+          padding-top: 18px;
+          border-top: 3px solid rgba(255, 255, 255, 0.4);
+          font-size: 20pt;
+          font-weight: 900;
         }
         .footer-section {
           margin-top: 30px;
           padding: 20px;
-          background-color: #f8f9fa;
-          border-radius: 8px;
+          background: linear-gradient(to right, #f0fdf4 0%, #ffffff 100%);
+          border-top: 4px solid #16a085;
+          border-radius: 6px;
           font-size: 9.5pt;
-          line-height: 1.7;
+          line-height: 1.8;
           color: #555;
         }
         .footer-section strong {
-          color: #667eea;
+          color: #16a085;
           font-weight: 700;
         }
       `}</style>
 
       <div className="invoice-container">
-        {/* Header Banner */}
-        <div className="header-banner no-break">
-          {/* Logo and INVOICE Title Row */}
-          <div className="logo-invoice-row">
+        {/* Top Bar: Logo + Invoice Title */}
+        <div className="top-bar no-break">
+          <div className="logo-container">
             {branding?.logoUrl && (
-              <div className="logo-container">
-                <img 
-                  src={branding.logoUrl} 
-                  alt={branding?.business_name || 'Company Logo'}
-                  onError={(e) => {
-                    e.currentTarget.style.display = 'none';
-                  }}
-                />
-              </div>
+              <img 
+                src={branding.logoUrl} 
+                alt={branding?.business_name || 'Company Logo'}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
             )}
-            <div className="invoice-title-top">INVOICE</div>
           </div>
-          <div style={{ textAlign: 'right' }}>
-            <div className="invoice-number-header">#{invoice.invoice_number}</div>
+          <div className="invoice-header-right">
+            <div className="invoice-title">INVOICE</div>
+            <div className="invoice-number">#{invoice.invoice_number}</div>
           </div>
         </div>
 
-        {/* Invoice Details Grid */}
-        <div className="header-details no-break">
-          <div className="detail-group">
-            <div className="detail-label">Issue Date</div>
-            <div className="detail-value">{formatDate(invoice.issue_date)}</div>
+        {/* Invoice Dates */}
+        <div className="invoice-dates no-break">
+          <div className="date-item">
+            <div className="date-label">Issue Date</div>
+            <div className="date-value">{formatDate(invoice.issue_date)}</div>
           </div>
           {invoice.due_date && (
-            <div className="detail-group">
-              <div className="detail-label">Due Date</div>
-              <div className="detail-value">{formatDate(invoice.due_date)}</div>
+            <div className="date-item">
+              <div className="date-label">Due Date</div>
+              <div className="date-value">{formatDate(invoice.due_date)}</div>
             </div>
           )}
         </div>
 
         {/* Bill From and Bill To Section */}
-        <div className="bill-from-to-section no-break">
-          <div className="bill-from-section">
-            <div className="bill-from-title">Bill From</div>
-            <div className="bill-from-content">
+        <div className="parties-section no-break">
+          <div className="party-card">
+            <div className="party-title">Bill From</div>
+            <div className="party-content">
               <div className="company-name">
                 {branding?.business_name || 'Company Name'}
               </div>
@@ -350,13 +316,17 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
                     {branding?.country && `, ${branding.country}`}
                   </div>
                 )}
-                {branding?.vat_number && <div>VAT: {branding.vat_number}</div>}
+                {branding?.vat_number && (
+                  <div style={{ marginTop: '8px', fontWeight: 600 }}>
+                    VAT: {branding.vat_number}
+                  </div>
+                )}
               </div>
             </div>
           </div>
-          <div className="bill-to-compact">
-            <div className="bill-to-title">Bill To</div>
-            <div className="bill-to-content">
+          <div className="party-card">
+            <div className="party-title">Bill To</div>
+            <div className="party-content">
               {invoice.customers?.name ? (
                 <>
                   <div><strong>{invoice.customers.name}</strong></div>
@@ -372,7 +342,9 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
                     </div>
                   )}
                   {invoice.customers.vat_number && (
-                    <div style={{ marginTop: '6px' }}>VAT: {invoice.customers.vat_number}</div>
+                    <div style={{ marginTop: '8px' }}>
+                      <strong>VAT:</strong> {invoice.customers.vat_number}
+                    </div>
                   )}
                 </>
               ) : (

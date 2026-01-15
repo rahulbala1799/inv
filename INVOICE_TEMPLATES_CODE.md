@@ -1219,3 +1219,217 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
 - All templates support 10+ line items per page
 - Logo error handling included in all templates
 - Long descriptions are word-wrapped properly
+
+
+Template 1
+// Layout skeleton for "ModernMinimal" – COMPACT MINIMAL UI
+
+<div className="invoice-container">
+  {/* Top Row: Logo + Invoice Meta (no big header bar) */}
+  <div className="top-row no-break">
+    <div className="top-left">
+      <div className="logo-container">
+        {/* company logo */}
+      </div>
+      <div className="from-block">
+        {/* Bill From: business name + address + VAT */}
+      </div>
+    </div>
+
+    <div className="top-right">
+      <div className="invoice-title">INVOICE</div>
+      <div className="invoice-meta">
+        {/* Invoice number, Issue date, Due date */}
+      </div>
+    </div>
+  </div>
+
+  {/* Bill To + Optional Reference Info */}
+  <div className="party-row no-break">
+    <div className="bill-to">
+      {/* Bill To: customer name, address, VAT */}
+    </div>
+    <div className="extra-info">
+      {/* Optional: PO number, reference, project name, etc. */}
+    </div>
+  </div>
+
+  {/* Items Table – multi-page safe */}
+  <table className="items-table">
+    <thead className="table-header">
+      {/* Description, Qty, Unit, Tax, Total */}
+    </thead>
+    <tbody>
+      {/* Line items */}
+    </tbody>
+  </table>
+
+  {/* Totals + Notes footer row on last page */}
+  <div className="bottom-row no-break">
+    <div className="notes-block">
+      {/* Notes / Terms (small text, left aligned) */}
+    </div>
+    <div className="totals-block">
+      {/* Subtotal, Tax, Total */}
+    </div>
+  </div>
+</div>
+
+
+Template 2
+
+// Layout skeleton for "ProfessionalClassic" – STRUCTURED COLUMNS UI
+
+<div className="invoice-container">
+  {/* Top band: Invoice title + number + dates, no big header-section */}
+  <div className="title-band no-break">
+    <div className="title-left">
+      <div className="business-name">
+        {/* Business name, optional small logo icon if needed */}
+      </div>
+      <div className="business-contact">
+        {/* Address, country, VAT */}
+      </div>
+    </div>
+    <div className="title-right">
+      <div className="invoice-title">INVOICE</div>
+      <div className="invoice-meta">
+        {/* Invoice #, Issue date, Due date */}
+      </div>
+    </div>
+  </div>
+
+  {/* Two-column info strip */}
+  <div className="info-strip no-break">
+    <div className="info-column">
+      <div className="section-title">Bill From</div>
+      <div className="section-body">
+        {/* From details */}
+      </div>
+    </div>
+    <div className="info-column">
+      <div className="section-title">Bill To</div>
+      <div className="section-body">
+        {/* To details */}
+      </div>
+    </div>
+  </div>
+
+  {/* Items Table */}
+  <table className="items-table">
+    <thead className="table-header">
+      {/* Description, Qty, Unit Price, Tax, Total */}
+    </thead>
+    <tbody>
+      {/* Line items */}
+    </tbody>
+  </table>
+
+  {/* Totals row with boxed style */}
+  <div className="totals-and-notes no-break">
+    <div className="notes-column">
+      <div className="section-title">Notes</div>
+      <div className="section-body">
+        {/* Payment terms / notes */}
+      </div>
+      <div className="section-title">Bank Details</div>
+      <div className="section-body">
+        {/* Bank, IBAN, BIC, etc. */}
+      </div>
+    </div>
+    <div className="totals-column">
+      <div className="totals-box">
+        {/* Subtotal, Tax, Grand Total */}
+      </div>
+    </div>
+  </div>
+</div>
+
+
+Template 3
+
+// Layout skeleton for "BoldContemporary" – COMPACT CONTEMPORARY UI
+
+<div className="invoice-container">
+  {/* Thin accent bar instead of large header-banner */}
+  <div className="accent-bar no-break">
+    <div className="accent-left">
+      <div className="logo-container">
+        {/* Logo on light background if needed */}
+      </div>
+      <div className="business-small">
+        {/* Short business name / tagline */}
+      </div>
+    </div>
+    <div className="accent-right">
+      <div className="invoice-title">INVOICE</div>
+      <div className="invoice-number">
+        {/* Invoice number */}
+      </div>
+    </div>
+  </div>
+
+  {/* Meta + dates row */}
+  <div className="meta-row no-break">
+    <div className="meta-left">
+      <div className="label">Issue Date</div>
+      <div className="value">
+        {/* Issue date */}
+      </div>
+    </div>
+    <div className="meta-left">
+      <div className="label">Due Date</div>
+      <div className="value">
+        {/* Due date */}
+      </div>
+    </div>
+    <div className="meta-right">
+      {/* Optional: PO number / Reference */}
+    </div>
+  </div>
+
+  {/* Parties block with subtle border accent */}
+  <div className="parties-row no-break">
+    <div className="party-block">
+      <div className="party-title">Bill From</div>
+      <div className="party-body">
+        {/* From details */}
+      </div>
+    </div>
+    <div className="party-block">
+      <div className="party-title">Bill To</div>
+      <div className="party-body">
+        {/* To details */}
+      </div>
+    </div>
+  </div>
+
+  {/* Items Table */}
+  <table className="items-table">
+    <thead className="table-header">
+      {/* Description, Qty, Unit, Tax, Total */}
+    </thead>
+    <tbody>
+      {/* Line items */}
+    </tbody>
+  </table>
+
+  {/* Totals + notes with a colored totals card */}
+  <div className="footer-row no-break">
+    <div className="footer-notes">
+      <div className="footer-title">Notes</div>
+      <div className="footer-body">
+        {/* Notes text */}
+      </div>
+      <div className="footer-title">Payment</div>
+      <div className="footer-body">
+        {/* Bank / payment details */}
+      </div>
+    </div>
+    <div className="footer-totals">
+      <div className="totals-card">
+        {/* Subtotal, Tax, Total Due */}
+      </div>
+    </div>
+  </div>
+</div>

@@ -8,11 +8,12 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
         @media print {
           @page {
             size: A4;
-            margin: 10mm;
+            margin: 10mm 10mm 20mm 10mm;
             @bottom-right {
               content: "Page " counter(page) " of " counter(pages);
               font-size: 9pt;
               color: #666;
+              margin-bottom: 5mm;
             }
           }
           .page-break {
@@ -30,33 +31,39 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
             page-break-inside: avoid;
             break-inside: avoid;
           }
+          body {
+            margin: 0;
+            padding: 0;
+          }
         }
         .invoice-container {
           width: 100%;
           max-width: 210mm;
           margin: 0 auto;
-          padding: 10mm;
+          padding: 8mm;
           font-family: 'Georgia', 'Times New Roman', serif;
           font-size: 10pt;
-          color: #2c2c2c;
+          color: #2c3e50;
+          min-height: 270mm;
+          padding-bottom: 15mm;
         }
-        .header-section {
-          margin-bottom: 25px;
-          padding-bottom: 20px;
-          border-bottom: 3px solid #2c2c2c;
-        }
-        .logo-invoice-row {
+        .top-section {
           display: flex;
           justify-content: space-between;
           align-items: flex-start;
-          margin-bottom: 20px;
+          margin-bottom: 25px;
+          padding-bottom: 20px;
+          border-bottom: 3px solid #3498db;
+        }
+        .logo-section {
+          flex: 0 0 auto;
         }
         .logo-container {
           display: inline-block;
         }
         .logo-container img {
-          height: 100px;
-          max-width: 200px;
+          height: 70px;
+          max-width: 180px;
           width: auto;
           object-fit: contain;
           display: block;
@@ -65,107 +72,116 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
         .logo-container img:not([src]) {
           display: none;
         }
-        .invoice-title-top {
-          font-size: 28pt;
-          font-weight: 700;
-          color: #2c2c2c;
+        .invoice-header-right {
           text-align: right;
+          flex: 1;
         }
-        .bill-from-to-section {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 40px;
-          margin-bottom: 20px;
-          padding: 20px;
-          background-color: #fafafa;
-          border-left: 4px solid #2c2c2c;
-        }
-        .bill-from-section {
-          display: flex;
-          flex-direction: column;
-        }
-        .bill-from-title {
-          font-size: 11pt;
+        .invoice-title {
+          font-size: 42pt;
           font-weight: 700;
-          text-transform: uppercase;
-          margin-bottom: 10px;
-          color: #2c2c2c;
+          color: #3498db;
+          margin-bottom: 8px;
+          letter-spacing: 1px;
         }
-        .bill-from-content {
-          font-size: 10pt;
-          line-height: 1.6;
-        }
-        .bill-from-content .company-name {
-          font-size: 16pt;
-          font-weight: 700;
-          color: #2c2c2c;
-          margin-bottom: 6px;
-          letter-spacing: 0.5px;
-        }
-        .bill-from-content .company-details {
-          font-size: 9.5pt;
-          color: #555;
-          line-height: 1.5;
-        }
-        .invoice-details-box {
-          background-color: #f5f5f5;
-          padding: 15px 20px;
-          border: 2px solid #2c2c2c;
-          text-align: right;
-          margin-top: 10px;
+        .invoice-meta-box {
+          background-color: #ecf0f1;
+          padding: 12px 18px;
+          border-left: 4px solid #3498db;
+          border-radius: 4px;
+          display: inline-block;
+          margin-top: 8px;
         }
         .invoice-meta {
           font-size: 10pt;
           line-height: 1.8;
         }
         .invoice-meta strong {
+          color: #2c3e50;
           font-weight: 700;
         }
-        .bill-to-section {
+        .parties-section {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 30px;
+          margin-bottom: 30px;
+          padding: 20px;
+          background: linear-gradient(to right, #f8f9fa 0%, #ffffff 50%);
+          border: 2px solid #3498db;
+          border-radius: 6px;
+        }
+        .party-block {
           display: flex;
           flex-direction: column;
         }
-        .section-title {
+        .party-title {
           font-size: 11pt;
           font-weight: 700;
           text-transform: uppercase;
-          margin-bottom: 10px;
-          color: #2c2c2c;
+          margin-bottom: 12px;
+          color: #3498db;
+          letter-spacing: 0.5px;
+          padding-bottom: 6px;
+          border-bottom: 2px solid #3498db;
         }
-        .section-content {
+        .party-content {
           font-size: 10pt;
+          line-height: 1.7;
+        }
+        .company-name {
+          font-size: 16pt;
+          font-weight: 700;
+          color: #2c3e50;
+          margin-bottom: 8px;
+        }
+        .company-details {
+          font-size: 9.5pt;
+          color: #555;
           line-height: 1.6;
         }
-        .section-content strong {
+        .party-content strong {
+          font-size: 12pt;
           font-weight: 700;
-          font-size: 11pt;
+          color: #2c3e50;
         }
         .items-table {
           width: 100%;
-          border-collapse: collapse;
+          border-collapse: separate;
+          border-spacing: 0;
           margin-bottom: 25px;
-          border: 1px solid #2c2c2c;
+          border: 2px solid #3498db;
+          border-radius: 6px;
+          overflow: hidden;
+          box-shadow: 0 2px 8px rgba(52, 152, 219, 0.1);
         }
         .items-table thead {
-          background-color: #2c2c2c;
+          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
           color: #fff;
         }
         .items-table th {
           text-align: left;
-          padding: 12px 10px;
+          padding: 14px 12px;
           font-size: 10pt;
           font-weight: 700;
           text-transform: uppercase;
           letter-spacing: 0.5px;
+          border-right: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .items-table th:last-child {
+          border-right: none;
         }
         .items-table th:last-child,
         .items-table td:last-child {
           text-align: right;
         }
         .items-table td {
-          padding: 12px 10px;
+          padding: 14px 12px;
           font-size: 10pt;
-          border-bottom: 1px solid #ddd;
+          border-bottom: 1px solid #e0e0e0;
+          border-right: 1px solid #e0e0e0;
+          background-color: #fff;
+        }
+        .items-table td:last-child {
+          border-right: none;
         }
         .items-table td:first-child {
           word-wrap: break-word;
@@ -174,48 +190,67 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
           overflow-wrap: break-word;
         }
         .items-table tbody tr:nth-child(even) {
-          background-color: #f9f9f9;
+          background-color: #f8f9fa;
+        }
+        .items-table tbody tr:nth-child(odd) {
+          background-color: #ffffff;
+        }
+        .items-table tbody tr:last-child td {
+          border-bottom: none;
+        }
+        .items-table tbody tr:hover {
+          background-color: #e8f4f8 !important;
         }
         .totals-section {
           margin-top: 25px;
-          margin-bottom: 30px;
+          margin-bottom: 20px;
         }
         .totals-container {
-          width: 300px;
+          width: 320px;
           margin-left: auto;
-          border: 2px solid #2c2c2c;
+          background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+          border-radius: 8px;
+          padding: 20px;
+          color: #fff;
+          box-shadow: 0 4px 12px rgba(52, 152, 219, 0.3);
         }
         .total-row {
           display: flex;
           justify-content: space-between;
-          padding: 10px 15px;
-          font-size: 10.5pt;
-          border-bottom: 1px solid #ddd;
+          padding: 10px 0;
+          font-size: 11pt;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.25);
         }
         .total-row:last-child {
           border-bottom: none;
         }
         .total-row.grand-total {
-          background-color: #2c2c2c;
-          color: #fff;
-          font-size: 14pt;
+          margin-top: 12px;
+          padding-top: 15px;
+          border-top: 2px solid rgba(255, 255, 255, 0.4);
+          font-size: 18pt;
           font-weight: 700;
         }
         .footer-section {
           margin-top: 30px;
           padding: 20px;
-          background-color: #f5f5f5;
-          border-top: 2px solid #2c2c2c;
+          background-color: #ecf0f1;
+          border-top: 3px solid #3498db;
+          border-radius: 4px;
           font-size: 9.5pt;
-          line-height: 1.7;
+          line-height: 1.8;
+          color: #555;
+        }
+        .footer-section strong {
+          color: #3498db;
+          font-weight: 700;
         }
       `}</style>
 
       <div className="invoice-container">
-        {/* Header Section */}
-        <div className="header-section no-break">
-          {/* Logo and INVOICE Title Row */}
-          <div className="logo-invoice-row">
+        {/* Top Section: Logo + Invoice Title + Meta */}
+        <div className="top-section no-break">
+          <div className="logo-section">
             {branding?.logoUrl && (
               <div className="logo-container">
                 <img 
@@ -227,73 +262,73 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
                 />
               </div>
             )}
-            <div className="invoice-title-top">INVOICE</div>
           </div>
-
-          {/* Bill From and Bill To Row */}
-          <div className="bill-from-to-section no-break">
-            <div className="bill-from-section">
-              <div className="bill-from-title">Bill From</div>
-              <div className="bill-from-content">
-                <div className="company-name">
-                  {branding?.business_name || 'Company Name'}
-                </div>
-                <div className="company-details">
-                  {branding?.address_line1 && <div>{branding.address_line1}</div>}
-                  {branding?.address_line2 && <div>{branding.address_line2}</div>}
-                  {(branding?.city || branding?.postcode) && (
-                    <div>
-                      {[branding.city, branding.postcode].filter(Boolean).join(', ')}
-                      {branding?.country && `, ${branding.country}`}
-                    </div>
-                  )}
-                  {branding?.vat_number && (
-                    <div style={{ marginTop: '6px', fontWeight: 600 }}>
-                      VAT Number: {branding.vat_number}
-                    </div>
-                  )}
-                </div>
+          <div className="invoice-header-right">
+            <div className="invoice-title">INVOICE</div>
+            <div className="invoice-meta-box">
+              <div className="invoice-meta">
+                <div><strong>Invoice #:</strong> {invoice.invoice_number}</div>
+                <div><strong>Date:</strong> {formatDate(invoice.issue_date)}</div>
+                {invoice.due_date && (
+                  <div><strong>Due Date:</strong> {formatDate(invoice.due_date)}</div>
+                )}
               </div>
             </div>
-            <div className="bill-to-section">
-              <div className="section-title">Bill To</div>
-              <div className="section-content">
-                {invoice.customers?.name ? (
-                  <>
-                    <div><strong>{invoice.customers.name}</strong></div>
-                    {invoice.customers.email && <div>{invoice.customers.email}</div>}
-                    {invoice.customers.address_line1 && <div>{invoice.customers.address_line1}</div>}
-                    {invoice.customers.address_line2 && <div>{invoice.customers.address_line2}</div>}
-                    {(invoice.customers.city || invoice.customers.postcode) && (
-                      <div>
-                        {[invoice.customers.city, invoice.customers.postcode]
-                          .filter(Boolean)
-                          .join(', ')}
-                        {invoice.customers.country && `, ${invoice.customers.country}`}
-                      </div>
-                    )}
-                    {invoice.customers.vat_number && (
-                      <div style={{ marginTop: '6px' }}>
-                        <strong>VAT:</strong> {invoice.customers.vat_number}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div style={{ color: '#999', fontStyle: 'italic' }}>
-                    {invoice.customers ? 'Customer information incomplete' : 'No customer selected'}
+          </div>
+        </div>
+
+        {/* Bill From and Bill To Section */}
+        <div className="parties-section no-break">
+          <div className="party-block">
+            <div className="party-title">Bill From</div>
+            <div className="party-content">
+              <div className="company-name">
+                {branding?.business_name || 'Company Name'}
+              </div>
+              <div className="company-details">
+                {branding?.address_line1 && <div>{branding.address_line1}</div>}
+                {branding?.address_line2 && <div>{branding.address_line2}</div>}
+                {(branding?.city || branding?.postcode) && (
+                  <div>
+                    {[branding.city, branding.postcode].filter(Boolean).join(', ')}
+                    {branding?.country && `, ${branding.country}`}
+                  </div>
+                )}
+                {branding?.vat_number && (
+                  <div style={{ marginTop: '8px', fontWeight: 600 }}>
+                    VAT Number: {branding.vat_number}
                   </div>
                 )}
               </div>
             </div>
           </div>
-
-          {/* Invoice Details - Right aligned */}
-          <div className="invoice-details-box">
-            <div className="invoice-meta">
-              <div><strong>Invoice #:</strong> {invoice.invoice_number}</div>
-              <div><strong>Date:</strong> {formatDate(invoice.issue_date)}</div>
-              {invoice.due_date && (
-                <div><strong>Due Date:</strong> {formatDate(invoice.due_date)}</div>
+          <div className="party-block">
+            <div className="party-title">Bill To</div>
+            <div className="party-content">
+              {invoice.customers?.name ? (
+                <>
+                  <div><strong>{invoice.customers.name}</strong></div>
+                  {invoice.customers.email && <div>{invoice.customers.email}</div>}
+                  {invoice.customers.address_line1 && <div>{invoice.customers.address_line1}</div>}
+                  {invoice.customers.address_line2 && <div>{invoice.customers.address_line2}</div>}
+                  {(invoice.customers.city || invoice.customers.postcode) && (
+                    <div>
+                      {[invoice.customers.city, invoice.customers.postcode]
+                        .filter(Boolean)
+                        .join(', ')}
+                      {invoice.customers.country && `, ${invoice.customers.country}`}
+                    </div>
+                  )}
+                  {invoice.customers.vat_number && (
+                    <div style={{ marginTop: '8px' }}>
+                      <strong>VAT:</strong> {invoice.customers.vat_number}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <div style={{ color: '#999', fontStyle: 'italic' }}>
+                  {invoice.customers ? 'Customer information incomplete' : 'No customer selected'}
+                </div>
               )}
             </div>
           </div>
