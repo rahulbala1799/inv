@@ -58,7 +58,7 @@ export default async function InvoiceDetailPage({
     .eq('org_id', orgId)
     .single()
 
-  // Get only Classic template (hide all other templates)
+  // Get print-ready templates (Classic, Modern Minimal, Professional Classic, Bold Contemporary)
   const { data: allTemplates } = await supabase
     .from('invoice_templates')
     .select('*')
@@ -66,10 +66,20 @@ export default async function InvoiceDetailPage({
     .order('is_default', { ascending: false })
     .order('name')
   
-  // Filter to only Classic template(s)
-  const templates = (allTemplates || []).filter(t => 
-    t.name?.toLowerCase().includes('classic')
-  )
+  // Filter to only print-ready templates
+  const templates = (allTemplates || []).filter(t => {
+    const name = t.name?.toLowerCase() || ''
+    const layout = t.config_json?.layout?.toLowerCase() || ''
+    return (
+      name.includes('classic') ||
+      name.includes('modern minimal') ||
+      name.includes('professional classic') ||
+      name.includes('bold contemporary') ||
+      layout === 'professional-classic' ||
+      layout === 'modern-minimal' ||
+      layout === 'bold-contemporary'
+    )
+  })
 
   return (
     <WYSIWYGInvoiceEditor
