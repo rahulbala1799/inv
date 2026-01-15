@@ -38,6 +38,21 @@ export default async function AppPage({
     role: om.role,
   })) || []
 
+  // Check if user needs onboarding (has org but no business_name)
+  if (organizations.length > 0) {
+    const firstOrgId = organizations[0].id
+    const { data: branding } = await supabase
+      .from('org_branding')
+      .select('business_name')
+      .eq('org_id', firstOrgId)
+      .single()
+
+    // If no business_name, redirect to onboarding
+    if (!branding?.business_name) {
+      redirect('/onboarding')
+    }
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
       <div className="container mx-auto px-4 py-16">

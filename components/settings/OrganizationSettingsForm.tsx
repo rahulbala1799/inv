@@ -10,6 +10,7 @@ interface OrganizationSettingsFormProps {
   branding: {
     business_name?: string | null
     vat_number?: string | null
+    charges_vat?: boolean | null
     address_line1?: string | null
     address_line2?: string | null
     city?: string | null
@@ -36,6 +37,9 @@ export default function OrganizationSettingsForm({
   logoUrl,
 }: OrganizationSettingsFormProps) {
   const [logoPath, setLogoPath] = useState(branding?.logo_storage_path || '')
+  const [chargesVat, setChargesVat] = useState<string>(
+    branding?.charges_vat === true ? 'yes' : branding?.charges_vat === false ? 'no' : ''
+  )
   const [isPending, startTransition] = useTransition()
   const router = useRouter()
 
@@ -165,18 +169,56 @@ export default function OrganizationSettingsForm({
       </div>
 
       <div>
-        <label htmlFor="vat_number" className="block text-sm font-medium text-gray-700 mb-2">
-          VAT/Tax ID <span className="text-red-500">*</span>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Do you charge VAT?
         </label>
-        <input
-          type="text"
-          id="vat_number"
-          name="vat_number"
-          defaultValue={branding?.vat_number || ''}
-          placeholder="Click to add VAT/Tax ID"
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-        />
+        <div className="space-y-3">
+          <div className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 transition-colors cursor-pointer">
+            <input
+              type="radio"
+              id="charges_vat_yes"
+              name="charges_vat"
+              value="yes"
+              checked={chargesVat === 'yes'}
+              onChange={(e) => setChargesVat(e.target.value)}
+              className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="charges_vat_yes" className="flex-1 cursor-pointer font-medium">
+              Yes, I charge VAT
+            </label>
+          </div>
+          <div className="flex items-center space-x-3 p-4 border-2 border-gray-200 rounded-lg hover:border-indigo-300 transition-colors cursor-pointer">
+            <input
+              type="radio"
+              id="charges_vat_no"
+              name="charges_vat"
+              value="no"
+              checked={chargesVat === 'no'}
+              onChange={(e) => setChargesVat(e.target.value)}
+              className="w-4 h-4 text-indigo-600 focus:ring-indigo-500"
+            />
+            <label htmlFor="charges_vat_no" className="flex-1 cursor-pointer font-medium">
+              No, I don&apos;t charge VAT
+            </label>
+          </div>
+        </div>
       </div>
+
+      {chargesVat === 'yes' && (
+        <div>
+          <label htmlFor="vat_number" className="block text-sm font-medium text-gray-700 mb-2">
+            VAT/Tax ID
+          </label>
+          <input
+            type="text"
+            id="vat_number"
+            name="vat_number"
+            defaultValue={branding?.vat_number || ''}
+            placeholder="Enter your VAT number"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+          />
+        </div>
+      )}
 
       <div>
         <label htmlFor="default_currency" className="block text-sm font-medium text-gray-700 mb-2">

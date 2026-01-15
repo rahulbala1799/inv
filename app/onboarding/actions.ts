@@ -4,18 +4,22 @@ import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
 
-export async function updateBranding(formData: FormData) {
+export async function saveOrganizationSettings(formData: FormData) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
   if (!user) {
-    redirect('/login')
+    return { error: 'Not authenticated' }
   }
 
   const orgId = formData.get('orgId') as string
+  if (!orgId) {
+    return { error: 'Organization ID is required' }
+  }
+
   const isMember = await verifyOrgMembership(orgId)
   if (!isMember) {
-    redirect('/app')
+    return { error: 'Not authorized' }
   }
 
   // Check if branding exists
@@ -25,30 +29,21 @@ export async function updateBranding(formData: FormData) {
     .eq('org_id', orgId)
     .single()
 
-  const chargesVat = formData.get('charges_vat') === 'true' || formData.get('charges_vat') === 'yes'
+  const chargesVat = formData.get('charges_vat') === 'true'
   const vatNumber = chargesVat ? (formData.get('vat_number') as string || null) : null
 
   const brandingData = {
     org_id: orgId,
     business_name: formData.get('business_name') as string || null,
-    vat_number: vatNumber,
     address_line1: formData.get('address_line1') as string || null,
     address_line2: formData.get('address_line2') as string || null,
     city: formData.get('city') as string || null,
     county: formData.get('county') as string || null,
     postcode: formData.get('postcode') as string || null,
     country: formData.get('country') as string || null,
-    logo_storage_path: formData.get('logo_storage_path') as string || null,
     default_currency: formData.get('default_currency') as string || 'EUR',
     charges_vat: chargesVat,
-    email: formData.get('email') as string || null,
-    phone: formData.get('phone') as string || null,
-    website: formData.get('website') as string || null,
-    bank_name: formData.get('bank_name') as string || null,
-    bank_account_number: formData.get('bank_account_number') as string || null,
-    bank_sort_code: formData.get('bank_sort_code') as string || null,
-    bank_iban: formData.get('bank_iban') as string || null,
-    bank_bic: formData.get('bank_bic') as string || null,
+    vat_number: vatNumber,
   }
 
   if (existing) {
@@ -56,19 +51,47 @@ export async function updateBranding(formData: FormData) {
       .from('org_branding')
       .update(brandingData)
       .eq('org_id', orgId)
-    
+
     if (error) {
-      redirect(`/app/org/${orgId}/settings?error=${encodeURIComponent(error.message)}`)
+      console.error('Error updating branding:', error)
+      return { error: error.message || 'Failed to update organization settings' }
     }
   } else {
     const { error } = await supabase
       .from('org_branding')
       .insert(brandingData)
-    
+
     if (error) {
-      redirect(`/app/org/${orgId}/settings?error=${encodeURIComponent(error.message)}`)
+      console.error('Error creating branding:', error)
+      return { error: error.message || 'Failed to create organization settings' }
     }
   }
 
-  redirect(`/app/org/${orgId}/settings?success=Organization settings saved successfully`)
+  return { success: true }
+}
+
+export async function checkOnboardingStatus(orgId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
+  if (!user) {
+    return { needsOnboarding: false, redirect: '/login' }
+  }
+
+  const isMember = await verifyOrgMembership(orgId)
+  if (!isMember) {
+    return { needsOnboarding: false, redirect: '/app' }
+  }
+
+  // Check if organization has completed onboarding
+  // Onboarding is complete if business_name is set
+  const { data: branding } = await supabase
+    .from('org_branding')
+    .select('business_name')
+    .eq('org_id', orgId)
+    .single()
+
+  const needsOnboarding = !branding?.business_name
+
+  return { needsOnboarding, orgId }
 }
