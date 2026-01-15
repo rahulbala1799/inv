@@ -14,7 +14,6 @@ import { MissingFieldsSummary, MissingField } from "@/components/invoices/Missin
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Plus, X, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
-import TemplateSelectionModal from "@/components/invoices/TemplateSelectionModal";
 import PDFPreviewModal from "@/components/invoices/PDFPreviewModal";
 
 interface InvoiceItem {
@@ -133,7 +132,6 @@ export default function WYSIWYGInvoiceEditor({
   const [selectedCustomerData, setSelectedCustomerData] = useState<Customer | null>(
     invoice?.customer_id ? customers.find((c) => c.id === invoice?.customer_id) || null : null
   );
-  const [templateModalOpen, setTemplateModalOpen] = useState(false);
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [templateError, setTemplateError] = useState<string | null>(null);
 
@@ -541,8 +539,7 @@ export default function WYSIWYGInvoiceEditor({
   const handleGeneratePDF = async (templateId: string) => {
     // Save template first
     await handleTemplateSelected(templateId);
-    // Close template selection modal and open preview
-    setTemplateModalOpen(false);
+    // Open preview
     setPreviewModalOpen(true);
   };
 
@@ -917,17 +914,6 @@ export default function WYSIWYGInvoiceEditor({
         </div>
       </div>
 
-      {/* Template Selection Modal */}
-      <TemplateSelectionModal
-        open={templateModalOpen}
-        onOpenChange={setTemplateModalOpen}
-        templates={templates}
-        selectedTemplateId={invoice?.template_id}
-        invoiceId={invoice?.id || initialInvoice.id}
-        orgId={orgId}
-        onSelectTemplate={handleSelectTemplate}
-        onGeneratePDF={handleGeneratePDF}
-      />
 
       {/* PDF Preview Modal */}
       <PDFPreviewModal

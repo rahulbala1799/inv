@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
 import { Button } from '@/components/ui/button'
-import { Download, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Download, X } from 'lucide-react'
 
 interface Template {
   id: string
@@ -34,32 +34,7 @@ export default function PDFPreviewModal({
   const [currentTemplateId, setCurrentTemplateId] = useState<string | null>(selectedTemplateId)
   const [isLoading, setIsLoading] = useState(false)
 
-  const currentTemplateIndex = templates.findIndex(t => t.id === currentTemplateId)
-  const currentTemplate = templates[currentTemplateIndex] || templates[0]
 
-  const handleTemplateChange = (templateId: string) => {
-    setCurrentTemplateId(templateId)
-    onTemplateChange(templateId)
-    setIsLoading(true)
-    // Reload iframe after a brief moment
-    setTimeout(() => {
-      setIsLoading(false)
-    }, 500)
-  }
-
-  const handlePreviousTemplate = () => {
-    if (currentTemplateIndex > 0) {
-      const prevTemplate = templates[currentTemplateIndex - 1]
-      handleTemplateChange(prevTemplate.id)
-    }
-  }
-
-  const handleNextTemplate = () => {
-    if (currentTemplateIndex < templates.length - 1) {
-      const nextTemplate = templates[currentTemplateIndex + 1]
-      handleTemplateChange(nextTemplate.id)
-    }
-  }
 
   const handleDownload = () => {
     const pdfUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf?download=true${currentTemplateId ? `&template=${currentTemplateId}` : ''}`
@@ -80,35 +55,6 @@ export default function PDFPreviewModal({
               </DialogDescription>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handlePreviousTemplate}
-                disabled={currentTemplateIndex === 0}
-              >
-                <ChevronLeft className="w-4 h-4 mr-1" />
-                Previous
-              </Button>
-              <select
-                value={currentTemplateId || ''}
-                onChange={(e) => handleTemplateChange(e.target.value)}
-                className="px-3 py-1.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-indigo-500"
-              >
-                {templates.map((template) => (
-                  <option key={template.id} value={template.id}>
-                    {template.name}
-                  </option>
-                ))}
-              </select>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleNextTemplate}
-                disabled={currentTemplateIndex === templates.length - 1}
-              >
-                Next
-                <ChevronRight className="w-4 h-4 ml-1" />
-              </Button>
               <Button
                 onClick={handleDownload}
                 className="bg-indigo-600 hover:bg-indigo-700"

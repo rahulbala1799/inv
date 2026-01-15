@@ -51,13 +51,18 @@ export default async function GenerateInvoicePageRoute({
     .eq('org_id', orgId)
     .single()
 
-  // Get available templates (global templates + org-specific templates)
-  const { data: templates } = await supabase
+  // Get only Classic template (hide all other templates)
+  const { data: allTemplates } = await supabase
     .from('invoice_templates')
     .select('*')
     .or(`org_id.is.null,org_id.eq.${orgId}`)
     .order('is_default', { ascending: false })
     .order('name')
+  
+  // Filter to only Classic template(s)
+  const templates = (allTemplates || []).filter(t => 
+    t.name?.toLowerCase().includes('classic')
+  )
 
   // Get organization details
   const { data: org } = await supabase

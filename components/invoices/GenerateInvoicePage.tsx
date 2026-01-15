@@ -13,7 +13,6 @@ import {
   Loader2,
   Sparkles
 } from 'lucide-react'
-import TemplateGallery from './TemplateGallery'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -54,7 +53,6 @@ export default function GenerateInvoicePage({
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
     invoice.template_id || templates.find(t => t.is_default)?.id || templates[0]?.id || null
   )
-  const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
@@ -263,19 +261,6 @@ export default function GenerateInvoicePage({
                   </Button>
                 </Link>
 
-                <Button 
-                  variant="outline" 
-                  className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-yellow-50 to-amber-50 border-yellow-200 hover:from-yellow-100 hover:to-amber-100"
-                  onClick={() => setIsGalleryOpen(true)}
-                >
-                  <div className="w-8 h-8 rounded-lg bg-yellow-100 flex items-center justify-center">
-                    <FileText className="w-4 h-4 text-yellow-700" />
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span className="font-medium text-sm text-yellow-900">Template</span>
-                    <span className="text-xs text-yellow-700">Change style</span>
-                  </div>
-                </Button>
 
                 <Button 
                   variant="outline" 
@@ -443,14 +428,6 @@ export default function GenerateInvoicePage({
         </div>
       </div>
 
-      {/* Template Gallery Modal */}
-      <TemplateGallery
-        open={isGalleryOpen}
-        onOpenChange={setIsGalleryOpen}
-        templates={templates}
-        selectedTemplateId={selectedTemplateId}
-        onSelectTemplate={handleTemplateChange}
-      />
 
       {/* Delete Confirmation Dialog */}
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
