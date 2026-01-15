@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { 
@@ -60,8 +60,38 @@ export default function GenerateInvoicePage({
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
   const [fontStyle, setFontStyle] = useState<'normal' | 'classic' | 'round'>('normal')
   const [fontSize, setFontSize] = useState<'normal' | 'small' | 'medium'>('normal')
+  const [colors, setColors] = useState({
+    primary: '#1E293B',
+    secondary: '#FCD34D',
+    background: '#FFFFFF',
+    neutral: '#94A3B8',
+    heading: '#4C1D95',
+    body: '#475569',
+  })
+  const [previewKey, setPreviewKey] = useState(0)
 
   const currentTemplate = templates.find(t => t.id === selectedTemplateId)
+  
+  // Build PDF URL with customization parameters
+  const pdfUrl = useMemo(() => {
+    const params = new URLSearchParams()
+    if (selectedTemplateId) params.set('template', selectedTemplateId)
+    if (fontStyle !== 'normal') params.set('fontStyle', fontStyle)
+    if (fontSize !== 'normal') params.set('fontSize', fontSize)
+    
+    // Add color parameters
+    Object.entries(colors).forEach(([key, value]) => {
+      if (value) params.set(`color_${key}`, value)
+    })
+    
+    const queryString = params.toString()
+    return `/api/org/${orgId}/invoices/${invoiceId}/pdf${queryString ? `?${queryString}` : ''}`
+  }, [orgId, invoiceId, selectedTemplateId, fontStyle, fontSize, colors])
+  
+  // Refresh preview when customization changes
+  useEffect(() => {
+    setPreviewKey(prev => prev + 1)
+  }, [fontStyle, fontSize, colors, selectedTemplateId])
 
   const handleTemplateChange = async (templateId: string) => {
     setSelectedTemplateId(templateId)
@@ -85,8 +115,16 @@ export default function GenerateInvoicePage({
   }
 
   const handleDownload = () => {
-    const pdfUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf?download=true${selectedTemplateId ? `&template=${selectedTemplateId}` : ''}`
-    window.open(pdfUrl, '_blank')
+    const params = new URLSearchParams()
+    if (selectedTemplateId) params.set('template', selectedTemplateId)
+    if (fontStyle !== 'normal') params.set('fontStyle', fontStyle)
+    if (fontSize !== 'normal') params.set('fontSize', fontSize)
+    Object.entries(colors).forEach(([key, value]) => {
+      if (value) params.set(`color_${key}`, value)
+    })
+    params.set('download', 'true')
+    const downloadUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf?${params.toString()}`
+    window.open(downloadUrl, '_blank')
   }
 
   const handleDuplicate = async () => {
@@ -124,7 +162,6 @@ export default function GenerateInvoicePage({
     }
   }
 
-  const pdfUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf${selectedTemplateId ? `?template=${selectedTemplateId}` : ''}`
 
   const getStatusColor = (status: string) => {
     switch (status) {
@@ -216,7 +253,7 @@ export default function GenerateInvoicePage({
               ) : (
                 <div className="relative">
                   <iframe
-                    key={selectedTemplateId}
+                    key={previewKey}
                     src={pdfUrl}
                     className="w-full border-0"
                     style={{ 
@@ -383,36 +420,41 @@ export default function GenerateInvoicePage({
                   Color Palette
                 </label>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-[#1E293B] border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Primary</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-[#FCD34D] border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Secondary</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-white border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Background</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-[#94A3B8] border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Neutral</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-[#4C1D95] border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Heading</span>
-                  </div>
-                  <div className="text-center">
-                    <div className="w-full h-12 rounded-lg bg-[#475569] border-2 border-gray-200 mb-1.5 shadow-sm" />
-                    <span className="text-[10px] text-gray-600">Body</span>
-                  </div>
+                  {[
+                    { key: 'primary', label: 'Primary', defaultColor: '#1E293B' },
+                    { key: 'secondary', label: 'Secondary', defaultColor: '#FCD34D' },
+                    { key: 'background', label: 'Background', defaultColor: '#FFFFFF' },
+                    { key: 'neutral', label: 'Neutral', defaultColor: '#94A3B8' },
+                    { key: 'heading', label: 'Heading', defaultColor: '#4C1D95' },
+                    { key: 'body', label: 'Body', defaultColor: '#475569' },
+                  ].map(({ key, label, defaultColor }) => (
+                    <div key={key} className="text-center">
+                      <input
+                        type="color"
+                        value={colors[key as keyof typeof colors]}
+                        onChange={(e) => setColors({ ...colors, [key]: e.target.value })}
+                        className="w-full h-12 rounded-lg border-2 border-gray-200 cursor-pointer shadow-sm hover:border-indigo-300 transition-colors"
+                        style={{ backgroundColor: colors[key as keyof typeof colors] }}
+                        title={`Select ${label} color`}
+                      />
+                      <span className="text-[10px] text-gray-600 mt-1.5 block">{label}</span>
+                    </div>
+                  ))}
                 </div>
+                <button
+                  onClick={() => setColors({
+                    primary: '#1E293B',
+                    secondary: '#FCD34D',
+                    background: '#FFFFFF',
+                    neutral: '#94A3B8',
+                    heading: '#4C1D95',
+                    body: '#475569',
+                  })}
+                  className="mt-3 w-full text-xs text-gray-600 hover:text-gray-900 py-1.5 px-3 rounded-md hover:bg-gray-100 transition-colors"
+                >
+                  Reset to Default
+                </button>
               </div>
-
-              <p className="text-xs text-gray-500 mt-4 text-center">
-                Custom colors coming soon
-              </p>
             </div>
 
             {/* Invoice Info Card */}
@@ -428,13 +470,15 @@ export default function GenerateInvoicePage({
                 <div className="flex justify-between">
                   <span className="text-indigo-700">Total:</span>
                   <span className="font-medium text-indigo-900">
-                    ${invoice.total_amount?.toFixed(2) || '0.00'}
+                    ${(invoice.total || invoice.total_amount || 0).toFixed(2)}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-indigo-700">Date:</span>
                   <span className="font-medium text-indigo-900">
-                    {new Date(invoice.invoice_date).toLocaleDateString()}
+                    {invoice.issue_date 
+                      ? new Date(invoice.issue_date).toLocaleDateString() 
+                      : 'Not set'}
                   </span>
                 </div>
               </div>

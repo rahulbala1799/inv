@@ -58,6 +58,22 @@ export async function GET(
   const templateIdFromQuery = searchParams.get('template')
   const templateId = templateIdFromQuery || invoice.template_id
   
+  // Get customization parameters
+  const fontStyle = searchParams.get('fontStyle') || 'normal'
+  const fontSize = searchParams.get('fontSize') || 'normal'
+  const customization = {
+    fontStyle: fontStyle as 'normal' | 'classic' | 'round',
+    fontSize: fontSize as 'small' | 'normal' | 'medium',
+    colors: {
+      primary: searchParams.get('color_primary') || undefined,
+      secondary: searchParams.get('color_secondary') || undefined,
+      background: searchParams.get('color_background') || undefined,
+      neutral: searchParams.get('color_neutral') || undefined,
+      heading: searchParams.get('color_heading') || undefined,
+      body: searchParams.get('color_body') || undefined,
+    },
+  }
+  
   let template = null
   if (templateId) {
     const { data: templateData } = await supabase
@@ -146,6 +162,7 @@ export async function GET(
         items: invoiceItems,
         branding: branding ? { ...branding, logoUrl } : null,
         template: template || null,
+        customization,
       })
     )
 

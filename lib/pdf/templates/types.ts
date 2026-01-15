@@ -55,6 +55,18 @@ export interface InvoiceTemplateProps {
     name: string
     config_json: any
   } | null
+  customization?: {
+    fontStyle?: 'normal' | 'classic' | 'round'
+    fontSize?: 'small' | 'normal' | 'medium'
+    colors?: {
+      primary?: string
+      secondary?: string
+      background?: string
+      neutral?: string
+      heading?: string
+      body?: string
+    }
+  }
 }
 
 /**

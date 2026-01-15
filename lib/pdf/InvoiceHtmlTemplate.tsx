@@ -9,9 +9,31 @@ import { InvoiceTemplateProps } from './templates/types'
  */
 /* eslint-disable @next/next/no-head-element, @next/next/no-sync-scripts */
 export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
-  const { template } = props
+  const { template, customization } = props
   const config = template?.config_json || {}
   const layout = config.layout || 'classic-blue'
+  
+  // Map font styles to actual font families
+  const fontFamilyMap: Record<string, string> = {
+    normal: 'Helvetica, Arial, sans-serif',
+    classic: 'Times New Roman, Times, serif',
+    round: 'Verdana, Geneva, sans-serif',
+  }
+  
+  // Map font sizes to actual sizes
+  const fontSizeMap: Record<string, string> = {
+    small: '9pt',
+    normal: '11pt',
+    medium: '13pt',
+  }
+  
+  const selectedFontFamily = customization?.fontStyle 
+    ? fontFamilyMap[customization.fontStyle] 
+    : config.fontFamily || 'Helvetica, Arial, sans-serif'
+  
+  const selectedFontSize = customization?.fontSize
+    ? fontSizeMap[customization.fontSize]
+    : config.fontSize || '11pt'
   
   // Get the template component
   const templateComponent = renderTemplate(layout, props)
@@ -44,10 +66,36 @@ export default function InvoiceHTMLTemplate(props: InvoiceTemplateProps) {
           
           html, body {
             width: 100%;
-            font-family: ${config.fontFamily || 'Helvetica, Arial, sans-serif'};
-            background-color: white;
+            font-family: ${selectedFontFamily};
+            font-size: ${selectedFontSize};
+            background-color: ${customization?.colors?.background || 'white'};
+            color: ${customization?.colors?.body || config.textColor || '#000000'};
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
+          }
+          
+          /* Apply custom colors via CSS variables */
+          :root {
+            ${customization?.colors?.primary ? `--color-primary: ${customization.colors.primary};` : ''}
+            ${customization?.colors?.secondary ? `--color-secondary: ${customization.colors.secondary};` : ''}
+            ${customization?.colors?.neutral ? `--color-neutral: ${customization.colors.neutral};` : ''}
+            ${customization?.colors?.heading ? `--color-heading: ${customization.colors.heading};` : ''}
+            ${customization?.colors?.body ? `--color-body: ${customization.colors.body};` : ''}
+          }
+          
+          /* Apply custom colors to headings */
+          h1, h2, h3, h4, h5, h6, .heading, [class*="heading"] {
+            color: ${customization?.colors?.heading || config.primaryColor || '#000000'} !important;
+          }
+          
+          /* Apply custom primary color to accents */
+          .primary-color, [class*="primary"], [class*="accent"] {
+            color: ${customization?.colors?.primary || config.primaryColor || '#000000'} !important;
+          }
+          
+          /* Apply custom secondary color */
+          .secondary-color, [class*="secondary"] {
+            color: ${customization?.colors?.secondary || config.secondaryColor || '#666666'} !important;
           }
           
           /* PDF page wrapper - avoids flex pagination weirdness */
