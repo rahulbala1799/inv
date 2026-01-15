@@ -45,7 +45,10 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
           padding-bottom: 20px;
           border-bottom: 3px solid #2c2c2c;
         }
-        .logo-row {
+        .logo-invoice-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
           margin-bottom: 20px;
         }
         .logo-container {
@@ -61,6 +64,12 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
         .logo-container img[src=""],
         .logo-container img:not([src]) {
           display: none;
+        }
+        .invoice-title-top {
+          font-size: 28pt;
+          font-weight: 700;
+          color: #2c2c2c;
+          text-align: right;
         }
         .bill-from-to-section {
           display: grid;
@@ -103,13 +112,7 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
           padding: 15px 20px;
           border: 2px solid #2c2c2c;
           text-align: right;
-          margin-top: -60px;
-        }
-        .invoice-title {
-          font-size: 28pt;
-          font-weight: 700;
-          color: #2c2c2c;
-          margin-bottom: 10px;
+          margin-top: 10px;
         }
         .invoice-meta {
           font-size: 10pt;
@@ -211,8 +214,8 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
       <div className="invoice-container">
         {/* Header Section */}
         <div className="header-section no-break">
-          {/* Logo Row */}
-          <div className="logo-row">
+          {/* Logo and INVOICE Title Row */}
+          <div className="logo-invoice-row">
             {branding?.logoUrl && (
               <div className="logo-container">
                 <img 
@@ -224,6 +227,7 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
                 />
               </div>
             )}
+            <div className="invoice-title-top">INVOICE</div>
           </div>
 
           {/* Bill From and Bill To Row */}
@@ -285,7 +289,6 @@ export const ProfessionalClassic = ({ invoice, items, branding, template }: Invo
 
           {/* Invoice Details - Right aligned */}
           <div className="invoice-details-box">
-            <div className="invoice-title">INVOICE</div>
             <div className="invoice-meta">
               <div><strong>Invoice #:</strong> {invoice.invoice_number}</div>
               <div><strong>Date:</strong> {formatDate(invoice.issue_date)}</div>

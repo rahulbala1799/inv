@@ -51,11 +51,35 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
           padding: 20px 25px;
           margin: -10mm -10mm 25px -10mm;
         }
-        .logo-row {
+        .logo-invoice-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
           margin-bottom: 20px;
         }
         .logo-container {
           display: inline-block;
+        }
+        .logo-container img {
+          height: 70px;
+          max-width: 180px;
+          width: auto;
+          object-fit: contain;
+          background: #fff;
+          padding: 8px;
+          border-radius: 4px;
+          display: block;
+        }
+        .logo-container img[src=""],
+        .logo-container img:not([src]) {
+          display: none;
+        }
+        .invoice-title-top {
+          font-size: 36pt;
+          font-weight: 900;
+          letter-spacing: 3px;
+          color: #fff;
+          text-align: right;
         }
         .header-left {
           display: flex;
@@ -275,8 +299,8 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
       <div className="invoice-container">
         {/* Header Banner */}
         <div className="header-banner no-break">
-          {/* Logo Row */}
-          <div className="logo-row">
+          {/* Logo and INVOICE Title Row */}
+          <div className="logo-invoice-row">
             {branding?.logoUrl && (
               <div className="logo-container">
                 <img 
@@ -288,13 +312,10 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
                 />
               </div>
             )}
+            <div className="invoice-title-top">INVOICE</div>
           </div>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div></div>
-            <div className="invoice-title-header">
-              <div className="invoice-title-text">INVOICE</div>
-              <div className="invoice-number-header">#{invoice.invoice_number}</div>
-            </div>
+          <div style={{ textAlign: 'right' }}>
+            <div className="invoice-number-header">#{invoice.invoice_number}</div>
           </div>
         </div>
 

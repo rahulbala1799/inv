@@ -45,7 +45,10 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
           padding-bottom: 15px;
           border-bottom: 1px solid #e5e5e5;
         }
-        .logo-row {
+        .logo-invoice-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
           margin-bottom: 20px;
         }
         .logo-container {
@@ -61,6 +64,13 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
         .logo-container img[src=""],
         .logo-container img:not([src]) {
           display: none;
+        }
+        .invoice-title-top {
+          font-size: 32pt;
+          font-weight: 300;
+          color: #1a1a1a;
+          letter-spacing: 2px;
+          text-align: right;
         }
         .bill-from-to-section {
           display: grid;
@@ -97,14 +107,7 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
         }
         .invoice-details {
           text-align: right;
-          margin-top: -60px;
-        }
-        .invoice-title {
-          font-size: 32pt;
-          font-weight: 300;
-          color: #1a1a1a;
-          margin-bottom: 12px;
-          letter-spacing: 2px;
+          margin-top: 10px;
         }
         .invoice-meta {
           font-size: 9pt;
@@ -205,8 +208,8 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
       <div className="invoice-container">
         {/* Header Section - Always on first page */}
         <div className="header-section no-break">
-          {/* Logo Row */}
-          <div className="logo-row">
+          {/* Logo and INVOICE Title Row */}
+          <div className="logo-invoice-row">
             {branding?.logoUrl && (
               <div className="logo-container">
                 <img 
@@ -218,6 +221,7 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
                 />
               </div>
             )}
+            <div className="invoice-title-top">INVOICE</div>
           </div>
 
           {/* Bill From and Bill To Row */}
@@ -275,7 +279,6 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
 
           {/* Invoice Details - Right aligned */}
           <div className="invoice-details">
-            <div className="invoice-title">INVOICE</div>
             <div className="invoice-meta">
               <div><strong>Invoice #:</strong> {invoice.invoice_number}</div>
               <div><strong>Date:</strong> {formatDate(invoice.issue_date)}</div>
