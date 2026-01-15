@@ -50,9 +50,12 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
           color: #fff;
           padding: 20px 25px;
           margin: -10mm -10mm 25px -10mm;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
+        }
+        .logo-row {
+          margin-bottom: 20px;
+        }
+        .logo-container {
+          display: inline-block;
         }
         .header-left {
           display: flex;
@@ -125,12 +128,46 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
           font-weight: 600;
           color: #1a1a1a;
         }
-        .bill-to-compact {
+        .bill-from-to-section {
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 30px;
           margin-bottom: 25px;
           padding: 15px 20px;
           background-color: #fff;
           border-left: 5px solid #667eea;
           border-radius: 4px;
+        }
+        .bill-from-section {
+          display: flex;
+          flex-direction: column;
+        }
+        .bill-from-title {
+          font-size: 9pt;
+          font-weight: 700;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          color: #667eea;
+          margin-bottom: 10px;
+        }
+        .bill-from-content {
+          font-size: 10pt;
+          line-height: 1.6;
+        }
+        .bill-from-content .company-name {
+          font-size: 16pt;
+          font-weight: 700;
+          color: #1a1a1a;
+          margin-bottom: 4px;
+        }
+        .bill-from-content .company-details {
+          font-size: 9pt;
+          color: #666;
+          line-height: 1.4;
+        }
+        .bill-to-compact {
+          display: flex;
+          flex-direction: column;
         }
         .bill-to-title {
           font-size: 9pt;
@@ -238,7 +275,8 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
       <div className="invoice-container">
         {/* Header Banner */}
         <div className="header-banner no-break">
-          <div className="header-left">
+          {/* Logo Row */}
+          <div className="logo-row">
             {branding?.logoUrl && (
               <div className="logo-container">
                 <img 
@@ -250,25 +288,13 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
                 />
               </div>
             )}
-            <div className="company-info-header">
-              <div className="company-name-header">
-                {branding?.business_name || 'Company Name'}
-              </div>
-              <div className="company-details-header">
-                {branding?.address_line1 && <div>{branding.address_line1}</div>}
-                {(branding?.city || branding?.postcode) && (
-                  <div>
-                    {[branding.city, branding.postcode].filter(Boolean).join(', ')}
-                    {branding?.country && `, ${branding.country}`}
-                  </div>
-                )}
-                {branding?.vat_number && <div>VAT: {branding.vat_number}</div>}
-              </div>
-            </div>
           </div>
-          <div className="invoice-title-header">
-            <div className="invoice-title-text">INVOICE</div>
-            <div className="invoice-number-header">#{invoice.invoice_number}</div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div></div>
+            <div className="invoice-title-header">
+              <div className="invoice-title-text">INVOICE</div>
+              <div className="invoice-number-header">#{invoice.invoice_number}</div>
+            </div>
           </div>
         </div>
 
@@ -286,33 +312,54 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
           )}
         </div>
 
-        {/* Bill To Section - Compact */}
-        <div className="bill-to-compact no-break">
-          <div className="bill-to-title">Bill To</div>
-          <div className="bill-to-content">
-            {invoice.customers?.name ? (
-              <>
-                <div><strong>{invoice.customers.name}</strong></div>
-                {invoice.customers.email && <div>{invoice.customers.email}</div>}
-                {invoice.customers.address_line1 && <div>{invoice.customers.address_line1}</div>}
-                {invoice.customers.address_line2 && <div>{invoice.customers.address_line2}</div>}
-                {(invoice.customers.city || invoice.customers.postcode) && (
+        {/* Bill From and Bill To Section */}
+        <div className="bill-from-to-section no-break">
+          <div className="bill-from-section">
+            <div className="bill-from-title">Bill From</div>
+            <div className="bill-from-content">
+              <div className="company-name">
+                {branding?.business_name || 'Company Name'}
+              </div>
+              <div className="company-details">
+                {branding?.address_line1 && <div>{branding.address_line1}</div>}
+                {branding?.address_line2 && <div>{branding.address_line2}</div>}
+                {(branding?.city || branding?.postcode) && (
                   <div>
-                    {[invoice.customers.city, invoice.customers.postcode]
-                      .filter(Boolean)
-                      .join(', ')}
-                    {invoice.customers.country && `, ${invoice.customers.country}`}
+                    {[branding.city, branding.postcode].filter(Boolean).join(', ')}
+                    {branding?.country && `, ${branding.country}`}
                   </div>
                 )}
-                {invoice.customers.vat_number && (
-                  <div style={{ marginTop: '6px' }}>VAT: {invoice.customers.vat_number}</div>
-                )}
-              </>
-            ) : (
-              <div style={{ color: '#999', fontStyle: 'italic' }}>
-                {invoice.customers ? 'Customer information incomplete' : 'No customer selected'}
+                {branding?.vat_number && <div>VAT: {branding.vat_number}</div>}
               </div>
-            )}
+            </div>
+          </div>
+          <div className="bill-to-compact">
+            <div className="bill-to-title">Bill To</div>
+            <div className="bill-to-content">
+              {invoice.customers?.name ? (
+                <>
+                  <div><strong>{invoice.customers.name}</strong></div>
+                  {invoice.customers.email && <div>{invoice.customers.email}</div>}
+                  {invoice.customers.address_line1 && <div>{invoice.customers.address_line1}</div>}
+                  {invoice.customers.address_line2 && <div>{invoice.customers.address_line2}</div>}
+                  {(invoice.customers.city || invoice.customers.postcode) && (
+                    <div>
+                      {[invoice.customers.city, invoice.customers.postcode]
+                        .filter(Boolean)
+                        .join(', ')}
+                      {invoice.customers.country && `, ${invoice.customers.country}`}
+                    </div>
+                  )}
+                  {invoice.customers.vat_number && (
+                    <div style={{ marginTop: '6px' }}>VAT: {invoice.customers.vat_number}</div>
+                  )}
+                </>
+              ) : (
+                <div style={{ color: '#999', fontStyle: 'italic' }}>
+                  {invoice.customers ? 'Customer information incomplete' : 'No customer selected'}
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
