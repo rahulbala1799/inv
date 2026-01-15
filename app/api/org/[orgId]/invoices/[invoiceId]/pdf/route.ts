@@ -84,17 +84,28 @@ export async function GET(
       .eq('is_default', true)
       .maybeSingle()
 
-    // If no org-specific default, use global default
+    // If no org-specific default, use Modern Minimal as default
     if (!defaultTemplate) {
-      const { data: globalTemplate } = await supabase
+      const { data: modernMinimalTemplate } = await supabase
         .from('invoice_templates')
         .select('*')
         .is('org_id', null)
-        .eq('is_default', true)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .single()
-      defaultTemplate = globalTemplate
+        .ilike('name', 'Modern Minimal')
+        .maybeSingle()
+      
+      if (modernMinimalTemplate) {
+        defaultTemplate = modernMinimalTemplate
+      } else {
+        // Fallback: try to find any of the 3 print-ready templates
+        const { data: printReadyTemplate } = await supabase
+          .from('invoice_templates')
+          .select('*')
+          .is('org_id', null)
+          .in('name', ['Modern Minimal', 'Professional Classic', 'Bold Contemporary'])
+          .limit(1)
+          .maybeSingle()
+        defaultTemplate = printReadyTemplate
+      }
     }
     template = defaultTemplate
   }

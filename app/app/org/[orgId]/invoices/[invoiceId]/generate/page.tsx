@@ -51,32 +51,13 @@ export default async function GenerateInvoicePageRoute({
     .eq('org_id', orgId)
     .single()
 
-  // Get print-ready templates (exclude Classic Blue, only show Modern Minimal, Professional Classic, Bold Contemporary)
-  const { data: allTemplates } = await supabase
+  // Get only the 3 print-ready templates (Modern Minimal, Professional Classic, Bold Contemporary)
+  const { data: templates } = await supabase
     .from('invoice_templates')
     .select('*')
     .or(`org_id.is.null,org_id.eq.${orgId}`)
-    .order('is_default', { ascending: false })
+    .in('name', ['Modern Minimal', 'Professional Classic', 'Bold Contemporary'])
     .order('name')
-  
-  // Filter to only new print-ready templates (exclude Classic Blue)
-  const templates = (allTemplates || []).filter(t => {
-    const name = t.name?.toLowerCase() || ''
-    const layout = t.config_json?.layout?.toLowerCase() || ''
-    // Exclude Classic Blue and other classic templates
-    if (name.includes('classic blue') || layout === 'classic-blue' || layout === 'classic') {
-      return false
-    }
-    // Include only the new print-ready templates
-    return (
-      name.includes('modern minimal') ||
-      name.includes('professional classic') ||
-      name.includes('bold contemporary') ||
-      layout === 'professional-classic' ||
-      layout === 'modern-minimal' ||
-      layout === 'bold-contemporary'
-    )
-  })
 
   // Get organization details
   const { data: org } = await supabase

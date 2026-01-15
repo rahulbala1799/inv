@@ -60,13 +60,21 @@ WHERE NOT EXISTS (
   WHERE name = 'Bold Contemporary' AND org_id IS NULL
 );
 
--- Update Modern Minimal template configuration for print-ready support
+-- Update Modern Minimal template configuration for print-ready support and set as default
 UPDATE invoice_templates
-SET config_json = config_json || '{
-  "printReady": true,
-  "pageSize": "A4",
-  "repeatHeadersOnPages": true
-}'::jsonb
+SET 
+  config_json = config_json || '{
+    "printReady": true,
+    "pageSize": "A4",
+    "repeatHeadersOnPages": true
+  }'::jsonb,
+  is_default = true
 WHERE name = 'Modern Minimal' 
+  AND org_id IS NULL;
+
+-- Remove default flag from all other templates
+UPDATE invoice_templates
+SET is_default = false
+WHERE name != 'Modern Minimal' 
   AND org_id IS NULL
-  AND NOT (config_json ? 'printReady');
+  AND is_default = true;

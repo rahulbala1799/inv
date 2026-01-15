@@ -83,14 +83,14 @@ const templateMap: Record<string, TemplateComponent> = {
  * Get template component by layout name
  * 
  * @param layout - Layout name from template config
- * @returns Template component or ClassicBlue as default
+ * @returns Template component or ModernMinimal as default
  */
 export function getTemplateComponent(layout: string | undefined | null): TemplateComponent {
   if (!layout) {
-    return ClassicBlue // Default template
+    return ModernMinimal // Default template
   }
   
-  return templateMap[layout.toLowerCase()] || ClassicBlue
+  return templateMap[layout.toLowerCase()] || ModernMinimal
 }
 
 /**
