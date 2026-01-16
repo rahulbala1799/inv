@@ -69,33 +69,61 @@ export default function GenerateInvoicePage({
     body: '#475569',
   })
   const [previewKey, setPreviewKey] = useState(0)
+  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
+  const [debouncedCustomization, setDebouncedCustomization] = useState({
+    fontStyle,
+    fontSize,
+    colors,
+    selectedTemplateId,
+  })
 
   const currentTemplate = templates.find(t => t.id === selectedTemplateId)
   
-  // Build PDF URL with customization parameters
+  // Debounce customization changes - only update preview after user stops changing for 600ms
+  // Template changes are handled immediately in handleTemplateChange, so we exclude it from debounce
+  useEffect(() => {
+    setIsPreviewLoading(true)
+    const timer = setTimeout(() => {
+      setDebouncedCustomization(prev => ({
+        ...prev,
+        fontStyle,
+        fontSize,
+        colors,
+      }))
+      setIsPreviewLoading(false)
+    }, 600) // 600ms debounce delay - faster response
+
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [fontStyle, fontSize, colors])
+  
+  // Build PDF URL with debounced customization parameters
   const pdfUrl = useMemo(() => {
     const params = new URLSearchParams()
-    if (selectedTemplateId) params.set('template', selectedTemplateId)
-    if (fontStyle !== 'normal') params.set('fontStyle', fontStyle)
-    if (fontSize !== 'normal') params.set('fontSize', fontSize)
+    if (debouncedCustomization.selectedTemplateId) params.set('template', debouncedCustomization.selectedTemplateId)
+    if (debouncedCustomization.fontStyle !== 'normal') params.set('fontStyle', debouncedCustomization.fontStyle)
+    if (debouncedCustomization.fontSize !== 'normal') params.set('fontSize', debouncedCustomization.fontSize)
     
     // Add color parameters
-    Object.entries(colors).forEach(([key, value]) => {
+    Object.entries(debouncedCustomization.colors).forEach(([key, value]) => {
       if (value) params.set(`color_${key}`, value)
     })
     
     const queryString = params.toString()
     return `/api/org/${orgId}/invoices/${invoiceId}/pdf${queryString ? `?${queryString}` : ''}`
-  }, [orgId, invoiceId, selectedTemplateId, fontStyle, fontSize, colors])
+  }, [orgId, invoiceId, debouncedCustomization])
   
-  // Refresh preview when customization changes
+  // Refresh preview when debounced customization changes
   useEffect(() => {
     setPreviewKey(prev => prev + 1)
-  }, [fontStyle, fontSize, colors, selectedTemplateId])
+  }, [debouncedCustomization])
 
   const handleTemplateChange = async (templateId: string) => {
     setSelectedTemplateId(templateId)
     setIsLoading(true)
+    // Immediately update debounced state for template changes (no debounce needed)
+    setDebouncedCustomization(prev => ({ ...prev, selectedTemplateId: templateId }))
     
     // Update invoice with selected template
     try {
@@ -244,11 +272,15 @@ export default function GenerateInvoicePage({
 
             {/* PDF Preview Container */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-              {isLoading ? (
+              {isLoading || isPreviewLoading ? (
                 <div className="flex flex-col items-center justify-center h-[800px] bg-gray-50">
                   <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mb-4" />
-                  <p className="text-gray-600 font-medium">Loading preview...</p>
-                  <p className="text-sm text-gray-500 mt-1">Applying template changes</p>
+                  <p className="text-gray-600 font-medium">
+                    {isLoading ? 'Loading preview...' : 'Updating preview...'}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {isLoading ? 'Applying template changes' : 'Applying customization'}
+                  </p>
                 </div>
               ) : (
                 <div className="relative">
@@ -362,9 +394,17 @@ export default function GenerateInvoicePage({
 
             {/* Template Customization Card */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-5">
-              <h3 className="text-sm font-semibold text-gray-900 mb-4">
-                Template Customization
-              </h3>
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-semibold text-gray-900">
+                  Template Customization
+                </h3>
+                {isPreviewLoading && (
+                  <div className="flex items-center gap-2 text-xs text-indigo-600">
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                    <span>Updating...</span>
+                  </div>
+                )}
+              </div>
 
               {/* Font Style */}
               <div className="mb-5">
@@ -376,12 +416,14 @@ export default function GenerateInvoicePage({
                     <button
                       key={style}
                       onClick={() => setFontStyle(style)}
+                      disabled={isPreviewLoading}
                       className={`
                         px-3 py-2 rounded-lg text-sm font-medium transition-all
                         ${fontStyle === style 
                           ? 'bg-indigo-600 text-white shadow-md' 
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }
+                        ${isPreviewLoading ? 'opacity-50 cursor-wait' : ''}
                       `}
                     >
                       {style.charAt(0).toUpperCase() + style.slice(1)}
@@ -400,12 +442,14 @@ export default function GenerateInvoicePage({
                     <button
                       key={size}
                       onClick={() => setFontSize(size)}
+                      disabled={isPreviewLoading}
                       className={`
                         px-3 py-2 rounded-lg text-sm font-medium transition-all
                         ${fontSize === size 
                           ? 'bg-indigo-600 text-white shadow-md' 
                           : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                         }
+                        ${isPreviewLoading ? 'opacity-50 cursor-wait' : ''}
                       `}
                     >
                       {size.charAt(0).toUpperCase() + size.slice(1)}
@@ -433,7 +477,10 @@ export default function GenerateInvoicePage({
                         type="color"
                         value={colors[key as keyof typeof colors]}
                         onChange={(e) => setColors({ ...colors, [key]: e.target.value })}
-                        className="w-full h-12 rounded-lg border-2 border-gray-200 cursor-pointer shadow-sm hover:border-indigo-300 transition-colors"
+                        disabled={isPreviewLoading}
+                        className={`w-full h-12 rounded-lg border-2 border-gray-200 cursor-pointer shadow-sm hover:border-indigo-300 transition-colors ${
+                          isPreviewLoading ? 'opacity-50 cursor-wait' : ''
+                        }`}
                         style={{ backgroundColor: colors[key as keyof typeof colors] }}
                         title={`Select ${label} color`}
                       />
@@ -450,7 +497,10 @@ export default function GenerateInvoicePage({
                     heading: '#4C1D95',
                     body: '#475569',
                   })}
-                  className="mt-3 w-full text-xs text-gray-600 hover:text-gray-900 py-1.5 px-3 rounded-md hover:bg-gray-100 transition-colors"
+                  disabled={isPreviewLoading}
+                  className={`mt-3 w-full text-xs text-gray-600 hover:text-gray-900 py-1.5 px-3 rounded-md hover:bg-gray-100 transition-colors ${
+                    isPreviewLoading ? 'opacity-50 cursor-wait' : ''
+                  }`}
                 >
                   Reset to Default
                 </button>
