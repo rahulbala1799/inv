@@ -80,6 +80,18 @@ export default async function GenerateInvoicePageRoute({
     .eq('id', orgId)
     .single()
 
+  // Determine initial template: invoice template > org default > global default > first template
+  const initialTemplateId = invoice.template_id || 
+    branding?.default_template_id || 
+    templates.find(t => t.is_default)?.id || 
+    templates[0]?.id || 
+    null
+
+  // Update invoice with initial template if it doesn't have one
+  if (!invoice.template_id && initialTemplateId) {
+    invoice.template_id = initialTemplateId
+  }
+
   return (
     <GenerateInvoicePage
       invoice={invoice}

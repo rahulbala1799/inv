@@ -91,16 +91,24 @@ export async function GET(
         .eq('id', invoiceId)
     }
   } else {
-    // If no template specified, use default template
-    // First try org-specific default
-    let { data: defaultTemplate } = await supabase
-      .from('invoice_templates')
-      .select('*')
-      .eq('org_id', orgId)
-      .eq('is_default', true)
-      .maybeSingle()
-
-    // If no org-specific default, use Modern Minimal as default
+    // If no template specified, use organization's default template
+    // Priority: org_branding.default_template_id > fallback to Modern Minimal
+    let defaultTemplate = null
+    
+    if (branding?.default_template_id) {
+      // Use the organization's default template
+      const { data: orgDefaultTemplate } = await supabase
+        .from('invoice_templates')
+        .select('*')
+        .eq('id', branding.default_template_id)
+        .maybeSingle()
+      
+      if (orgDefaultTemplate) {
+        defaultTemplate = orgDefaultTemplate
+      }
+    }
+    
+    // Fallback to Modern Minimal if no org default is set
     if (!defaultTemplate) {
       const { data: modernMinimalTemplate } = await supabase
         .from('invoice_templates')
@@ -112,17 +120,18 @@ export async function GET(
       if (modernMinimalTemplate) {
         defaultTemplate = modernMinimalTemplate
       } else {
-        // Fallback: try to find any of the 3 print-ready templates
+        // Final fallback: try to find any of the print-ready templates
         const { data: printReadyTemplate } = await supabase
           .from('invoice_templates')
           .select('*')
           .is('org_id', null)
-          .in('name', ['Modern Minimal', 'Professional Classic', 'Bold Contemporary'])
+          .in('name', ['Modern Minimal', 'Professional Classic', 'Bold Contemporary', 'SaaS Professional', 'Editorial Magazine'])
           .limit(1)
           .maybeSingle()
         defaultTemplate = printReadyTemplate
       }
     }
+    
     template = defaultTemplate
   }
 

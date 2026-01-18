@@ -20,28 +20,46 @@ export async function PUT(
   }
 
   const body = await request.json()
-  const { invoice, items } = body
+  const { invoice, items, template_id } = body
+
+  // Determine template_id from either direct param or invoice object
+  const templateIdToSet = template_id || invoice?.template_id
+
+  // Prepare invoice update data
+  const invoiceUpdateData: any = {}
+  if (invoice) {
+    invoiceUpdateData.invoice_number = invoice.invoice_number
+    invoiceUpdateData.customer_id = invoice.customer_id
+    invoiceUpdateData.issue_date = invoice.issue_date
+    invoiceUpdateData.due_date = invoice.due_date
+    invoiceUpdateData.status = invoice.status
+    invoiceUpdateData.subtotal = invoice.subtotal
+    invoiceUpdateData.tax_total = invoice.tax_total
+    invoiceUpdateData.total = invoice.total
+    invoiceUpdateData.notes = invoice.notes
+    invoiceUpdateData.template_id = invoice.template_id
+  }
+  if (template_id !== undefined) {
+    invoiceUpdateData.template_id = template_id
+  }
 
   // Update invoice
   const { error: invoiceError } = await supabase
     .from('invoices')
-    .update({
-      invoice_number: invoice.invoice_number,
-      customer_id: invoice.customer_id,
-      issue_date: invoice.issue_date,
-      due_date: invoice.due_date,
-      status: invoice.status,
-      subtotal: invoice.subtotal,
-      tax_total: invoice.tax_total,
-      total: invoice.total,
-      notes: invoice.notes,
-      template_id: invoice.template_id,
-    })
+    .update(invoiceUpdateData)
     .eq('id', invoiceId)
     .eq('org_id', orgId)
 
   if (invoiceError) {
     return NextResponse.json({ error: invoiceError.message }, { status: 400 })
+  }
+
+  // If a template was set, update the organization's default template
+  if (templateIdToSet) {
+    await supabase
+      .from('org_branding')
+      .update({ default_template_id: templateIdToSet })
+      .eq('org_id', orgId)
   }
 
   // Delete existing items

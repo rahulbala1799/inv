@@ -51,8 +51,13 @@ export default function GenerateInvoicePage({
   invoiceId,
   orgName,
 }: GenerateInvoicePageProps) {
+  // Determine initial template: invoice template > org default > global default > first template
   const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
-    invoice.template_id || templates.find(t => t.is_default)?.id || templates[0]?.id || null
+    invoice.template_id || 
+    (branding?.default_template_id && templates.find(t => t.id === branding.default_template_id)?.id) ||
+    templates.find(t => t.is_default)?.id || 
+    templates[0]?.id || 
+    null
   )
   const [isGalleryOpen, setIsGalleryOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
