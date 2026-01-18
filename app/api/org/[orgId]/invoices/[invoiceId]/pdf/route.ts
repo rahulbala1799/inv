@@ -135,48 +135,53 @@ export async function GET(
     logoUrl = publicUrl
   }
 
-  // Generate PDF
+  // Ensure items is an array
+  const invoiceItems = items && Array.isArray(items) ? items : []
+
+  // Dynamically import React and rendering utilities (only at runtime)
+  const React = (await import('react')).default
+  const { renderToStaticMarkup } = await import('react-dom/server')
+  const InvoiceHTMLTemplate = (await import('@/lib/pdf/InvoiceHtmlTemplate')).default
+
+  // Render HTML (used for both HTML preview and PDF)
+  const htmlString = '<!DOCTYPE html>' + renderToStaticMarkup(
+    React.createElement(InvoiceHTMLTemplate, {
+      invoice,
+      items: invoiceItems,
+      branding: branding ? { ...branding, logoUrl } : null,
+      template: template || null,
+      customization,
+    })
+  )
+
+  const formatHtml = searchParams.get('format') === 'html'
+  const isDownload = searchParams.get('download') === 'true'
+
+  // HTML preview: return HTML for iframe (no Chromium needed – works in serverless)
+  if (formatHtml) {
+    return new NextResponse(htmlString, {
+      headers: {
+        'Content-Type': 'text/html; charset=utf-8',
+        'X-Content-Type-Options': 'nosniff',
+      },
+    })
+  }
+
+  // Generate PDF (requires Chromium; set CHROMIUM_REMOTE_EXEC_PATH on Vercel)
   try {
-    // Ensure items is an array
-    const invoiceItems = items && Array.isArray(items) ? items : []
-    
-    // Log for debugging (remove in production if needed)
     console.log('PDF Generation (HTML-to-PDF):', {
       invoiceId,
       itemsCount: invoiceItems.length,
       hasBranding: !!branding,
       hasTemplate: !!template,
-      hasCustomer: !!invoice.customers,
-      templateLayout: template?.config_json?.layout || 'classic-blue',
     })
 
-    // Dynamically import React and rendering utilities (only at runtime)
-    const React = (await import('react')).default
-    const { renderToStaticMarkup } = await import('react-dom/server')
-    const InvoiceHTMLTemplate = (await import('@/lib/pdf/InvoiceHtmlTemplate')).default
-    
-    // Render React component to HTML string (server-only, runtime only)
-    const htmlString = '<!DOCTYPE html>' + renderToStaticMarkup(
-      React.createElement(InvoiceHTMLTemplate, {
-        invoice,
-        items: invoiceItems,
-        branding: branding ? { ...branding, logoUrl } : null,
-        template: template || null,
-        customization,
-      })
-    )
-
-    // Generate PDF from HTML using Puppeteer
     const pdfBuffer = await generatePdfFromHtml(htmlString)
-
-    // Check if download is explicitly requested
-    const { searchParams } = new URL(request.url)
-    const isDownload = searchParams.get('download') === 'true'
 
     return new NextResponse(pdfBuffer as any, {
       headers: {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': isDownload 
+        'Content-Disposition': isDownload
           ? `attachment; filename="invoice-${invoice.invoice_number}.pdf"`
           : `inline; filename="invoice-${invoice.invoice_number}.pdf"`,
         'X-Content-Type-Options': 'nosniff',
@@ -184,9 +189,9 @@ export async function GET(
     })
   } catch (error) {
     console.error('PDF generation error:', error)
-    return NextResponse.json({ 
+    return NextResponse.json({
       error: 'Failed to generate PDF',
-      details: error instanceof Error ? error.message : 'Unknown error'
+      details: error instanceof Error ? error.message : 'Unknown error',
     }, { status: 500 })
   }
 }

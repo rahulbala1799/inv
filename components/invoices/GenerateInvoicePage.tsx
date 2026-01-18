@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { 
@@ -58,73 +58,20 @@ export default function GenerateInvoicePage({
   const [isLoading, setIsLoading] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
   const [showDeleteDialog, setShowDeleteDialog] = useState(false)
-  const [fontStyle, setFontStyle] = useState<'normal' | 'classic' | 'round'>('normal')
-  const [fontSize, setFontSize] = useState<'normal' | 'small' | 'medium'>('normal')
-  const [colors, setColors] = useState({
-    primary: '#1E293B',
-    secondary: '#FCD34D',
-    background: '#FFFFFF',
-    neutral: '#94A3B8',
-    heading: '#4C1D95',
-    body: '#475569',
-  })
-  const [previewKey, setPreviewKey] = useState(0)
-  const [isPreviewLoading, setIsPreviewLoading] = useState(false)
-  const [debouncedCustomization, setDebouncedCustomization] = useState({
-    fontStyle,
-    fontSize,
-    colors,
-    selectedTemplateId,
-  })
 
   const currentTemplate = templates.find(t => t.id === selectedTemplateId)
-  
-  // Debounce customization changes - only update preview after user stops changing for 600ms
-  // Template changes are handled immediately in handleTemplateChange, so we exclude it from debounce
-  useEffect(() => {
-    setIsPreviewLoading(true)
-    const timer = setTimeout(() => {
-      setDebouncedCustomization(prev => ({
-        ...prev,
-        fontStyle,
-        fontSize,
-        colors,
-      }))
-      setIsPreviewLoading(false)
-    }, 600) // 600ms debounce delay - faster response
 
-    return () => {
-      clearTimeout(timer)
-    }
-  }, [fontStyle, fontSize, colors])
-  
-  // Build PDF URL with debounced customization parameters
   const pdfUrl = useMemo(() => {
     const params = new URLSearchParams()
-    if (debouncedCustomization.selectedTemplateId) params.set('template', debouncedCustomization.selectedTemplateId)
-    if (debouncedCustomization.fontStyle !== 'normal') params.set('fontStyle', debouncedCustomization.fontStyle)
-    if (debouncedCustomization.fontSize !== 'normal') params.set('fontSize', debouncedCustomization.fontSize)
-    
-    // Add color parameters
-    Object.entries(debouncedCustomization.colors).forEach(([key, value]) => {
-      if (value) params.set(`color_${key}`, value)
-    })
-    
-    const queryString = params.toString()
-    return `/api/org/${orgId}/invoices/${invoiceId}/pdf${queryString ? `?${queryString}` : ''}`
-  }, [orgId, invoiceId, debouncedCustomization])
-  
-  // Refresh preview when debounced customization changes
-  useEffect(() => {
-    setPreviewKey(prev => prev + 1)
-  }, [debouncedCustomization])
+    params.set('format', 'html')
+    if (selectedTemplateId) params.set('template', selectedTemplateId)
+    return `/api/org/${orgId}/invoices/${invoiceId}/pdf?${params.toString()}`
+  }, [orgId, invoiceId, selectedTemplateId])
 
   const handleTemplateChange = async (templateId: string) => {
     setSelectedTemplateId(templateId)
     setIsLoading(true)
-    // Immediately update debounced state for template changes (no debounce needed)
-    setDebouncedCustomization(prev => ({ ...prev, selectedTemplateId: templateId }))
-    
+
     // Update invoice with selected template
     try {
       await fetch(`/api/org/${orgId}/invoices/${invoiceId}`, {
@@ -145,14 +92,8 @@ export default function GenerateInvoicePage({
   const handleDownload = () => {
     const params = new URLSearchParams()
     if (selectedTemplateId) params.set('template', selectedTemplateId)
-    if (fontStyle !== 'normal') params.set('fontStyle', fontStyle)
-    if (fontSize !== 'normal') params.set('fontSize', fontSize)
-    Object.entries(colors).forEach(([key, value]) => {
-      if (value) params.set(`color_${key}`, value)
-    })
     params.set('download', 'true')
-    const downloadUrl = `/api/org/${orgId}/invoices/${invoiceId}/pdf?${params.toString()}`
-    window.open(downloadUrl, '_blank')
+    window.open(`/api/org/${orgId}/invoices/${invoiceId}/pdf?${params.toString()}`, '_blank')
   }
 
   const handleDuplicate = async () => {
@@ -272,20 +213,16 @@ export default function GenerateInvoicePage({
 
             {/* PDF Preview Container */}
             <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
-              {isLoading || isPreviewLoading ? (
+              {isLoading ? (
                 <div className="flex flex-col items-center justify-center h-[800px] bg-gray-50">
                   <Loader2 className="w-12 h-12 text-indigo-600 animate-spin mb-4" />
-                  <p className="text-gray-600 font-medium">
-                    {isLoading ? 'Loading preview...' : 'Updating preview...'}
-                  </p>
-                  <p className="text-sm text-gray-500 mt-1">
-                    {isLoading ? 'Applying template changes' : 'Applying customization'}
-                  </p>
+                  <p className="text-gray-600 font-medium">Loading preview...</p>
+                  <p className="text-sm text-gray-500 mt-1">Applying template changes</p>
                 </div>
               ) : (
                 <div className="relative">
                   <iframe
-                    key={previewKey}
+                    key={selectedTemplateId}
                     src={pdfUrl}
                     className="w-full border-0"
                     style={{ 
@@ -389,121 +326,6 @@ export default function GenerateInvoicePage({
                     </div>
                   </Button>
                 </div>
-              </div>
-            </div>
-
-            {/* Template Customization Card */}
-            <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-5">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-semibold text-gray-900">
-                  Template Customization
-                </h3>
-                {isPreviewLoading && (
-                  <div className="flex items-center gap-2 text-xs text-indigo-600">
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                    <span>Updating...</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Font Style */}
-              <div className="mb-5">
-                <label className="text-xs font-medium text-gray-700 mb-2 block">
-                  Font Style
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['normal', 'classic', 'round'] as const).map((style) => (
-                    <button
-                      key={style}
-                      onClick={() => setFontStyle(style)}
-                      disabled={isPreviewLoading}
-                      className={`
-                        px-3 py-2 rounded-lg text-sm font-medium transition-all
-                        ${fontStyle === style 
-                          ? 'bg-indigo-600 text-white shadow-md' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }
-                        ${isPreviewLoading ? 'opacity-50 cursor-wait' : ''}
-                      `}
-                    >
-                      {style.charAt(0).toUpperCase() + style.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Font Size */}
-              <div className="mb-5">
-                <label className="text-xs font-medium text-gray-700 mb-2 block">
-                  Font Size
-                </label>
-                <div className="grid grid-cols-3 gap-2">
-                  {(['small', 'normal', 'medium'] as const).map((size) => (
-                    <button
-                      key={size}
-                      onClick={() => setFontSize(size)}
-                      disabled={isPreviewLoading}
-                      className={`
-                        px-3 py-2 rounded-lg text-sm font-medium transition-all
-                        ${fontSize === size 
-                          ? 'bg-indigo-600 text-white shadow-md' 
-                          : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }
-                        ${isPreviewLoading ? 'opacity-50 cursor-wait' : ''}
-                      `}
-                    >
-                      {size.charAt(0).toUpperCase() + size.slice(1)}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Color Palette */}
-              <div>
-                <label className="text-xs font-medium text-gray-700 mb-3 block">
-                  Color Palette
-                </label>
-                <div className="grid grid-cols-3 gap-3">
-                  {[
-                    { key: 'primary', label: 'Primary', defaultColor: '#1E293B' },
-                    { key: 'secondary', label: 'Secondary', defaultColor: '#FCD34D' },
-                    { key: 'background', label: 'Background', defaultColor: '#FFFFFF' },
-                    { key: 'neutral', label: 'Neutral', defaultColor: '#94A3B8' },
-                    { key: 'heading', label: 'Heading', defaultColor: '#4C1D95' },
-                    { key: 'body', label: 'Body', defaultColor: '#475569' },
-                  ].map(({ key, label, defaultColor }) => (
-                    <div key={key} className="text-center">
-                      <input
-                        type="color"
-                        value={colors[key as keyof typeof colors]}
-                        onChange={(e) => setColors({ ...colors, [key]: e.target.value })}
-                        disabled={isPreviewLoading}
-                        className={`w-full h-12 rounded-lg border-2 border-gray-200 cursor-pointer shadow-sm hover:border-indigo-300 transition-colors ${
-                          isPreviewLoading ? 'opacity-50 cursor-wait' : ''
-                        }`}
-                        style={{ backgroundColor: colors[key as keyof typeof colors] }}
-                        title={`Select ${label} color`}
-                      />
-                      <span className="text-[10px] text-gray-600 mt-1.5 block">{label}</span>
-                    </div>
-                  ))}
-                </div>
-                <button
-                  onClick={() => setColors({
-                    primary: '#1E293B',
-                    secondary: '#FCD34D',
-                    background: '#FFFFFF',
-                    neutral: '#94A3B8',
-                    heading: '#4C1D95',
-                    body: '#475569',
-                  })}
-                  disabled={isPreviewLoading}
-                  className={`mt-3 w-full text-xs text-gray-600 hover:text-gray-900 py-1.5 px-3 rounded-md hover:bg-gray-100 transition-colors ${
-                    isPreviewLoading ? 'opacity-50 cursor-wait' : ''
-                  }`}
-                >
-                  Reset to Default
-                </button>
               </div>
             </div>
 

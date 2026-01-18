@@ -410,9 +410,7 @@ export const BoldContemporary = ({ invoice, items, branding, template }: Invoice
               <span>{formatCurrency(Number(invoice.total), invoice.currency)}</span>
             </div>
           </div>
-        </div>
-
-        {/* Footer Section */}
+        </div>        {/* Footer Section */}
         {(invoice.notes || branding?.bank_name || branding?.bank_iban) && (
           <div className="footer-section no-break">
             {invoice.notes && (
