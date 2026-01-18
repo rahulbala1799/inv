@@ -18,6 +18,7 @@ import { LuxuryGold } from './LuxuryGold'
 import { ProfessionalClassic } from './ProfessionalClassic'
 import { BoldContemporary } from './BoldContemporary'
 import { SaaSProfessional } from './SaaSProfessional'
+import { EditorialMagazine } from './EditorialMagazine'
 
 // Import new tech-themed templates
 import { TechMinimal } from './TechMinimal'
@@ -49,6 +50,8 @@ const templateMap: Record<string, TemplateComponent> = {
   'bold-contemporary': BoldContemporary,
   'saas-professional': SaaSProfessional,
   'template-4': SaaSProfessional, // Alias for Template 4
+  'editorial-magazine': EditorialMagazine,
+  'template-5': EditorialMagazine, // Alias for Template 5
   
   // Fully converted templates
   'corporate-elegant': CorporateElegant,
