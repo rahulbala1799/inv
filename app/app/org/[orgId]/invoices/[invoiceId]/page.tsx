@@ -58,7 +58,7 @@ export default async function InvoiceDetailPage({
     .eq('org_id', orgId)
     .single()
 
-  // Get the 3 print-ready templates (Modern Minimal, Professional Classic, Bold Contemporary)
+  // Get all print-ready templates
   // Query by name OR layout to ensure all templates are found
   const { data: allTemplates } = await supabase
     .from('invoice_templates')
@@ -66,14 +66,17 @@ export default async function InvoiceDetailPage({
     .or(`org_id.is.null,org_id.eq.${orgId}`)
     .order('name')
   
-  // Filter to show only the 3 print-ready templates
+  // Filter to show print-ready templates (Modern Minimal, Professional Classic, Bold Contemporary, SaaS Professional, Editorial Magazine)
   const templates = allTemplates?.filter(template => {
     const name = template.name?.toLowerCase() || ''
     const layout = template.config_json?.layout?.toLowerCase() || ''
     return (
       name.includes('modern minimal') || layout === 'modern-minimal' ||
       name.includes('professional classic') || layout === 'professional-classic' ||
-      name.includes('bold contemporary') || layout === 'bold-contemporary'
+      name.includes('bold contemporary') || layout === 'bold-contemporary' ||
+      name.includes('saas professional') || layout === 'saas-professional' ||
+      name.includes('editorial magazine') || layout === 'editorial-magazine' ||
+      layout === 'template-4' || layout === 'template-5'
     )
   }) || []
 
