@@ -17,6 +17,7 @@ import { LuxuryGold } from './LuxuryGold'
 // Import new A4 print-ready templates
 import { ProfessionalClassic } from './ProfessionalClassic'
 import { BoldContemporary } from './BoldContemporary'
+import { SaaSProfessional } from './SaaSProfessional'
 
 // Import new tech-themed templates
 import { TechMinimal } from './TechMinimal'
@@ -46,6 +47,8 @@ const templateMap: Record<string, TemplateComponent> = {
   // New A4 print-ready templates
   'professional-classic': ProfessionalClassic,
   'bold-contemporary': BoldContemporary,
+  'saas-professional': SaaSProfessional,
+  'template-4': SaaSProfessional, // Alias for Template 4
   
   // Fully converted templates
   'corporate-elegant': CorporateElegant,
