@@ -124,7 +124,7 @@ export default function VatRatesManager({ orgId }: VatRatesManagerProps) {
 
         {vatRates.length === 0 ? (
           <div className="text-center py-8 text-gray-500">
-            <p>No VAT rates yet. Click "Add VAT Rate" to create your first one.</p>
+            <p>No VAT rates yet. Click &quot;Add VAT Rate&quot; to create your first one.</p>
           </div>
         ) : (
           <div className="border border-gray-200 rounded-lg overflow-hidden">
