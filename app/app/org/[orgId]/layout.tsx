@@ -73,6 +73,12 @@ export default async function OrgLayout({
                   Invoices
                 </Link>
                 <Link
+                  href={`/app/org/${orgId}/products`}
+                  className="text-gray-700 hover:text-gray-900 font-medium"
+                >
+                  Products
+                </Link>
+                <Link
                   href={`/app/org/${orgId}/settings`}
                   className="text-gray-700 hover:text-gray-900 font-medium"
                 >

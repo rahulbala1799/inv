@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { verifyOrgMembership } from '@/lib/utils-server'
 import { redirect } from 'next/navigation'
 import OrganizationSettingsForm from '@/components/settings/OrganizationSettingsForm'
+import VatRatesManager from '@/components/settings/VatRatesManager'
 
 export default async function SettingsPage({
   params,
@@ -78,6 +79,11 @@ export default async function SettingsPage({
             Configure your company information that will appear on invoices
           </p>
           <OrganizationSettingsForm orgId={orgId} branding={branding} logoUrl={logoUrl} />
+        </div>
+
+        {/* VAT Rates Section */}
+        <div className="bg-white rounded-lg shadow p-6">
+          <VatRatesManager orgId={orgId} />
         </div>
 
         {/* Templates Section */}

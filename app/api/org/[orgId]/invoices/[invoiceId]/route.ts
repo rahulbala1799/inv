@@ -80,6 +80,7 @@ export async function PUT(
       tax_rate: item.tax_rate,
       line_total: item.line_total,
       sort_order: index,
+      product_id: item.product_id || null,
     }))
 
     const { error: itemsError } = await supabase

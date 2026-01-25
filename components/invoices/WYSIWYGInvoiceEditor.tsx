@@ -17,6 +17,8 @@ import { formatCurrency } from "@/lib/utils";
 import PDFPreviewModal from "@/components/invoices/PDFPreviewModal";
 import ProductModal from "@/components/products/ProductModal";
 import ProductSavePrompt from "@/components/products/ProductSavePrompt";
+import { VatRateSelect } from "@/components/invoices/VatRateSelect";
+import { ProductSelect } from "@/components/invoices/ProductSelect";
 
 interface InvoiceItem {
   id?: string;
@@ -26,6 +28,7 @@ interface InvoiceItem {
   tax_rate: number;
   line_total: number;
   sort_order: number;
+  product_id?: string | null;
 }
 
 interface Invoice {
@@ -305,7 +308,7 @@ export default function WYSIWYGInvoiceEditor({
     }
   };
 
-  const updateItem = (index: number, field: keyof InvoiceItem, value: string | number) => {
+  const updateItem = (index: number, field: keyof InvoiceItem, value: string | number | null) => {
     setItems((prev) => {
       const newItems = [...prev];
       newItems[index] = { ...newItems[index], [field]: value };
@@ -794,14 +797,29 @@ export default function WYSIWYGInvoiceEditor({
                   <React.Fragment key={index}>
                     <tr className="border-b border-gray-200 group hover:bg-gray-50">
                       <td className="py-3 px-2">
-                        <InlineEditableText
-                          ref={index === 0 ? firstItemDescRef : undefined}
-                          value={item.description}
-                          onChange={(value) => updateItem(index, "description", value)}
-                          placeholder="Click to add item description"
-                          className="text-sm"
-                          required={index === 0}
-                        />
+                        <div className="flex items-center gap-2">
+                          <InlineEditableText
+                            ref={index === 0 ? firstItemDescRef : undefined}
+                            value={item.description}
+                            onChange={(value) => updateItem(index, "description", value)}
+                            placeholder="Click to add item description"
+                            className="text-sm flex-1"
+                            required={index === 0}
+                          />
+                          <ProductSelect
+                            orgId={orgId}
+                            currency={currency}
+                            onSelect={(product) => {
+                              updateItem(index, "description", product.name);
+                              updateItem(index, "unit_price", product.unit_price);
+                              if (product.vat_rates) {
+                                updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));
+                              }
+                              updateItem(index, "product_id", product.id);
+                            }}
+                            className="flex-shrink-0"
+                          />
+                        </div>
                       </td>
                       <td className="py-3 px-2">
                         <InlineEditableNumber
@@ -823,13 +841,11 @@ export default function WYSIWYGInvoiceEditor({
                         />
                       </td>
                       <td className="py-3 px-2">
-                        <InlineEditableNumber
+                        <VatRateSelect
                           value={item.tax_rate}
                           onChange={(value) => updateItem(index, "tax_rate", value)}
+                          orgId={orgId}
                           className="text-sm"
-                          min={0}
-                          max={100}
-                          step={0.1}
                         />
                       </td>
                       <td className="py-3 px-2 text-right text-sm font-mono">
