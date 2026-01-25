@@ -29,6 +29,7 @@ interface InvoiceItem {
   line_total: number;
   sort_order: number;
   product_id?: string | null;
+  product_description?: string | null; // Store product description separately
 }
 
 interface Invoice {
@@ -786,45 +787,57 @@ export default function WYSIWYGInvoiceEditor({
                   <React.Fragment key={index}>
                     <tr className="border-b border-gray-200 group hover:bg-gray-50">
                       <td className="py-3 px-2">
-                        <ProductAutocomplete
-                          ref={index === 0 ? firstItemDescRef : undefined}
-                          value={item.description}
-                          onChange={(value) => updateItem(index, "description", value)}
-                          onProductSelect={(product) => {
-                            // Set description to product name + description if available
-                            const fullDescription = product.description 
-                              ? `${product.name} - ${product.description}`
-                              : product.name
-                            updateItem(index, "description", fullDescription);
-                            updateItem(index, "unit_price", product.unit_price);
-                            if (product.vat_rates) {
-                              updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));
-                            }
-                            updateItem(index, "product_id", product.id);
-                            // Clear any pending prompts since product was selected
-                            if (productPromptItemIndex === index) {
-                              setProductPromptItemIndex(null);
-                            }
-                          }}
-                          onNoProductSelected={() => {
-                            // Show save prompt if item has description and price, and wasn't dismissed
-                            if (
-                              item.description.trim() !== '' &&
-                              item.unit_price > 0 &&
-                              !dismissedProductPrompts.has(index) &&
-                              !item.product_id &&
-                              productPromptItemIndex === null
-                            ) {
-                              setProductPromptItemIndex(index);
-                            }
-                          }}
-                          orgId={orgId}
-                          currency={currency}
-                          refreshKey={productListRefreshKey}
-                          placeholder="Type to search products or enter description..."
-                          className="text-sm"
-                          required={index === 0}
-                        />
+                        <div className="flex flex-col">
+                          <ProductAutocomplete
+                            ref={index === 0 ? firstItemDescRef : undefined}
+                            value={item.description}
+                            onChange={(value) => {
+                              updateItem(index, "description", value);
+                              // Clear product description if user manually edits
+                              if (item.product_id && value !== item.description) {
+                                updateItem(index, "product_description", null);
+                              }
+                            }}
+                            onProductSelect={(product) => {
+                              // Set description to product name only
+                              updateItem(index, "description", product.name);
+                              // Store product description separately
+                              updateItem(index, "product_description", product.description || null);
+                              updateItem(index, "unit_price", product.unit_price);
+                              if (product.vat_rates) {
+                                updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));
+                              }
+                              updateItem(index, "product_id", product.id);
+                              // Clear any pending prompts since product was selected
+                              if (productPromptItemIndex === index) {
+                                setProductPromptItemIndex(null);
+                              }
+                            }}
+                            onNoProductSelected={() => {
+                              // Show save prompt if item has description and price, and wasn't dismissed
+                              if (
+                                item.description.trim() !== '' &&
+                                item.unit_price > 0 &&
+                                !dismissedProductPrompts.has(index) &&
+                                !item.product_id &&
+                                productPromptItemIndex === null
+                              ) {
+                                setProductPromptItemIndex(index);
+                              }
+                            }}
+                            orgId={orgId}
+                            currency={currency}
+                            refreshKey={productListRefreshKey}
+                            placeholder="Type to search products or enter description..."
+                            className="text-sm"
+                            required={index === 0}
+                          />
+                          {item.product_description && (
+                            <div className="text-xs text-gray-500 mt-1 italic">
+                              {item.product_description}
+                            </div>
+                          )}
+                        </div>
                       </td>
                       <td className="py-3 px-2">
                         <InlineEditableNumber

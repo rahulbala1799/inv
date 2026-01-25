@@ -130,8 +130,10 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     }, [isEditing])
 
     useEffect(() => {
-      setEditValue(value)
-      setHasSelectedProduct(false)
+      // Sync value from props, but skip if we just selected a product (to prevent reset)
+      if (!hasSelectedProduct && value !== editValue) {
+        setEditValue(value)
+      }
     }, [value])
 
     const handleClick = () => {
@@ -178,20 +180,26 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     }
 
     const handleProductSelect = (product: Product) => {
-      // Build description: product name + description if available
-      const fullDescription = product.description 
-        ? `${product.name} - ${product.description}`
-        : product.name
-      
-      setEditValue(fullDescription)
+      // Set description to just product name (not combined)
+      setEditValue(product.name)
       setHasSelectedProduct(true)
       setShowSuggestions(false)
       setIsEditing(false)
-      onChange(fullDescription)
       
+      // Call onProductSelect first (updates parent state)
       if (onProductSelect) {
         onProductSelect(product)
       }
+      
+      // Then call onChange to sync the value (after parent has updated)
+      // Use setTimeout to ensure parent state update completes first
+      setTimeout(() => {
+        onChange(product.name)
+        // Reset flag after a brief delay to allow value prop to update
+        setTimeout(() => {
+          setHasSelectedProduct(false)
+        }, 100)
+      }, 0)
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
