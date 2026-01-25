@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useRef, useMemo } from "react";
+import React, { useState, useCallback, useEffect, useRef, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -791,83 +791,82 @@ export default function WYSIWYGInvoiceEditor({
               </thead>
               <tbody>
                 {items.map((item, index) => (
-                  <tr
-                    key={index}
-                    className="border-b border-gray-200 group hover:bg-gray-50"
-                  >
-                    <td className="py-3 px-2">
-                      <InlineEditableText
-                        ref={index === 0 ? firstItemDescRef : undefined}
-                        value={item.description}
-                        onChange={(value) => updateItem(index, "description", value)}
-                        placeholder="Click to add item description"
-                        className="text-sm"
-                        required={index === 0}
-                      />
-                    </td>
-                    <td className="py-3 px-2">
-                      <InlineEditableNumber
-                        value={item.quantity}
-                        onChange={(value) => updateItem(index, "quantity", value)}
-                        className="text-sm"
-                        min={0}
-                        step={1}
-                      />
-                    </td>
-                    <td className="py-3 px-2">
-                      <InlineEditableMoney
-                        ref={index === 0 ? firstItemPriceRef : undefined}
-                        value={item.unit_price}
-                        onChange={(value) => updateItem(index, "unit_price", value)}
-                        currency={currency}
-                        className="text-sm"
-                        required={index === 0}
-                      />
-                    </td>
-                    <td className="py-3 px-2">
-                      <InlineEditableNumber
-                        value={item.tax_rate}
-                        onChange={(value) => updateItem(index, "tax_rate", value)}
-                        className="text-sm"
-                        min={0}
-                        max={100}
-                        step={0.1}
-                      />
-                    </td>
-                    <td className="py-3 px-2 text-right text-sm font-mono">
-                      {formatCurrency(calculateLineTotal(item), currency)}
-                    </td>
-                    <td className="py-3 px-2">
-                      {items.length > 1 && (
-                        <button
-                          onClick={() => removeItem(index)}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700"
-                        >
-                          <X className="w-4 h-4" />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                  {productPromptItemIndex === index && item.description && item.unit_price > 0 && (
-                    <tr>
-                      <td colSpan={6} className="py-0">
-                        <ProductSavePrompt
-                          itemDescription={item.description}
-                          itemPrice={item.unit_price}
-                          itemVatRate={item.tax_rate}
-                          orgId={orgId}
-                          onSave={() => {
-                            setProductModalOpen(true);
-                            setProductPromptItemIndex(null);
-                          }}
-                          onDismiss={() => {
-                            setDismissedProductPrompts(prev => new Set(prev).add(index));
-                            setProductPromptItemIndex(null);
-                          }}
+                  <React.Fragment key={index}>
+                    <tr className="border-b border-gray-200 group hover:bg-gray-50">
+                      <td className="py-3 px-2">
+                        <InlineEditableText
+                          ref={index === 0 ? firstItemDescRef : undefined}
+                          value={item.description}
+                          onChange={(value) => updateItem(index, "description", value)}
+                          placeholder="Click to add item description"
+                          className="text-sm"
+                          required={index === 0}
                         />
                       </td>
+                      <td className="py-3 px-2">
+                        <InlineEditableNumber
+                          value={item.quantity}
+                          onChange={(value) => updateItem(index, "quantity", value)}
+                          className="text-sm"
+                          min={0}
+                          step={1}
+                        />
+                      </td>
+                      <td className="py-3 px-2">
+                        <InlineEditableMoney
+                          ref={index === 0 ? firstItemPriceRef : undefined}
+                          value={item.unit_price}
+                          onChange={(value) => updateItem(index, "unit_price", value)}
+                          currency={currency}
+                          className="text-sm"
+                          required={index === 0}
+                        />
+                      </td>
+                      <td className="py-3 px-2">
+                        <InlineEditableNumber
+                          value={item.tax_rate}
+                          onChange={(value) => updateItem(index, "tax_rate", value)}
+                          className="text-sm"
+                          min={0}
+                          max={100}
+                          step={0.1}
+                        />
+                      </td>
+                      <td className="py-3 px-2 text-right text-sm font-mono">
+                        {formatCurrency(calculateLineTotal(item), currency)}
+                      </td>
+                      <td className="py-3 px-2">
+                        {items.length > 1 && (
+                          <button
+                            onClick={() => removeItem(index)}
+                            className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-700"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </td>
                     </tr>
-                  )}
+                    {productPromptItemIndex === index && item.description && item.unit_price > 0 && (
+                      <tr>
+                        <td colSpan={6} className="py-0">
+                          <ProductSavePrompt
+                            itemDescription={item.description}
+                            itemPrice={item.unit_price}
+                            itemVatRate={item.tax_rate}
+                            orgId={orgId}
+                            onSave={() => {
+                              setProductModalOpen(true);
+                              setProductPromptItemIndex(null);
+                            }}
+                            onDismiss={() => {
+                              setDismissedProductPrompts(prev => new Set(prev).add(index));
+                              setProductPromptItemIndex(null);
+                            }}
+                          />
+                        </td>
+                      </tr>
+                    )}
+                  </React.Fragment>
                 ))}
                 <tr>
                   <td colSpan={6} className="py-2">
