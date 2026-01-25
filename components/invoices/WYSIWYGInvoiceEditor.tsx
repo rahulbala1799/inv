@@ -18,7 +18,7 @@ import PDFPreviewModal from "@/components/invoices/PDFPreviewModal";
 import ProductModal from "@/components/products/ProductModal";
 import ProductSavePrompt from "@/components/products/ProductSavePrompt";
 import { VatRateSelect } from "@/components/invoices/VatRateSelect";
-import { ProductSelect } from "@/components/invoices/ProductSelect";
+import { ProductAutocomplete } from "@/components/invoices/ProductAutocomplete";
 
 interface InvoiceItem {
   id?: string;
@@ -314,20 +314,8 @@ export default function WYSIWYGInvoiceEditor({
       const newItems = [...prev];
       newItems[index] = { ...newItems[index], [field]: value };
       
-      // Check if item is complete enough to show product save prompt
-      const item = newItems[index];
-      if (
-        item.description &&
-        item.description.trim() !== '' &&
-        item.unit_price > 0 &&
-        !dismissedProductPrompts.has(index) &&
-        productPromptItemIndex === null
-      ) {
-        // Show prompt after a short delay to avoid showing immediately while typing
-        setTimeout(() => {
-          setProductPromptItemIndex(index);
-        }, 1000);
-      }
+      // Note: Product save prompt is now handled by ProductAutocomplete component
+      // via onNoProductSelected callback when user finishes typing without selecting a product
       
       return newItems;
     });
@@ -798,30 +786,41 @@ export default function WYSIWYGInvoiceEditor({
                   <React.Fragment key={index}>
                     <tr className="border-b border-gray-200 group hover:bg-gray-50">
                       <td className="py-3 px-2">
-                        <div className="flex items-center gap-2">
-                          <InlineEditableText
-                            ref={index === 0 ? firstItemDescRef : undefined}
-                            value={item.description}
-                            onChange={(value) => updateItem(index, "description", value)}
-                            placeholder="Click to add item description"
-                            className="text-sm flex-1"
-                            required={index === 0}
-                          />
-                          <ProductSelect
-                            orgId={orgId}
-                            currency={currency}
-                            refreshKey={productListRefreshKey}
-                            onSelect={(product) => {
-                              updateItem(index, "description", product.name);
-                              updateItem(index, "unit_price", product.unit_price);
-                              if (product.vat_rates) {
-                                updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));
-                              }
-                              updateItem(index, "product_id", product.id);
-                            }}
-                            className="flex-shrink-0"
-                          />
-                        </div>
+                        <ProductAutocomplete
+                          ref={index === 0 ? firstItemDescRef : undefined}
+                          value={item.description}
+                          onChange={(value) => updateItem(index, "description", value)}
+                          onProductSelect={(product) => {
+                            updateItem(index, "description", product.name);
+                            updateItem(index, "unit_price", product.unit_price);
+                            if (product.vat_rates) {
+                              updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));
+                            }
+                            updateItem(index, "product_id", product.id);
+                            // Clear any pending prompts since product was selected
+                            if (productPromptItemIndex === index) {
+                              setProductPromptItemIndex(null);
+                            }
+                          }}
+                          onNoProductSelected={() => {
+                            // Show save prompt if item has description and price, and wasn't dismissed
+                            if (
+                              item.description.trim() !== '' &&
+                              item.unit_price > 0 &&
+                              !dismissedProductPrompts.has(index) &&
+                              !item.product_id &&
+                              productPromptItemIndex === null
+                            ) {
+                              setProductPromptItemIndex(index);
+                            }
+                          }}
+                          orgId={orgId}
+                          currency={currency}
+                          refreshKey={productListRefreshKey}
+                          placeholder="Type to search products or enter description..."
+                          className="text-sm"
+                          required={index === 0}
+                        />
                       </td>
                       <td className="py-3 px-2">
                         <InlineEditableNumber
