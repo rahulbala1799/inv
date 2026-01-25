@@ -1,0 +1,43 @@
+# Cursor Rules for Inv App
+
+## Deployment and Log Checking Rules
+
+### MANDATORY: Always Deploy Changes to Git
+- **ALWAYS** commit and push code changes to git after making modifications
+- Use descriptive commit messages that explain what was changed and why
+- Format: `type: Brief description` (e.g., `fix: Refresh product list after saving`)
+- Include detailed explanation in commit body if needed
+
+### MANDATORY: Always Check Vercel Logs After Deployment
+- **ALWAYS** check Vercel deployment logs after pushing to git
+- Wait 30-60 seconds after git push for Vercel deployment to start
+- Use the script: `npm run check-logs` or `node scripts/check-vercel-logs.js`
+- If VERCEL_TOKEN is not set locally, verify logs via GitHub Actions workflow
+- Check for errors and verify deployment success
+
+### Deployment Workflow
+1. Make code changes
+2. Test changes locally if possible
+3. Stage all changes: `git add -A`
+4. Commit with descriptive message: `git commit -m "type: description"`
+5. Push to remote: `git push`
+6. Wait 30-60 seconds for Vercel deployment
+7. Check logs using the log checking script or GitHub Actions
+8. Verify deployment success and check for any errors
+
+### Code Quality
+- Always check the whole program when changing code to ensure one change doesn't affect the remaining code
+- Run linter checks before committing
+- Fix any linting errors before deployment
+
+### Git Commit Message Format
+```
+type: Brief description
+
+Detailed explanation if needed:
+- What was changed
+- Why it was changed
+- Any breaking changes or important notes
+```
+
+Types: `fix`, `feat`, `refactor`, `docs`, `chore`, `test`
