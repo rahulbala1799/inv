@@ -15,6 +15,8 @@ import { Button } from "@/components/ui/button";
 import { ArrowLeft, Download, Plus, X, FileText } from "lucide-react";
 import { formatCurrency } from "@/lib/utils";
 import PDFPreviewModal from "@/components/invoices/PDFPreviewModal";
+import ProductModal from "@/components/products/ProductModal";
+import ProductSavePrompt from "@/components/products/ProductSavePrompt";
 
 interface InvoiceItem {
   id?: string;
@@ -134,6 +136,9 @@ export default function WYSIWYGInvoiceEditor({
   );
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [templateError, setTemplateError] = useState<string | null>(null);
+  const [productModalOpen, setProductModalOpen] = useState(false);
+  const [productPromptItemIndex, setProductPromptItemIndex] = useState<number | null>(null);
+  const [dismissedProductPrompts, setDismissedProductPrompts] = useState<Set<number>>(new Set());
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -304,6 +309,22 @@ export default function WYSIWYGInvoiceEditor({
     setItems((prev) => {
       const newItems = [...prev];
       newItems[index] = { ...newItems[index], [field]: value };
+      
+      // Check if item is complete enough to show product save prompt
+      const item = newItems[index];
+      if (
+        item.description &&
+        item.description.trim() !== '' &&
+        item.unit_price > 0 &&
+        !dismissedProductPrompts.has(index) &&
+        productPromptItemIndex === null
+      ) {
+        // Show prompt after a short delay to avoid showing immediately while typing
+        setTimeout(() => {
+          setProductPromptItemIndex(index);
+        }, 1000);
+      }
+      
       return newItems;
     });
     calculateTotals();
@@ -827,6 +848,26 @@ export default function WYSIWYGInvoiceEditor({
                       )}
                     </td>
                   </tr>
+                  {productPromptItemIndex === index && item.description && item.unit_price > 0 && (
+                    <tr>
+                      <td colSpan={6} className="py-0">
+                        <ProductSavePrompt
+                          itemDescription={item.description}
+                          itemPrice={item.unit_price}
+                          itemVatRate={item.tax_rate}
+                          orgId={orgId}
+                          onSave={() => {
+                            setProductModalOpen(true);
+                            setProductPromptItemIndex(null);
+                          }}
+                          onDismiss={() => {
+                            setDismissedProductPrompts(prev => new Set(prev).add(index));
+                            setProductPromptItemIndex(null);
+                          }}
+                        />
+                      </td>
+                    </tr>
+                  )}
                 ))}
                 <tr>
                   <td colSpan={6} className="py-2">
@@ -925,6 +966,31 @@ export default function WYSIWYGInvoiceEditor({
         orgId={orgId}
         onTemplateChange={handleTemplateSelected}
       />
+
+      {/* Product Modal */}
+      {productModalOpen && productPromptItemIndex !== null && items[productPromptItemIndex] && (
+        <ProductModal
+          open={productModalOpen}
+          onOpenChange={(open) => {
+            setProductModalOpen(open);
+            if (!open) {
+              setProductPromptItemIndex(null);
+            }
+          }}
+          orgId={orgId}
+          initialData={{
+            name: items[productPromptItemIndex].description || '',
+            description: items[productPromptItemIndex].description || '',
+            unit_price: items[productPromptItemIndex].unit_price || 0,
+            vat_rate_percentage: items[productPromptItemIndex].tax_rate || 0,
+          }}
+          onSuccess={() => {
+            setDismissedProductPrompts(prev => new Set(prev).add(productPromptItemIndex!));
+            setProductPromptItemIndex(null);
+            setProductModalOpen(false);
+          }}
+        />
+      )}
     </div>
   );
 }
