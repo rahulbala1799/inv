@@ -791,7 +791,11 @@ export default function WYSIWYGInvoiceEditor({
                           value={item.description}
                           onChange={(value) => updateItem(index, "description", value)}
                           onProductSelect={(product) => {
-                            updateItem(index, "description", product.name);
+                            // Set description to product name + description if available
+                            const fullDescription = product.description 
+                              ? `${product.name} - ${product.description}`
+                              : product.name
+                            updateItem(index, "description", fullDescription);
                             updateItem(index, "unit_price", product.unit_price);
                             if (product.vat_rates) {
                               updateItem(index, "tax_rate", parseFloat(product.vat_rates.rate.toString()));

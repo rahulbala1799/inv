@@ -178,11 +178,16 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     }
 
     const handleProductSelect = (product: Product) => {
-      setEditValue(product.name)
+      // Build description: product name + description if available
+      const fullDescription = product.description 
+        ? `${product.name} - ${product.description}`
+        : product.name
+      
+      setEditValue(fullDescription)
       setHasSelectedProduct(true)
       setShowSuggestions(false)
       setIsEditing(false)
-      onChange(product.name)
+      onChange(fullDescription)
       
       if (onProductSelect) {
         onProductSelect(product)
