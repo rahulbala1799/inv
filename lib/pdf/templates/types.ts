@@ -31,6 +31,7 @@ export interface InvoiceTemplateProps {
     unit_price: number
     tax_rate: number
     line_total: number
+    product_description?: string | null
   }>
   branding: {
     business_name?: string | null

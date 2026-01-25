@@ -304,7 +304,14 @@ export const ModernMinimal = ({ invoice, items, branding, template }: InvoiceTem
             {items && items.length > 0 ? (
               items.map((item, index) => (
                 <tr key={item.id || index} className="table-row">
-                  <td>{item.description || ''}</td>
+                  <td>
+                    <div>{item.description || ''}</div>
+                    {item.product_description && (
+                      <div style={{ fontSize: '8pt', color: '#6B7280', marginTop: '2px', fontStyle: 'italic' }}>
+                        {item.product_description}
+                      </div>
+                    )}
+                  </td>
                   <td style={{ textAlign: 'right' }}>{item.quantity || 0}</td>
                   <td style={{ textAlign: 'right' }}>
                     {formatCurrency(Number(item.unit_price || 0), invoice.currency)}

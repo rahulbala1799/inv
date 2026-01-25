@@ -38,10 +38,17 @@ export async function GET(
     return NextResponse.json({ error: 'Invoice not found' }, { status: 404 })
   }
 
-  // Fetch invoice items
+  // Fetch invoice items WITH product data if product_id exists
   const { data: items } = await supabase
     .from('invoice_items')
-    .select('*')
+    .select(`
+      *,
+      products (
+        id,
+        name,
+        description
+      )
+    `)
     .eq('invoice_id', invoiceId)
     .eq('org_id', orgId)
     .order('sort_order')
@@ -144,8 +151,19 @@ export async function GET(
     logoUrl = publicUrl
   }
 
-  // Ensure items is an array
-  const invoiceItems = items && Array.isArray(items) ? items : []
+  // Ensure items is an array and enrich with product data if available
+  const invoiceItems = items && Array.isArray(items) ? items.map((item: any) => {
+    // If product_id exists and we have product data, use product name + description
+    if (item.product_id && item.products) {
+      return {
+        ...item,
+        description: item.products.name,
+        product_description: item.products.description || null,
+      }
+    }
+    // Otherwise, use the typed description as-is
+    return item
+  }) : []
 
   // Dynamically import React and rendering utilities (only at runtime)
   const React = (await import('react')).default
