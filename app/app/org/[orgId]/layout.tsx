@@ -24,6 +24,19 @@ export default async function OrgLayout({
     redirect('/app')
   }
 
+  // Check if organization needs onboarding (for newly created orgs)
+  // Only redirect if business_name is not set (new orgs going forward)
+  const { data: branding } = await supabase
+    .from('org_branding')
+    .select('business_name')
+    .eq('org_id', orgId)
+    .single()
+
+  // If org doesn't have business_name, redirect to onboarding
+  if (!branding?.business_name) {
+    redirect(`/onboarding?orgId=${orgId}`)
+  }
+
   // Get org name
   const { data: org } = await supabase
     .from('organizations')

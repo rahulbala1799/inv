@@ -49,6 +49,6 @@ export async function createOrg(formData: FormData) {
   }
 
   // Trigger will create org_members entry automatically
-  // Redirect to onboarding for new organizations
-  redirect(`/onboarding`)
+  // Redirect to onboarding for new organizations with orgId
+  redirect(`/onboarding?orgId=${org.id}`)
 }

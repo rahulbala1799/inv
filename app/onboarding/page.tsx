@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation'
 import { checkOnboardingStatus } from './actions'
 import OnboardingClient from './OnboardingClient'
 
-export default async function OnboardingPage() {
+export default async function OnboardingPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ orgId?: string }>
+}) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
 
@@ -11,26 +15,70 @@ export default async function OnboardingPage() {
     redirect('/login')
   }
 
-  // Get user's first organization
-  const { data: orgs } = await supabase
-    .from('org_members')
-    .select(`
-      org_id,
-      organizations (
-        id,
-        name
-      )
-    `)
-    .eq('user_id', user.id)
-    .order('created_at', { foreignTable: 'organizations', ascending: true })
-    .limit(1)
+  const { orgId: orgIdParam } = await searchParams
 
-  if (!orgs || orgs.length === 0) {
-    // No organization yet, redirect to create one
-    redirect('/app')
+  let orgId: string | null = null
+
+  // If orgId is provided in query params, use it (for newly created orgs)
+  if (orgIdParam) {
+    // Verify user is a member of this org
+    const { data: membership } = await supabase
+      .from('org_members')
+      .select('org_id')
+      .eq('user_id', user.id)
+      .eq('org_id', orgIdParam)
+      .single()
+
+    if (membership) {
+      orgId = orgIdParam
+    }
   }
 
-  const orgId = (orgs[0] as any).organizations.id
+  // If no orgId from params, find the newest organization without business_name
+  if (!orgId) {
+    const { data: orgs } = await supabase
+      .from('org_members')
+      .select(`
+        org_id,
+        organizations (
+          id,
+          name,
+          created_at
+        )
+      `)
+      .eq('user_id', user.id)
+      .order('created_at', { foreignTable: 'organizations', ascending: false })
+
+    if (!orgs || orgs.length === 0) {
+      // No organization yet, redirect to create one
+      redirect('/app')
+    }
+
+    // Find the first org without business_name (needs onboarding)
+    for (const orgMember of orgs) {
+      const currentOrgId = (orgMember as any).organizations.id
+      const { data: branding } = await supabase
+        .from('org_branding')
+        .select('business_name')
+        .eq('org_id', currentOrgId)
+        .single()
+
+      if (!branding?.business_name) {
+        orgId = currentOrgId
+        break
+      }
+    }
+
+    // If all orgs have business_name, use the first one (for existing users)
+    if (!orgId) {
+      orgId = (orgs[0] as any).organizations.id
+    }
+  }
+
+  // Ensure we have an orgId
+  if (!orgId) {
+    redirect('/app')
+  }
 
   // Check if onboarding is needed
   const { needsOnboarding, redirect: redirectTo } = await checkOnboardingStatus(orgId)
