@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect, useRef, forwardRef } from 'react'
+import { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react'
 import { formatCurrency } from '@/lib/utils'
 
 interface VatRate {
@@ -58,6 +58,15 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     const containerRef = useRef<HTMLDivElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
     const suggestionsRef = useRef<HTMLDivElement>(null)
+
+    // Expose the container ref to parent via forwardRef
+    useImperativeHandle(ref, () => {
+      if (containerRef.current) {
+        return containerRef.current
+      }
+      // Return a dummy element if ref is not yet set (shouldn't happen in practice)
+      return document.createElement('div') as HTMLDivElement
+    }, [])
 
     // Count words in the input
     useEffect(() => {
@@ -206,19 +215,9 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
       }
     }, [selectedIndex])
 
-    // Merge refs for container
-    const containerDivRef = (node: HTMLDivElement | null) => {
-      containerRef.current = node
-      if (typeof ref === 'function') {
-        ref(node)
-      } else if (ref) {
-        (ref as React.MutableRefObject<HTMLDivElement | null>).current = node
-      }
-    }
-
     if (isEditing) {
       return (
-        <div ref={containerDivRef} className={`relative ${className}`}>
+        <div ref={containerRef} className={`relative ${className}`}>
           <input
             ref={inputRef}
             type="text"
@@ -278,7 +277,7 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
 
     return (
       <div
-        ref={containerDivRef}
+        ref={containerRef}
         onClick={handleClick}
         className={`cursor-pointer transition-colors relative ${className} ${
           isEmpty ? "text-amber-500 italic" : ""
