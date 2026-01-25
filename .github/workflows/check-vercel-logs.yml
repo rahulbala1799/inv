@@ -1,0 +1,47 @@
+name: Check Vercel Logs on Deployment
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  workflow_dispatch: # Allows manual triggering
+
+jobs:
+  check-logs:
+    runs-on: ubuntu-latest
+    name: Check Vercel Deployment Logs
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Wait for Vercel deployment
+        run: |
+          echo "Waiting 30 seconds for Vercel deployment to start..."
+          sleep 30
+
+      - name: Check Vercel logs
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+        run: |
+          node scripts/check-vercel-logs.js
+
+      - name: Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vercel-logs
+          path: vercel-logs-*.txt
+          retention-days: 7

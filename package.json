@@ -7,7 +7,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "check-logs": "node scripts/check-vercel-logs.js"
   },
   "keywords": [],
   "author": "",

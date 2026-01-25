@@ -142,6 +142,7 @@ export default function WYSIWYGInvoiceEditor({
   const [productModalOpen, setProductModalOpen] = useState(false);
   const [productPromptItemIndex, setProductPromptItemIndex] = useState<number | null>(null);
   const [dismissedProductPrompts, setDismissedProductPrompts] = useState<Set<number>>(new Set());
+  const [productListRefreshKey, setProductListRefreshKey] = useState(0);
 
   // Refs for fields
   const companyNameRef = useRef<HTMLDivElement>(null);
@@ -809,6 +810,7 @@ export default function WYSIWYGInvoiceEditor({
                           <ProductSelect
                             orgId={orgId}
                             currency={currency}
+                            refreshKey={productListRefreshKey}
                             onSelect={(product) => {
                               updateItem(index, "description", product.name);
                               updateItem(index, "unit_price", product.unit_price);
@@ -1003,6 +1005,8 @@ export default function WYSIWYGInvoiceEditor({
             setDismissedProductPrompts(prev => new Set(prev).add(productPromptItemIndex!));
             setProductPromptItemIndex(null);
             setProductModalOpen(false);
+            // Refresh product list in all ProductSelect components
+            setProductListRefreshKey(prev => prev + 1);
           }}
         />
       )}

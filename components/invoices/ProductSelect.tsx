@@ -23,9 +23,10 @@ interface ProductSelectProps {
   orgId: string
   currency: string
   className?: string
+  refreshKey?: number | string // Force refresh when this changes
 }
 
-export function ProductSelect({ onSelect, orgId, currency, className = '' }: ProductSelectProps) {
+export function ProductSelect({ onSelect, orgId, currency, className = '', refreshKey }: ProductSelectProps) {
   const [products, setProducts] = useState<Product[]>([])
   const [isOpen, setIsOpen] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
@@ -56,7 +57,7 @@ export function ProductSelect({ onSelect, orgId, currency, className = '' }: Pro
     if (isOpen) {
       loadProducts()
     }
-  }, [orgId, isOpen, searchTerm])
+  }, [orgId, isOpen, searchTerm, refreshKey]) // Added refreshKey to dependencies
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
