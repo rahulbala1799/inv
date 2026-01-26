@@ -232,6 +232,7 @@ export default function ProductsManager({ orgId }: ProductsManagerProps) {
         open={showAddModal}
         onOpenChange={handleModalClose}
         orgId={orgId}
+        productId={editingProduct?.id || null}
         initialData={
           editingProduct
             ? {

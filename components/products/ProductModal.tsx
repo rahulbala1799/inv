@@ -15,6 +15,7 @@ interface ProductModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   orgId: string
+  productId?: string | null // If provided, edit mode; if not, create mode
   initialData?: {
     name?: string
     description?: string
@@ -29,9 +30,11 @@ export default function ProductModal({
   open,
   onOpenChange,
   orgId,
+  productId,
   initialData,
   onSuccess,
 }: ProductModalProps) {
+  const isEditMode = !!productId
   const [name, setName] = useState(initialData?.name || '')
   const [description, setDescription] = useState(initialData?.description || '')
   const [unitPrice, setUnitPrice] = useState(initialData?.unit_price?.toString() || '')
@@ -97,8 +100,14 @@ export default function ProductModal({
     setIsSubmitting(true)
 
     try {
-      const response = await fetch(`/api/org/${orgId}/products`, {
-        method: 'POST',
+      // Determine URL and method based on edit mode
+      const url = isEditMode 
+        ? `/api/org/${orgId}/products/${productId}`
+        : `/api/org/${orgId}/products`
+      const method = isEditMode ? 'PUT' : 'POST'
+
+      const response = await fetch(url, {
+        method,
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           name: name.trim(),
@@ -110,7 +119,7 @@ export default function ProductModal({
 
       if (!response.ok) {
         const data = await response.json()
-        throw new Error(data.error || 'Failed to save product')
+        throw new Error(data.error || `Failed to ${isEditMode ? 'update' : 'save'} product`)
       }
 
       // Reset form and close modal
@@ -152,9 +161,11 @@ export default function ProductModal({
       <Dialog open={open} onOpenChange={handleClose}>
         <DialogContent className="sm:max-w-lg">
           <DialogHeader>
-            <DialogTitle>Save Product</DialogTitle>
+            <DialogTitle>{isEditMode ? 'Edit Product' : 'Save Product'}</DialogTitle>
             <DialogDescription>
-              Save this item as a product for quick reuse in future invoices.
+              {isEditMode 
+                ? 'Update product information.'
+                : 'Save this item as a product for quick reuse in future invoices.'}
             </DialogDescription>
           </DialogHeader>
 
@@ -261,7 +272,9 @@ export default function ProductModal({
                 disabled={isSubmitting || !name.trim() || !unitPrice}
                 className="bg-indigo-600 hover:bg-indigo-700"
               >
-                {isSubmitting ? 'Saving...' : 'Save Product'}
+                {isSubmitting 
+                  ? (isEditMode ? 'Updating...' : 'Saving...') 
+                  : (isEditMode ? 'Update Product' : 'Save Product')}
               </Button>
             </div>
           </form>
