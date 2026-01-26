@@ -40,7 +40,7 @@ export async function GET(
 
   // Fetch invoice items WITH product data if product_id exists
   // Use left join (default) to include items even if they don't have products
-  const { data: items } = await supabase
+  const { data: items, error: itemsError } = await supabase
     .from('invoice_items')
     .select(`
       *,
@@ -54,46 +54,13 @@ export async function GET(
     .eq('org_id', orgId)
     .order('sort_order')
   
-  // Fallback: if join fails, fetch items and products separately
-  let finalItems = items
-  if (!items || items.length === 0) {
-    const { data: itemsWithoutProducts } = await supabase
-      .from('invoice_items')
-      .select('*')
-      .eq('invoice_id', invoiceId)
-      .eq('org_id', orgId)
-      .order('sort_order')
-    
-    if (itemsWithoutProducts && itemsWithoutProducts.length > 0) {
-      // Fetch products separately for items that have product_id
-      const productIds = itemsWithoutProducts
-        .filter((item: any) => item.product_id)
-        .map((item: any) => item.product_id)
-      
-      let productsMap: Record<string, any> = {}
-      if (productIds.length > 0) {
-        const { data: products } = await supabase
-          .from('products')
-          .select('id, name, description')
-          .in('id', productIds)
-          .eq('org_id', orgId)
-        
-        if (products) {
-          products.forEach((p: any) => {
-            productsMap[p.id] = p
-          })
-        }
-      }
-      
-      // Merge products into items
-      finalItems = itemsWithoutProducts.map((item: any) => ({
-        ...item,
-        products: item.product_id ? productsMap[item.product_id] || null : null
-      }))
-    } else {
-      finalItems = []
-    }
+  // If query failed, log error but continue with empty array
+  if (itemsError) {
+    console.error('Error fetching invoice items:', itemsError)
   }
+  
+  // Use items from query (will be null/undefined if error, empty array if no items)
+  const finalItems = items || []
 
   // Fetch org branding
   const { data: branding } = await supabase
