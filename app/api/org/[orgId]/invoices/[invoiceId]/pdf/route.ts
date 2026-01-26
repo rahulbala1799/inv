@@ -39,6 +39,7 @@ export async function GET(
   }
 
   // Fetch invoice items WITH product data if product_id exists
+  // Use left join (default) to include items even if they don't have products
   const { data: items } = await supabase
     .from('invoice_items')
     .select(`
@@ -52,6 +53,47 @@ export async function GET(
     .eq('invoice_id', invoiceId)
     .eq('org_id', orgId)
     .order('sort_order')
+  
+  // Fallback: if join fails, fetch items and products separately
+  let finalItems = items
+  if (!items || items.length === 0) {
+    const { data: itemsWithoutProducts } = await supabase
+      .from('invoice_items')
+      .select('*')
+      .eq('invoice_id', invoiceId)
+      .eq('org_id', orgId)
+      .order('sort_order')
+    
+    if (itemsWithoutProducts && itemsWithoutProducts.length > 0) {
+      // Fetch products separately for items that have product_id
+      const productIds = itemsWithoutProducts
+        .filter((item: any) => item.product_id)
+        .map((item: any) => item.product_id)
+      
+      let productsMap: Record<string, any> = {}
+      if (productIds.length > 0) {
+        const { data: products } = await supabase
+          .from('products')
+          .select('id, name, description')
+          .in('id', productIds)
+          .eq('org_id', orgId)
+        
+        if (products) {
+          products.forEach((p: any) => {
+            productsMap[p.id] = p
+          })
+        }
+      }
+      
+      // Merge products into items
+      finalItems = itemsWithoutProducts.map((item: any) => ({
+        ...item,
+        products: item.product_id ? productsMap[item.product_id] || null : null
+      }))
+    } else {
+      finalItems = []
+    }
+  }
 
   // Fetch org branding
   const { data: branding } = await supabase
@@ -152,17 +194,28 @@ export async function GET(
   }
 
   // Ensure items is an array and enrich with product data if available
-  const invoiceItems = items && Array.isArray(items) ? items.map((item: any) => {
+  const invoiceItems = finalItems && Array.isArray(finalItems) ? finalItems.map((item: any) => {
+    // Handle product data - Supabase returns products as object (not array) for foreign key relationships
+    // But handle both cases for safety
+    let productData = null
+    if (item.products) {
+      productData = Array.isArray(item.products) ? item.products[0] : item.products
+    }
+    
     // If product_id exists and we have product data, use product name + description
-    if (item.product_id && item.products) {
+    if (item.product_id && productData && productData.name) {
       return {
         ...item,
-        description: item.products.name,
-        product_description: item.products.description || null,
+        description: productData.name,
+        product_description: productData.description || null,
       }
     }
-    // Otherwise, use the typed description as-is
-    return item
+    // Otherwise, use the typed description as-is (fallback to item.description)
+    return {
+      ...item,
+      description: item.description || '', // Ensure description is always a string
+      product_description: null, // Ensure product_description is always set
+    }
   }) : []
 
   // Dynamically import React and rendering utilities (only at runtime)
