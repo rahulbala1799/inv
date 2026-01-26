@@ -54,9 +54,21 @@ export async function GET(
     .eq('org_id', orgId)
     .order('sort_order')
   
+  // Log fetched items for debugging
+  console.log('📦 Fetched items count:', items?.length || 0)
+  if (items && items.length > 0) {
+    console.log('📦 First item:', {
+      description: items[0].description,
+      product_id: items[0].product_id,
+      has_product: !!items[0].products,
+      unit_price: items[0].unit_price,
+      tax_rate: items[0].tax_rate
+    })
+  }
+  
   // If query failed, log error but continue with empty array
   if (itemsError) {
-    console.error('Error fetching invoice items:', itemsError)
+    console.error('❌ Error fetching invoice items:', itemsError)
   }
   
   // Use items from query (will be null/undefined if error, empty array if no items)
@@ -171,19 +183,34 @@ export async function GET(
     
     // If product_id exists and we have product data, use product name + description
     if (item.product_id && productData && productData.name) {
-      return {
+      const enrichedItem = {
         ...item,
         description: productData.name,
         product_description: productData.description || null,
       }
+      console.log('✅ Enriched item with product:', {
+        description: enrichedItem.description,
+        product_description: enrichedItem.product_description,
+        unit_price: enrichedItem.unit_price,
+        tax_rate: enrichedItem.tax_rate
+      })
+      return enrichedItem
     }
     // Otherwise, use the typed description as-is (fallback to item.description)
-    return {
+    const fallbackItem = {
       ...item,
       description: item.description || '', // Ensure description is always a string
       product_description: null, // Ensure product_description is always set
     }
+    console.log('⚠️ Item without product:', {
+      description: fallbackItem.description,
+      unit_price: fallbackItem.unit_price,
+      tax_rate: fallbackItem.tax_rate
+    })
+    return fallbackItem
   }) : []
+  
+  console.log('📊 Final invoice items count:', invoiceItems.length)
 
   // Dynamically import React and rendering utilities (only at runtime)
   const React = (await import('react')).default
