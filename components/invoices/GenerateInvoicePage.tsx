@@ -70,6 +70,8 @@ export default function GenerateInvoicePage({
     const params = new URLSearchParams()
     params.set('format', 'html')
     if (selectedTemplateId) params.set('template', selectedTemplateId)
+    // Add timestamp to prevent caching issues
+    params.set('t', Date.now().toString())
     return `/api/org/${orgId}/invoices/${invoiceId}/pdf?${params.toString()}`
   }, [orgId, invoiceId, selectedTemplateId])
 
