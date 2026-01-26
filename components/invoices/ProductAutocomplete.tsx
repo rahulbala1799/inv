@@ -143,12 +143,19 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     const handleBlur = () => {
       // Delay to allow click on suggestion
       setTimeout(() => {
-        setIsEditing(false)
-        setShowSuggestions(false)
-        onChange(editValue)
-        // If user finished typing and didn't select a product, trigger callback
-        if (editValue.trim() && !hasSelectedProduct && onNoProductSelected) {
-          onNoProductSelected()
+        // Don't update if we just selected a product (onProductSelect already handled it)
+        if (!hasSelectedProduct) {
+          setIsEditing(false)
+          setShowSuggestions(false)
+          onChange(editValue)
+          // If user finished typing and didn't select a product, trigger callback
+          if (editValue.trim() && onNoProductSelected) {
+            onNoProductSelected()
+          }
+        } else {
+          // Just close the editor if product was selected
+          setIsEditing(false)
+          setShowSuggestions(false)
         }
       }, 200)
     }
@@ -180,26 +187,25 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
     }
 
     const handleProductSelect = (product: Product) => {
+      // Prevent multiple calls
+      if (hasSelectedProduct) {
+        return
+      }
+      
       // Set description to just product name (not combined)
       setEditValue(product.name)
       setHasSelectedProduct(true)
       setShowSuggestions(false)
       setIsEditing(false)
       
-      // Call onProductSelect first (updates parent state)
+      // Call onProductSelect - this already updates description, so don't call onChange
+      // The onProductSelect callback handles all the updates including description
       if (onProductSelect) {
         onProductSelect(product)
       }
       
-      // Then call onChange to sync the value (after parent has updated)
-      // Use setTimeout to ensure parent state update completes first
-      setTimeout(() => {
-        onChange(product.name)
-        // Reset flag after a brief delay to allow value prop to update
-        setTimeout(() => {
-          setHasSelectedProduct(false)
-        }, 100)
-      }, 0)
+      // Don't call onChange here - onProductSelect already updated the description
+      // This prevents duplicate updates
     }
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -251,7 +257,15 @@ export const ProductAutocomplete = forwardRef<HTMLDivElement, ProductAutocomplet
                 <button
                   key={product.id}
                   type="button"
-                  onClick={() => handleProductSelect(product)}
+                  onClick={(e) => {
+                    e.preventDefault()
+                    e.stopPropagation()
+                    handleProductSelect(product)
+                  }}
+                  onMouseDown={(e) => {
+                    // Prevent blur event from firing before click
+                    e.preventDefault()
+                  }}
                   className={`w-full px-4 py-3 text-left hover:bg-gray-50 border-b border-gray-100 last:border-b-0 transition-colors ${
                     index === selectedIndex ? 'bg-indigo-50 border-indigo-200' : ''
                   }`}
